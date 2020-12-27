@@ -1,5 +1,6 @@
 package com.neurologyca.kopernica.config.controller;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -63,6 +65,24 @@ public class AppController {
 				throw new Exception("No se encuentra ninguna carpeta de estudios en " + directory);		
 		return folders;
 		}
+	}
+		
+	@PostMapping("/app/{proyecto}")
+	public String crearProyecto(@PathVariable String proyecto) throws Exception {
+ 
+		String subDirectory = basePath + "\\" + proyecto;
+		File directorio = new File(subDirectory);
+    		
+    	if (directorio.mkdirs()) {
+    		   System.out.println("Se ha creado el directorio del proyecto.");
+    	} else if (directorio.isDirectory()) {
+    		    throw new Exception("Ya existe el proyecto " + proyecto);	
+    	} else {
+    		    throw new Exception("No se ha podido crear el directorio del proyecto " + proyecto);
+    	}
+			
+		return proyecto;
+		
 				
 	}
 
