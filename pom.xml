@@ -67,11 +67,11 @@
 	      <version>3.32.3</version>
    	   </dependency>
    	   
-   	   <dependency>
+   	   <!--  dependency>
 	     <groupId>com.zsoltfabok</groupId>
 	     <artifactId>sqlite-dialect</artifactId>
 	     <version>1.0</version>
-	   </dependency>
+	   </dependency-->
 	</dependencies>
 
 	<build>
