@@ -18,6 +18,20 @@ public class AppController {
 	@Value("${base.path}")
 	private String basePath;
 	
+	@Value("${database.url}")
+	private String databaseUrl;
+    
+	public static String estudio;
+	public static String proyecto;
+	public static String fullDatabaseUrl;
+	
+	@GetMapping("/app/properties/{proyecto}/{estudio}")
+	public void setProperties(@PathVariable String project, @PathVariable String study) {
+		proyecto = project;
+		estudio = study;
+		fullDatabaseUrl = databaseUrl + project + "\\" + study + "\\csvs\\database";
+		System.out.println(fullDatabaseUrl);
+	}
 	
 	@SuppressWarnings("finally")
 	@GetMapping("/app/")
@@ -40,8 +54,7 @@ public class AppController {
 		return folders;
 		}
 	}
-		
-		
+			
 	@SuppressWarnings("finally")
 	@GetMapping("/app/estudios/{proyecto}")
 	public List<String> getEstudios(@PathVariable String proyecto) throws Exception {
@@ -66,7 +79,7 @@ public class AppController {
 		return folders;
 		}
 	}
-		
+/*		
 	@PostMapping("/app/{proyecto}")
 	public String crearProyecto(@PathVariable String proyecto) throws Exception {
  
@@ -85,5 +98,5 @@ public class AppController {
 		
 				
 	}
-
+*/
 }
