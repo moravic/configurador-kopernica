@@ -1,0 +1,105 @@
+<form #testForm="ngForm" (ngSubmit)="testForm.form.valid" novalidate>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Angular 9 Template Driven Form</mat-card-title>
+      <mat-card-subtitle>Mat Table Validation</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-table [dataSource]="elistMatTableDataSource">
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef>
+            Name
+          </mat-header-cell>
+          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <input matInput #name="ngModel" name="txtName{{rowIdx}}" placeholder="Name" [(ngModel)]="participant.name"
+                required>
+              <mat-error *ngIf="name?.invalid">
+                <div *ngIf="name.errors.required">Name is required</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <mat-header-cell *matHeaderCellDef>
+            Email
+          </mat-header-cell>
+          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <input matInput #email="ngModel" name="txtEmail{{rowIdx}}" placeholder="Email"
+                [(ngModel)]="participant.email" required>
+              <mat-error *ngIf="email?.invalid">
+                <div *ngIf="email.errors.required">Email is required</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="address">
+          <mat-header-cell *matHeaderCellDef>
+            Address
+          </mat-header-cell>
+          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <input matInput #address="ngModel" name="txtAddress{{rowIdx}}" placeholder="Address"
+                [(ngModel)]="participant.address" required style="text-overflow: ellipsis;">
+              <mat-error *ngIf="address?.invalid">
+                <div *ngIf="address.errors.required">Address` is required</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dob">
+          <mat-header-cell *matHeaderCellDef>
+            Dob
+          </mat-header-cell>
+          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <input matInput #dob="ngModel" name="txtDob{{rowIdx}}" placeholder="DOB"
+                [ngModel]="participant.dob  | date:'yyyy-MM-dd'" (ngModelChange)="participant.dob = $event" [max]="todaysDate"
+                required [matDatepicker]="picker">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="dob?.invalid">
+                <div *ngIf="dob.errors.required">Date Of Birth is required</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="gender">
+          <mat-header-cell *matHeaderCellDef>
+            Gender
+          </mat-header-cell>
+          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <mat-select matInput #gender="ngModel" name="ddlGender{{rowIdx}}" placeholder="Gender"
+                [(ngModel)]="participant.gender" required>
+                <mat-option value="female">Female</mat-option>
+                <mat-option value="male">Male</mat-option>
+                <mat-option value="others">Others</mat-option>
+              </mat-select>
+              <mat-error *ngIf="gender?.invalid">
+                <div *ngIf="gender.errors.required">Gender is required</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;">
+        </mat-row>
+      </mat-table>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="testForm.invalid" (click)="save(testForm);">SAVE</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
