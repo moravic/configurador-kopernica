@@ -19,10 +19,10 @@ export class ParticipantListComponent implements OnInit {
   constructor(private eDataStore: ParticipantDataStoreService) {
     this.displayedColumns = [
       'name',
-      'address',
       'email',
-      'dob',
-      'gender'
+      'age',
+      'gender',
+      'profile'
     ];
     this.todaysDate = new Date();
   }

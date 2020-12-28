@@ -1,0 +1,33 @@
+<form #testForm="ngForm" (ngSubmit)="testForm.form.valid" novalidate>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Estímulos</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-table [dataSource]="elistMatTableDataSource">
+        <ng-container matColumnDef="text">
+          <mat-header-cell *matHeaderCellDef>
+            Introduzca el nombre de los estímulos que se guardarán en orden
+          </mat-header-cell>
+          <mat-cell *matCellDef="let estimulo; let rowIdx = index;">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <input matInput #name="ngModel" name="txtEstimulo{{rowIdx}}" placeholder="Texto" [(ngModel)]="estimulo.text"
+                required>
+              <mat-error *ngIf="text?.invalid">
+                <div *ngIf="name.errors.required">La descripción del estímulo es obligatoria</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+        
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;">
+        </mat-row>
+      </mat-table>
+    </mat-card-content>
+    <!--mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="testForm.invalid" (click)="save(testForm);">SAVE</button>
+    </mat-card-actions-->
+  </mat-card>
+</form>

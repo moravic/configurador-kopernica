@@ -1,28 +1,42 @@
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-  <!-- Links -->
-  <ul class="navbar-nav">
-    <li class="nav-item">
-        <a routerLink="employees" class="nav-link" routerLinkActive="active">Employee List</a>
-    </li>
-    <li class="nav-item">
-        <a routerLink="add" class="nav-link" routerLinkActive="active">Add Employee</a>
-    </li>
-  </ul>
-</nav>
-<div class="container">
-  <br>
-  <h2 style="text-align: center;">{{title}}</h2>
-  <hr>  
-  <div class="card">
-    <div class="card-body">
-  <router-outlet></router-outlet>
-    </div>
-  </div>
-   <participant-list></participant-list>
-</div>
-
-<footer class="footer">
+<header class="site-header">
   <div class="container">
-      <span>All Rights Reserved 2020 @Neurologyca</span>
+	  <div class="row">
+	    <div class="col">
+	  		<a class="site-header-logo no-underline-hover" href="/">
+	   		 <img src="/config-kopernica/assets/logo-kopernica-apaisado.png" width="340" height="80" class="d-inline-block align-top" alt="" loading="lazy">
+	  		</a>
+	  	</div>
+	  	<div class="col">
+	  		<h1 class="mb-0 blueTitle">C O N F I G U R A D O R</h1>
+	  	</div>	
+	 </div> 
   </div>
-</footer>
+</header>
+
+<div class="container">
+    <div class="row">
+         <div class="col">
+		  	<h5 style="text-align: left">{{cuadroProyecto}}</h5>
+            <general-combo (shareItemToParent) = shareItemToParent($event) [listItems]="listProjects" [selectedItem]="projectSelected"></general-combo>
+		</div>
+		<div class="col">
+		  	<h5 style="text-align: left">{{cuadroEstudio}}</h5>
+            <general-combo (shareItemToParent) = shareEstudioToParent($event) [listItems]="listEstudios" [selectedItem]="studySelected"></general-combo>
+         </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <participant-list></participant-list>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <pregunta-list></pregunta-list>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <estimulo-list></estimulo-list>
+      </div>
+    </div>
+</div>

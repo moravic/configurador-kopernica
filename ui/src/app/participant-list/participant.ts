@@ -1,7 +1,7 @@
 export class Participant {
     name: string;
     email: string;
-    address: string;
-    dob: Date;
+    age: string;
+    profile: string;
     gender: string;
 }
