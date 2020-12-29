@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Study;
 
 import java.sql.Statement;
@@ -58,16 +59,16 @@ public class StudyRepository {
              pstmt.setString(3, study.getType());
              pstmt.executeUpdate();
          } catch (SQLException e) {
-             System.out.println(e.getMessage());
+        	 throw new Exception(e.getMessage());
          }
     }
 	
 	public Integer save(Study study) throws Exception{
-		String fullDatabaseUrl = databaseUrl + study.getProject() + "\\" + study.getStudy() + "\\csvs\\database";
+		AppController.fullDatabaseUrl = databaseUrl + study.getProject() + "\\" + study.getStudy() + "\\csvs\\database";
 		
 		createFolders(study.getProject(), study.getStudy());
 		
-		try (Connection conn = DriverManager.getConnection(fullDatabaseUrl)) {
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
