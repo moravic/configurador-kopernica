@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 
-@RestController
+
 @RequestMapping("participants")
 public class ParticipantController {
     @Autowired
