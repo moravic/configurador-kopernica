@@ -28,6 +28,9 @@ public class StudyRepository {
 	private void createFolders(String project, String study) throws Exception {
 		 
 		String subFolder = basePath + "\\" + project + "\\" + study + "\\csvs";
+		String subFolderFaces = basePath + "\\" + project + "\\" + study + "\\faces";
+		String subFolderAudios = basePath + "\\" + project + "\\" + study + "\\audios";
+		
 		File projectFolder = new File(subFolder);
     		
     	if (projectFolder.mkdirs()) {
@@ -36,8 +39,27 @@ public class StudyRepository {
     		 System.out.println("Ya existe el proyecto " + project);	
     	} else {
     		    throw new Exception("No se ha podido crear el directorio del proyecto " + project);
-    	}			
+    	}	
+    	
+    	projectFolder = new File(subFolderFaces);
+    	if (projectFolder.mkdirs()) {
+ 		   System.out.println("Se ha creado el directorio \"faces\" del proyecto.");
+    	} else if (projectFolder.isDirectory()) {
+ 		 System.out.println("Ya existe la carpeta \"faces\" proyecto " + project);	
+    	} else {
+ 		    throw new Exception("No se ha podido crear el directorio \"faces\" del proyecto " + project);
+    	}	
+    	
+    	projectFolder = new File(subFolderAudios);
+    	if (projectFolder.mkdirs()) {
+ 		   System.out.println("Se ha creado el directorio \"audios\" del proyecto.");
+    	} else if (projectFolder.isDirectory()) {
+ 		 System.out.println("Ya existe la carpeta \"audios\" del proyecto " + project);	
+    	} else {
+ 		    throw new Exception("No se ha podido crear el directorio \"audios\" del proyecto " + project);
+    	}	
 	}
+	
     private void createTableStudies(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS studies (id integer PRIMARY KEY, project TEXT NOT NULL, study TEXT NOT NULL, type TEXT NOT NULL)";
 		
