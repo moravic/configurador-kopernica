@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.Stimulus;
 
 @RestController
 @RequestMapping("import-excel")
 public class ImportExcelController {
 	 
-	@PostMapping()
-    public ResponseEntity<List<Participant>> importExcelFile(@RequestParam("file") MultipartFile files) throws Exception {
+	@PostMapping("/participants")
+    public ResponseEntity<List<Participant>> importParticipantExcelFile(@RequestParam("file") MultipartFile files) throws Exception {
         HttpStatus status = HttpStatus.OK;
         List<Participant> participantList = new ArrayList<>();
 
@@ -47,5 +48,30 @@ public class ImportExcelController {
         }
 
          return new ResponseEntity<>(participantList, status);
+    }
+	
+	@PostMapping("/stimuli")
+    public ResponseEntity<List<Stimulus>> importStimulusExcelFile(@RequestParam("file") MultipartFile files) throws Exception {
+        HttpStatus status = HttpStatus.OK;
+        List<Stimulus> stimulusList = new ArrayList<>();
+
+        XSSFWorkbook workbook = new XSSFWorkbook(files.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+
+        for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
+            if (index > 0) {
+                Stimulus stimulus = new Stimulus();
+                XSSFRow row = worksheet.getRow(index);
+                stimulus.setId((int) row.getCell(0).getNumericCellValue());              
+                stimulus.setName((String) row.getCell(1).getStringCellValue());
+
+                //stimulus.toString();
+                
+                stimulusList.add(stimulus);
+
+            }
+        }
+
+         return new ResponseEntity<>(stimulusList, status);
     }
 }
