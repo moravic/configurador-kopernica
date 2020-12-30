@@ -13,6 +13,8 @@ import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Participant;
 
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -111,6 +113,46 @@ public class ParticipantRepository {
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
+		
+	}
+	
+	public List<Participant> getParticipantList() throws Exception{
+	    String getParticipantsSql = "SELECT id, name, gender, age, type, email FROM participants";
+	    Participant participant;
+	    List<Participant> participantList = new ArrayList<Participant>();
+	    
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getParticipantsSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				participant = new Participant();
+				participant.setId(rs.getInt("id"));
+				participant.setName(rs.getString("name"));
+				participant.setAge(rs.getInt("age"));
+				participant.setGender(rs.getString("gender"));
+				participant.setEmail(rs.getString("email"));
+
+				participantList.add(participant);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+		return participantList;
 		
 	}
 }

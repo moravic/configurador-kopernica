@@ -13,6 +13,8 @@ import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Question;
 
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -83,5 +85,41 @@ public class QuestionRepository {
         }
 
 		return question.getId();
+	}
+	
+	public List<Question> getQuestionList() throws Exception{
+	    String getQuestionsSql = "SELECT id, question FROM questions";
+	    Question question;
+	    List<Question> questionList = new ArrayList<Question>();
+	    
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getQuestionsSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				question = new Question();
+				question.setId(rs.getInt("id"));
+				question.setQuestion(rs.getString("question"));
+
+				questionList.add(question);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+		return questionList;	
 	}
 }

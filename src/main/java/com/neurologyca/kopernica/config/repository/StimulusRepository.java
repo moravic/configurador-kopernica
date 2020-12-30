@@ -13,6 +13,8 @@ import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Stimulus;
 
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -83,5 +85,42 @@ public class StimulusRepository {
         }
 
 		return stimulus.getId();
+	}
+	
+	public List<Stimulus> getStimulusList() throws Exception{
+	    String getStimulusSql = "SELECT id, name FROM stimuli";
+	    Stimulus stimulus;
+	    List<Stimulus> stimulusList = new ArrayList<Stimulus>();
+	    
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getStimulusSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				stimulus = new Stimulus();
+				stimulus.setId(rs.getInt("id"));
+				stimulus.setName(rs.getString("name"));
+
+				stimulusList.add(stimulus);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+		return stimulusList;
+		
 	}
 }
