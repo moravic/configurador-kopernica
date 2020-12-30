@@ -64,7 +64,10 @@ public class StudyRepository {
     }
 	
 	public Integer save(Study study) throws Exception{
-		AppController.fullDatabaseUrl = databaseUrl + study.getProject() + "\\" + study.getStudy() + "\\csvs\\database";
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
 		
 		createFolders(study.getProject(), study.getStudy());
 		

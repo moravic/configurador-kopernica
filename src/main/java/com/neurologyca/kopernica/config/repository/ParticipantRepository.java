@@ -68,6 +68,9 @@ public class ParticipantRepository {
 	
 	public Integer save(Participant participant) throws Exception{
 		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
             if (conn != null) {
             	// Si no existe se crea la bbdd
@@ -86,5 +89,28 @@ public class ParticipantRepository {
 		
 
 		return participant.getId();
+	}
+	
+	public void deleteAll() throws Exception{
+	    String deleteAllSql = "DELETE FROM participants";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
 	}
 }

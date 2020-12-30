@@ -1,6 +1,7 @@
 package com.neurologyca.kopernica.config.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,12 @@ public class ParticipantController {
     public Integer createParticipant(@RequestBody Participant participant) throws Exception {
     	//System.out.println("createParticipant");
         return participantRepository.save(participant);
+    }
+    
+    @DeleteMapping()
+    public void deleteAllParticipants() throws Exception {
+    	//System.out.println("createParticipant");
+        participantRepository.deleteAll();
     }
 
 }
