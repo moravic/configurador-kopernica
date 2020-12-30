@@ -25,10 +25,10 @@ public class AppController {
 	public static String proyecto;
 	public static String fullDatabaseUrl;
 	
-	@GetMapping("/app/properties/{proyecto}/{estudio}")
+	@GetMapping("/app/properties/{project}/{study}")
 	public void setProperties(@PathVariable String project, @PathVariable String study) {
-		proyecto = project;
-		estudio = study;
+		this.proyecto = project;
+		this.estudio = study;
 		fullDatabaseUrl = databaseUrl + project + "\\" + study + "\\csvs\\database";
 		System.out.println(fullDatabaseUrl);
 	}

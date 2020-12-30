@@ -20,8 +20,8 @@ export class AppService {
   } 
   
   setProperties(project: string, study: string): Observable<Object> {
-    //console.log("test " + project + "/" + study);
-    return this.http.get(`${this.baseUrl}properties/${project}/${study}`);
+    console.log("test " + project + "/" + study);
+    return this.http.get(`${this.baseUrl}/properties/${project}/${study}`);
   }
   
 }

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CreateEmployeeComponent } from './create-employee/create-employee.component';
@@ -13,7 +13,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from './app-material.module';
-import { GeneralComboComponent } from './general-combo/general-combo.component';
+import { StudyComboComponent } from './study-combo/study-combo.component';
+import { ProjectComboComponent } from './project-combo/project-combo.component';
+import { ProjectTypeRadioComponent } from './projectType-radio/projectType-radio.component';
 import { ParticipantDataStoreService } from './participant-list/participant-list.service';
 import { PreguntaDataStoreService } from './pregunta-list/pregunta-list.service';
 import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service';
@@ -26,9 +28,11 @@ import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service'
     EmployeeListComponent,
     UpdateEmployeeComponent,
     ParticipantListComponent,
-    GeneralComboComponent,
     PreguntaListComponent,
-    EstimuloListComponent
+    EstimuloListComponent,
+    ProjectComboComponent,
+    StudyComboComponent,
+    ProjectTypeRadioComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +40,8 @@ import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service'
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    AppMaterialModule
+    AppMaterialModule,
+    ReactiveFormsModule
   ],
   providers: [
     ParticipantDataStoreService,

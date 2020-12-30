@@ -16,13 +16,16 @@
 <div class="container">
     <div class="row">
          <div class="col">
-		  	<h5 style="text-align: left">{{cuadroProyecto}}</h5>
-            <general-combo (shareItemToParent) = shareItemToParent($event) [listItems]="listProjects" [selectedItem]="projectSelected"></general-combo>
+            <project-combo (shareItemToParent) = shareItemToParent($event) [listItems]="listProjects"></project-combo>
 		</div>
 		<div class="col">
-		  	<h5 style="text-align: left">{{cuadroEstudio}}</h5>
-            <general-combo (shareItemToParent) = shareEstudioToParent($event) [listItems]="listEstudios" [selectedItem]="studySelected"></general-combo>
+            <study-combo (shareItemToParent) = shareEstudioToParent($event) [listItems]="listEstudios"></study-combo>
          </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+      	 <projectType-radio></projectType-radio>
+      </div>
     </div>
     <div class="row">
       <div class="col-12">

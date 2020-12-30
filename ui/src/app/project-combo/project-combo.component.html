@@ -1,0 +1,20 @@
+<br>
+<mat-card-header>
+  <mat-card-title>Proyecto</mat-card-title>
+</mat-card-header>
+<form class="project-form">
+  <mat-form-field class="project">
+    <input type="text"
+           placeholder="Elige/Crea un proyecto"
+           aria-label="Number"
+           matInput
+           [formControl]="myProjectControl"
+           [matAutocomplete]="auto">
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      <mat-option *ngFor="let item of filteredOptions | async" [value]="item">
+        {{item}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</form>
+<label id="projectLabel">{{notFound}}</label>

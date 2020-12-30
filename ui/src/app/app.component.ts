@@ -9,9 +9,6 @@ import { AppService } from "./app.service";
 export class AppComponent implements OnInit{
   title = 'Kopernica Configurator';
   
-  cuadroProyecto = 'Proyecto';
-  cuadroEstudio = 'Estudio';
-  
   listProjects:String[]=[];
   listEstudios:String[]=[];
   projectSelected:string;
@@ -47,6 +44,7 @@ export class AppComponent implements OnInit{
      //console.log("shareEstudioToParent " + itemSelected);	
      this.studySelected = itemSelected;
      
+     if (!this.projectSelected || !this.studySelected) return;
      this.appService.setProperties(this.projectSelected, this.studySelected).subscribe(data => {
 	     console.log(data);
 	     this.error_str="";	 
