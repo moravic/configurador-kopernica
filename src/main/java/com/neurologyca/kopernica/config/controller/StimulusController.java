@@ -6,19 +6,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.neurologyca.kopernica.config.model.Participant;
-import com.neurologyca.kopernica.config.repository.ParticipantRepository;
+import com.neurologyca.kopernica.config.model.Stimulus;
+import com.neurologyca.kopernica.config.repository.StimulusRepository;
 
 @RestController
-@RequestMapping("participants")
-public class ParticipantController {
+@RequestMapping("stimuli")
+public class StimulusController {
     @Autowired
-    private ParticipantRepository participantRepository;
+    private StimulusRepository stimulusRepository;
     
     @PostMapping()
-    public Integer createParticipant(@RequestBody Participant participant) throws Exception {
+    public Integer createStimulus(@RequestBody Stimulus stimulus) throws Exception {
     	//System.out.println("createParticipant");
-        return participantRepository.save(participant);
+        return stimulusRepository.save(stimulus);
     }
 
 }

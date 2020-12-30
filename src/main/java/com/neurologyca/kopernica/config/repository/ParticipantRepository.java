@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.stereotype.Repository;
@@ -32,11 +33,27 @@ public class ParticipantRepository {
 		 }
 	 }
     
+    private Integer selectMaxId(Connection conn) throws Exception {
+      	 String selectMaxIdSql = "SELECT MAX(id) id FROM participants";
+      	 ResultSet rs;
+      	 
+           try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
+           	Statement stmt = conn.createStatement();
+           	rs = stmt.executeQuery(selectMaxIdSql);
+           } catch (SQLException e) {
+          	 throw new Exception(e.getMessage());
+           }
+           return rs.getInt("id");
+      }
+    
     private void insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, type, email, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,1)";
     	 
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
+        	 if (participant.getId()==0) {
+        		 participant.setId(selectMaxId(conn)+1);
+        	 }        	 
              pstmt.setInt(1, participant.getId());
              pstmt.setString(2, participant.getName());
              pstmt.setString(3, participant.getGender());
@@ -68,6 +85,6 @@ public class ParticipantRepository {
 		
 		
 
-		return 1;
+		return participant.getId();
 	}
 }
