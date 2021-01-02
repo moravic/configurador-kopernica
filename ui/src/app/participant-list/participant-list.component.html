@@ -1,19 +1,20 @@
 <br>
-<form #testForm="ngForm" (ngSubmit)="testForm.form.valid" novalidate>
+<form #form="ngForm" (ngSubmit)="form.form.valid" novalidate>
   <mat-card>
     <mat-card-header>
       <mat-card-title>Participantes</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-table [dataSource]="elistMatTableDataSource">
+      <button mat-button (click)="deleteAll" mat-flat-button color="primary">Borrar Todo</button>
+      <mat-table [dataSource]="elistMatTableDataSource" matSort>
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
             Nombre
           </mat-header-cell>
           <mat-cell *matCellDef="let participant; let rowIdx = index;">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #name="ngModel" name="txtName{{rowIdx}}" placeholder="Nombre" [(ngModel)]="participant.name"
+              <input matInput #name="ngModel" name="name{{rowIdx}}" placeholder="Nombre" [(ngModel)]="participant.name"
                 required>
               <mat-error *ngIf="name?.invalid">
                 <div *ngIf="name.errors.required">El nombre es obligatorio</div>
@@ -23,13 +24,13 @@
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <mat-header-cell *matHeaderCellDef>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
             Email
           </mat-header-cell>
           <mat-cell *matCellDef="let participant; let rowIdx = index;">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #email="ngModel" name="txtEmail{{rowIdx}}" placeholder="Email"
+              <input matInput #email="ngModel" name="email{{rowIdx}}" placeholder="Email"
                 [(ngModel)]="participant.email" required>
               <mat-error *ngIf="email?.invalid">
                 <div *ngIf="email.errors.required">Email is required</div>
@@ -39,29 +40,29 @@
         </ng-container>
 
         <ng-container matColumnDef="age">
-          <mat-header-cell *matHeaderCellDef>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
             Edad
           </mat-header-cell>
           <mat-cell *matCellDef="let participant; let rowIdx = index;">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #age="ngModel" name="txtAge{{rowIdx}}" placeholder="Edad"
+              <input matInput #age="ngModel" name="age{{rowIdx}}" placeholder="Edad"
                 [(ngModel)]="participant.age" required style="text-overflow: ellipsis;">
               <mat-error *ngIf="age?.invalid">
-                <div *ngIf="address.errors.required">La edad es obligatoria</div>
+                <div *ngIf="age.errors.required">La edad es obligatoria</div>
               </mat-error>
             </mat-form-field>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="gender">
-          <mat-header-cell *matHeaderCellDef>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
             Género
           </mat-header-cell>
           <mat-cell *matCellDef="let participant; let rowIdx = index;">
             <mat-form-field>
               <mat-label></mat-label>
-              <mat-select matInput #gender="ngModel" name="ddlGender{{rowIdx}}" placeholder="Genero"
+              <mat-select matInput #gender="ngModel" name="gender{{rowIdx}}" placeholder="Genero"
                 [(ngModel)]="participant.gender" required>
                 <mat-option value="Mujer">Mujer</mat-option>
                 <mat-option value="Hombre">Hombre</mat-option>
@@ -74,28 +75,39 @@
         </ng-container>
 
         <ng-container matColumnDef="profile">
-          <mat-header-cell *matHeaderCellDef>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
             Perfil
           </mat-header-cell>
           <mat-cell *matCellDef="let participant; let rowIdx = index;">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #profile="ngModel" name="txtProfile{{rowIdx}}" placeholder="Perfil"
+              <input matInput #profile="ngModel" name="profile{{rowIdx}}" placeholder="Perfil"
                 [(ngModel)]="participant.profile" required style="text-overflow: ellipsis;">
               <mat-error *ngIf="profile?.invalid">
-                <div *ngIf="address.errors.required">El perfil es obligatorio</div>
+                <div *ngIf="profile.errors.required">El perfil es obligatorio</div>
               </mat-error>
             </mat-form-field>
           </mat-cell>
         </ng-container>
         
+        <!-- Delete Column -->
+        <ng-container matColumnDef="deleteParticipant">
+			<mat-header-cell *matHeaderCellDef> Borrado </mat-header-cell>
+			<mat-cell *matCellDef="let participant; let rowIdx = index;">
+	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteParticipant(rowIdx)">
+	        		<mat-icon>delete</mat-icon>
+	      		</button>
+    		</mat-cell>
+ 		</ng-container>
+  
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;">
+        <mat-row (input)="onRowChanged(row, i)" *matRowDef="let row; columns: displayedColumns; let i = index;">
         </mat-row>
       </mat-table>
+      <mat-paginator [pageSizeOptions]="[10, 15, 20]" showFirstLastButtons></mat-paginator>
     </mat-card-content>
     <!--mat-card-actions>
-      <button mat-raised-button color="primary" [disabled]="testForm.invalid" (click)="save(testForm);">SAVE</button>
+      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save(form);">SAVE</button>
     </mat-card-actions-->
   </mat-card>
 </form>
