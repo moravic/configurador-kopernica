@@ -16,13 +16,22 @@ export class AppComponent implements OnInit{
   projectSelected:string;
   studySelected:string;
   error_str:string;
+  study:Study;
   
-  public newStudy(){
-   	 console.log("New study");
-   	 
+  public addStudy(){
+     console.log("Adding study");
+     this.study = new Study();
+     this.study.project=this.projectSelected;
+     this.study.study=this.studySelected;
+     this.study.type="type";
+     this.studyService.addStudy(this.study)
+     	.subscribe(resp => {
+     	    console.log(resp)
+	      }, error =>  this.error_str=error.error.message);
+	      this.error_str=""; 
    }
   
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService, private studyService: StudyService) { }
   
   ngOnInit() {
   	this.appService.getListProjects()
