@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from "./app.service";
+import { Study } from './study';
+import { StudyService } from './study.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +16,11 @@ export class AppComponent implements OnInit{
   projectSelected:string;
   studySelected:string;
   error_str:string;
+  
+  public newStudy(){
+   	 console.log("New study");
+   	 
+   }
   
   constructor(private appService: AppService) { }
   
@@ -50,4 +57,5 @@ export class AppComponent implements OnInit{
 	     this.error_str="";	 
 	  }, error => console.log(error));
    }
+   
 }

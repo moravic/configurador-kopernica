@@ -1,4 +1,7 @@
 <header class="site-header">
+  <div class="col">
+	<h1 class="mb-0 blueTitle">C O N F I G U R A D O R</h1>
+  </div>	
   <div class="container">
 	  <div class="row">
 	    <div class="col">
@@ -6,9 +9,6 @@
 	   		 <img src="/config-kopernica/assets/logo-kopernica-apaisado.png" width="340" height="80" class="d-inline-block align-top" alt="" loading="lazy">
 	  		</a>
 	  	</div>
-	  	<div class="col">
-	  		<h1 class="mb-0 blueTitle">C O N F I G U R A D O R</h1>
-	  	</div>	
 	 </div> 
   </div>
 </header>
@@ -21,6 +21,9 @@
 		<div class="col">
             <study-combo (shareItemToParent) = shareEstudioToParent($event) [listItems]="listEstudios"></study-combo>
          </div>
+        <div class="col">
+            <button type="submit" (click)="newStudy()" style="border:none;background:none;"><img src="/config-kopernica/assets/add.png" width="25" height="25"/></button>
+         </div> 
     </div>
     <div class="row">
       <div class="col-12">
