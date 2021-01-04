@@ -15,15 +15,17 @@ export class AppComponent implements OnInit{
   listEstudios:String[]=[];
   projectSelected:string;
   studySelected:string;
+  typeSelected:string='1';
   error_str:string;
   study:Study;
   
   public addStudy(){
      console.log("Adding study");
+     console.log(this.typeSelected);
      this.study = new Study();
      this.study.project=this.projectSelected;
      this.study.study=this.studySelected;
-     this.study.type="type";
+     this.study.type=this.typeSelected;
      this.studyService.addStudy(this.study)
      	.subscribe(resp => {
      	    console.log(resp)
@@ -65,6 +67,11 @@ export class AppComponent implements OnInit{
 	     console.log(data);
 	     this.error_str="";	 
 	  }, error => console.log(error));
+   }
+   
+    shareChangeType(itemSelected:string){
+        console.log("changeType " + itemSelected);	 
+        this.typeSelected = itemSelected;   
    }
    
 }
