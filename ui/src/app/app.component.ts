@@ -48,6 +48,7 @@ export class AppComponent implements OnInit{
      console.log("shareProjectToParent " + itemSelected);	
      
         this.projectSelected = itemSelected;
+        this.studySelected = "";
        	this.appService.getListEstudios(itemSelected)
 	      .subscribe(data => {
 	        console.log(data)

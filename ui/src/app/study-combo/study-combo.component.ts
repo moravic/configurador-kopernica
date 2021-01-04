@@ -19,6 +19,9 @@ export class StudyComboComponent implements OnInit {
   @Input()
   listItems:string[];
   
+  @Input()
+  selectedItem:string;
+  
   filteredOptions: Observable<string[]>;
   notFound:string;
   

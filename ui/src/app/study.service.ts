@@ -12,7 +12,6 @@ export class StudyService {
   constructor(private http: HttpClient) { }
   
     addStudy(data): Observable<any> {
-    console.log("hola");
     const headers = { 'content-type': 'application/json'}  
     const body=JSON.stringify(data);
     console.log(body);
