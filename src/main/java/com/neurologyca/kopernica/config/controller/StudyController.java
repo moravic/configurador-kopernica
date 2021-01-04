@@ -18,7 +18,7 @@ public class StudyController {
     
     @PostMapping()
     public Integer createStudy(@RequestBody Study study) throws Exception {
-    	//System.out.println("createStudy");
+    	System.out.println("createStudy");
         return studyRepository.save(study);
     }
 

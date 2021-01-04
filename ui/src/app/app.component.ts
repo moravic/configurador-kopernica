@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AppService } from "./app.service";
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
+import { Study } from './study';
+import { StudyService } from './study.service';
 
 @Component({
   selector: 'app-root',
@@ -15,10 +17,13 @@ export class AppComponent implements OnInit{
   listEstudios:String[]=[];
   projectSelected:string;
   studySelected:string;
+  typeSelected:string='1';
   error_str:string;
+  study:Study;
   
   constructor(
     private appService: AppService,
+    private studyService: StudyService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ){
@@ -39,6 +44,20 @@ export class AppComponent implements OnInit{
       this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/delete-bin.svg")
     );
   }
+
+  public addStudy(){
+     console.log("Adding study");
+     console.log(this.typeSelected);
+     this.study = new Study();
+     this.study.project=this.projectSelected;
+     this.study.study=this.studySelected;
+     this.study.type=this.typeSelected;
+     this.studyService.addStudy(this.study)
+     	.subscribe(resp => {
+     	    console.log(resp)
+	      }, error =>  this.error_str=error.error.message);
+	      this.error_str=""; 
+   }
   
   ngOnInit() {
   	this.appService.getListProjects()
@@ -53,6 +72,7 @@ export class AppComponent implements OnInit{
      console.log("shareProjectToParent " + itemSelected);	
      
         this.projectSelected = itemSelected;
+        this.studySelected = "";
        	this.appService.getListEstudios(itemSelected)
 	      .subscribe(data => {
 	        console.log(data)
@@ -73,4 +93,10 @@ export class AppComponent implements OnInit{
 	     this.error_str="";	 
 	  }, error => console.log(error));
    }
+   
+    shareChangeType(itemSelected:string){
+        console.log("changeType " + itemSelected);	 
+        this.typeSelected = itemSelected;   
+   }
+   
 }
