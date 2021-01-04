@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from "./app.service";
+import { MatIconRegistry } from "@angular/material/icon";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +17,28 @@ export class AppComponent implements OnInit{
   studySelected:string;
   error_str:string;
   
-  constructor(private appService: AppService) { }
+  constructor(
+    private appService: AppService,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer
+  ){
+    this.matIconRegistry.addSvgIcon(
+      "export-csv",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/export-csv.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "import-csv",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/import-csv.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "add-new",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/add-new.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "delete-bin",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/delete-bin.svg")
+    );
+  }
   
   ngOnInit() {
   	this.appService.getListProjects()

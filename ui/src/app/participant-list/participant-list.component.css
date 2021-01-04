@@ -1,0 +1,31 @@
+.mat-column-name {
+    flex: 0 0 300px;
+}
+.mat-column-email {
+    flex: none;
+    width: 200px;
+}
+
+.mat-column-age {
+    flex: none;
+    width: 40px;
+}
+
+.mat-column-gender {
+    flex: none;
+    width: 100px;
+}
+
+.mat-column-profile {
+    flex: none;
+    width: 250px;
+}
+
+.mat-column-deleteParticipant {
+    flex: none;
+    width: 50px;
+}
+
+mat-form-field {
+  width: 98%;
+}

@@ -1,20 +1,31 @@
 <br>
-<form #form="ngForm" (ngSubmit)="form.form.valid" novalidate>
+<form [formGroup]="form">
   <mat-card>
     <mat-card-header>
       <mat-card-title>Participantes</mat-card-title>
+      <button mat-icon-button (click)="importCsv()" color="primary">
+         <mat-icon svgIcon="import-csv"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="exportCsv()" color="primary">
+         <mat-icon svgIcon="export-csv"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="addNew()" color="primary">
+         <mat-icon svgIcon="add-new"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="deleteAll()" color="primary">
+         <mat-icon svgIcon="delete-bin"></mat-icon>
+      </button>
     </mat-card-header>
     <mat-card-content>
-      <button mat-button (click)="deleteAll" mat-flat-button color="primary">Borrar Todo</button>
-      <mat-table [dataSource]="elistMatTableDataSource" matSort>
+	  <mat-table [dataSource]="elistMatTableDataSource" formArrayName="participants" matSort>
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 250px">
             Nombre
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #name="ngModel" name="name{{rowIdx}}" placeholder="Nombre" [(ngModel)]="participant.name"
+              <input matInput formControlName="name" placeholder="Nombre"
                 required>
               <mat-error *ngIf="name?.invalid">
                 <div *ngIf="name.errors.required">El nombre es obligatorio</div>
@@ -27,11 +38,10 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Email
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #email="ngModel" name="email{{rowIdx}}" placeholder="Email"
-                [(ngModel)]="participant.email" required>
+              <input matInput formControlName="email" placeholder="Email" required>
               <mat-error *ngIf="email?.invalid">
                 <div *ngIf="email.errors.required">Email is required</div>
               </mat-error>
@@ -43,11 +53,10 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Edad
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #age="ngModel" name="age{{rowIdx}}" placeholder="Edad"
-                [(ngModel)]="participant.age" required style="text-overflow: ellipsis;">
+              <input matInput formControlName="age" placeholder="Edad" required style="text-overflow: ellipsis;">
               <mat-error *ngIf="age?.invalid">
                 <div *ngIf="age.errors.required">La edad es obligatoria</div>
               </mat-error>
@@ -59,11 +68,10 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Género
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
             <mat-form-field>
               <mat-label></mat-label>
-              <mat-select matInput #gender="ngModel" name="gender{{rowIdx}}" placeholder="Genero"
-                [(ngModel)]="participant.gender" required>
+              <mat-select matInput formControlName="gender" placeholder="Género" required>
                 <mat-option value="Mujer">Mujer</mat-option>
                 <mat-option value="Hombre">Hombre</mat-option>
               </mat-select>
@@ -78,11 +86,18 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Perfil
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #profile="ngModel" name="profile{{rowIdx}}" placeholder="Perfil"
-                [(ngModel)]="participant.profile" required style="text-overflow: ellipsis;">
+              <input matInput placeholder="Perfil"
+                required style="text-overflow: ellipsis;"
+                formControlName="profile"
+                [matAutocomplete]="auto">
+			    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+			      <mat-option *ngFor="let item of profileOptions[rowIdx] | async" [value]="item">
+			        {{item}}
+			      </mat-option>
+			    </mat-autocomplete>
               <mat-error *ngIf="profile?.invalid">
                 <div *ngIf="profile.errors.required">El perfil es obligatorio</div>
               </mat-error>
@@ -93,9 +108,9 @@
         <!-- Delete Column -->
         <ng-container matColumnDef="deleteParticipant">
 			<mat-header-cell *matHeaderCellDef> Borrado </mat-header-cell>
-			<mat-cell *matCellDef="let participant; let rowIdx = index;">
+			<mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
 	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteParticipant(rowIdx)">
-	        		<mat-icon>delete</mat-icon>
+	        		<mat-icon svgIcon="delete-bin"></mat-icon>
 	      		</button>
     		</mat-cell>
  		</ng-container>
