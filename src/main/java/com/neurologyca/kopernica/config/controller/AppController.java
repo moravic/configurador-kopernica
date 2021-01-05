@@ -31,7 +31,7 @@ public class AppController {
 		fullDatabaseUrl = databaseUrl + project + "\\" + study + "\\csvs\\database";
 		System.out.println(fullDatabaseUrl);
 	}
-	
+		
 	@SuppressWarnings("finally")
 	@GetMapping("/app/")
 	public List<String> getProyectos() throws Exception {

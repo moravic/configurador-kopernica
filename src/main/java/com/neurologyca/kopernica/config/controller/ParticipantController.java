@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ public class ParticipantController {
     @Autowired
     private ParticipantRepository participantRepository;
     
-	@GetMapping()
-	public List<Participant> getParticipantList() throws Exception {
+    @GetMapping("/getParticipants/{project}/{study}")
+	public List<Participant> getParticipantList(@PathVariable String project, @PathVariable String study) throws Exception {
 		return participantRepository.getParticipantList();
 	}
     

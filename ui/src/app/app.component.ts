@@ -4,6 +4,8 @@ import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Study } from './study';
 import { StudyService } from './study.service';
+import { ParticipantService } from './participant.service';
+import { Participant } from './participant';
 
 @Component({
   selector: 'app-root',
@@ -20,10 +22,13 @@ export class AppComponent implements OnInit{
   typeSelected:string='1';
   error_str:string;
   study:Study;
+  typeDisabled=false;
+  participants:Participant[];
   
   constructor(
     private appService: AppService,
     private studyService: StudyService,
+    private participantService:ParticipantService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ){
@@ -90,8 +95,29 @@ export class AppComponent implements OnInit{
      if (!this.projectSelected || !this.studySelected) return;
      this.appService.setProperties(this.projectSelected, this.studySelected).subscribe(data => {
 	     console.log(data);
-	     this.error_str="";	 
-	  }, error => console.log(error));
+	     this.error_str="";
+	     this.studyService.getTypeStudy(this.projectSelected, this.studySelected).subscribe(data => {
+	     if (data){
+		    this.typeSelected=""+data; 
+		    this.typeDisabled=true;
+		 } else {
+		    this.typeSelected='1'; 
+		    this.typeDisabled=false;
+		 }
+		 console.log("getParticipants");
+         this.participantService.getParticipants(this.projectSelected, this.studySelected)
+	      .subscribe(data => {
+	        console.log(data);
+	        this.participants = data;
+	      }, error =>  this.error_str=error.error.message);
+	      
+	      console.log("type: " + data);
+	     }, error => {console.log(error);
+	        this.typeSelected='1'; 
+		    this.typeDisabled=false;});
+	  }, error => {console.log(error);
+	      this.typeSelected='1'; 
+		  this.typeDisabled=false;});
    }
    
     shareChangeType(itemSelected:string){

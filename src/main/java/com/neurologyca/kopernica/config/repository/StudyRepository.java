@@ -5,15 +5,19 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.neurologyca.kopernica.config.controller.AppController;
+import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Study;
 
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -85,6 +89,34 @@ public class StudyRepository {
          }
     }
 	
+    public String getTypeStudy() throws Exception{
+    	String getTypeStudy = "SELECT type FROM studies";
+
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getTypeStudy);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			rs.next();
+			
+			return rs.getString("type");
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+    }
+    
 	public Integer save(Study study) throws Exception{
 		
 		if (AppController.fullDatabaseUrl==null) {

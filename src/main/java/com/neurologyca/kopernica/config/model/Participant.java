@@ -5,19 +5,19 @@ public class Participant {
     private String name;
 	private String gender;
 	private Integer age;
-	private String type;
+	private String profile;
 	private String email;
 	
 	public Participant() {
 	}
 	
-	public Participant(Integer id, String name, String gender, Integer age, String type, String email) {
+	public Participant(Integer id, String name, String gender, Integer age, String profile, String email) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.gender = gender;
 		this.age = age;
-		this.type = type;
+		this.profile = profile;
 		this.email = email;
 	}
 
@@ -53,12 +53,12 @@ public class Participant {
 		this.age = age;
 	}
 
-	public String getType() {
-		return type;
+	public String getProfile() {
+		return profile;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 
 	public String getEmail() {
@@ -71,7 +71,7 @@ public class Participant {
 
 	@Override
 	public String toString() {
-		return "Participant [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + ", email=" + email + ", type=" + type + "]";
+		return "Participant [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + ", email=" + email + ", profile=" + profile + "]";
 	}
 
 }

@@ -1,15 +1,14 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, ViewChild, OnChanges } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormArray, FormGroup, FormBuilder } from '@angular/forms';
-import { Participant } from './participant';
-import { ParticipantDataStoreService } from './participant-list.service';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
+import { Participant } from '../participant';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatSort} from '@angular/material/sort';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import { Observable} from 'rxjs';
+import { map, startWith} from 'rxjs/operators';
+import { FormControl, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'participant-list',
@@ -18,7 +17,10 @@ import {FormControl, ReactiveFormsModule} from '@angular/forms';
 })
 export class ParticipantListComponent implements OnInit, AfterViewInit {
 
-  title = 'table-validation-demo';
+  title = 'Participants Table';
+  @Input()
+  participants:Participant[];
+  
   elistMatTableDataSource = new MatTableDataSource<Participant>();
   displayedColumns: string[];
   todaysDate: Date;
@@ -28,7 +30,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   form: FormGroup;
   myProfileControl=[];
     
-  constructor(private eDataStore: ParticipantDataStoreService,
+  constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     private formBuilder: FormBuilder
@@ -65,8 +67,12 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     return results;
   }
   
-  ngOnInit() {
-    this.elistMatTableDataSource.data = this.eDataStore.getParticipants();
+  ngOnInit() {    
+  }
+  
+  ngOnChanges() {
+    console.log("ngOnChanges " + this.participants);
+    this.elistMatTableDataSource = new MatTableDataSource<Participant>(this.participants);
     
     this.form= this.formBuilder.group({
        participants: this.formBuilder.array([])
@@ -76,13 +82,13 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     this.form.get('participants').valueChanges.subscribe(
         participants => {console.log('participants', participants)}
     );
-    
   }
-
+  
   private setParticipantsForm(){
     const participantCtrl = this.form.get('participants') as FormArray;
     let index = 0;
     this.elistMatTableDataSource.data.forEach((participant)=>{
+      console.log("participant.name: " + participant.name);
       var formGroup = this.setParticipantsFormArray(participant);
       participantCtrl.push(formGroup);
       

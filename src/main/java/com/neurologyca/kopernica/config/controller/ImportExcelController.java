@@ -38,7 +38,7 @@ public class ImportExcelController {
                 participant.setName((String) row.getCell(1).getStringCellValue());
                 participant.setGender((String) row.getCell(2).getStringCellValue());
                 participant.setAge((int) row.getCell(3).getNumericCellValue());
-                participant.setType((String) row.getCell(4).getStringCellValue());
+                participant.setProfile((String) row.getCell(4).getStringCellValue());
                 participant.setEmail((String) row.getCell(5).getStringCellValue());
 
                 //participant.toString();

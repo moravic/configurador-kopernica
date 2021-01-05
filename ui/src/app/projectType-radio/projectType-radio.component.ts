@@ -10,9 +10,12 @@ export class ProjectTypeRadioComponent {
   @Input()
   selectedItem:String;
   
+  @Input()
+  disabled: boolean;
+
   @Output() shareItemToParent = new EventEmitter();
 
- ngOnInit() {
+  ngOnInit() {
       // Valor por defecto
       this.selectedItem = '1';
   }

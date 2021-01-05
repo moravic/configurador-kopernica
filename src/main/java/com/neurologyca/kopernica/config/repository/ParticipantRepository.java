@@ -23,7 +23,7 @@ public class ParticipantRepository {
     private void createTableParticipants(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS participants ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, gender TEXT NOT NULL, age integer NOT NULL, "
-				+ "type TEXT NOT NULL, email TEXT, study_id integer NOT NULL, "
+				+ "profile TEXT NOT NULL, email TEXT, study_id integer NOT NULL, "
 				+ "FOREIGN KEY(study_id) REFERENCES studies(id))";
 		
 		try {
@@ -49,7 +49,7 @@ public class ParticipantRepository {
       }
     
     private void insertParticipant(Connection conn, Participant participant) throws Exception {
-    	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, type, email, study_id) "
+    	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,1)";
     	 
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
@@ -60,7 +60,7 @@ public class ParticipantRepository {
              pstmt.setString(2, participant.getName());
              pstmt.setString(3, participant.getGender());
              pstmt.setInt(4, participant.getAge());
-             pstmt.setString(5, participant.getType());
+             pstmt.setString(5, participant.getProfile());
              pstmt.setString(6, participant.getEmail());
              pstmt.executeUpdate();
          } catch (SQLException e) {
@@ -117,11 +117,10 @@ public class ParticipantRepository {
 	}
 	
 	public List<Participant> getParticipantList() throws Exception{
-	    String getParticipantsSql = "SELECT id, name, gender, age, type, email FROM participants";
+	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email FROM participants";
 	    Participant participant;
 	    List<Participant> participantList = new ArrayList<Participant>();
-	    
-	    
+	           
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
@@ -129,6 +128,7 @@ public class ParticipantRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
+                createTableParticipants(conn);
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
@@ -144,6 +144,7 @@ public class ParticipantRepository {
 				participant.setAge(rs.getInt("age"));
 				participant.setGender(rs.getString("gender"));
 				participant.setEmail(rs.getString("email"));
+				participant.setProfile(rs.getString("profile"));
 
 				participantList.add(participant);
 			}
@@ -152,7 +153,7 @@ public class ParticipantRepository {
         	throw new Exception(e.getMessage());
         }
 		
-		return participantList;
+	    return participantList;
 		
 	}
 }

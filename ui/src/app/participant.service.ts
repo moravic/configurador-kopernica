@@ -6,21 +6,20 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 
-export class StudyService {
-  private baseUrl = 'http://localhost:8080/config-kopernica/studies';
+export class ParticipantService {
+  private baseUrl = 'http://localhost:8080/config-kopernica/participants';
 
   constructor(private http: HttpClient) { }
   
-  addStudy(data): Observable<any> {
+  addParticipant(data): Observable<any> {
     const headers = { 'content-type': 'application/json'}  
     const body=JSON.stringify(data);
     console.log(body);
     return this.http.post(`${this.baseUrl}`,body,{'headers':headers});
   }
   
-  getTypeStudy(project: string, study: string): Observable<Object> {
-    //console.log("test " + project + "/" + study);
-    return this.http.get(`${this.baseUrl}/getTypeStudy/${project}/${study}`);
+  getParticipants(project: string, study: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getParticipants/${project}/${study}`);
   }
 
 }

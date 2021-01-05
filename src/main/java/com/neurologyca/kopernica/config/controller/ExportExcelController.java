@@ -22,7 +22,7 @@ public class ExportExcelController {
 	 
 	@PostMapping("/participants")
     public void exportParticipantExcelFile(@RequestBody List<Participant> participantList) throws Exception {
-	    String[] columns = {"Id", "Nombre", "Género", "Edad", "Tipo", "Email"};
+	    String[] columns = {"Id", "Nombre", "Género", "Edad", "Perfil", "Email"};
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet worksheet = workbook.createSheet("Participantes");
 
@@ -41,7 +41,7 @@ public class ExportExcelController {
                 row.createCell(1).setCellValue(participant.getName());
                 row.createCell(2).setCellValue(participant.getGender());
                 row.createCell(3).setCellValue(participant.getAge());
-                row.createCell(4).setCellValue(participant.getType());
+                row.createCell(4).setCellValue(participant.getProfile());
                 row.createCell(5).setCellValue(participant.getEmail());
         }
 		// Resize de todas las columnas

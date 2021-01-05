@@ -27,12 +27,12 @@
     </div>
     <div class="row">
       <div class="col-12">
-      	 <projectType-radio (shareItemToParent) = shareChangeType($event) [selectedItem]="typeSelected"></projectType-radio>
+      	 <projectType-radio (shareItemToParent) = shareChangeType($event) [selectedItem]="typeSelected" disabled="{{typeDisabled}}"></projectType-radio>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <participant-list></participant-list>
+        <participant-list [participants]="participants"></participant-list>
       </div>
     </div>
     <div class="row">
