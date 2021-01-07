@@ -3,15 +3,16 @@ package com.neurologyca.kopernica.config.model;
 public class Participant {
 	private Integer id;
     private String name;
-	private String gender;
-	private Integer age;
-	private String profile;
 	private String email;
+	private Integer age;
+	private String gender;
+	private String profile;
+
 	
 	public Participant() {
 	}
 	
-	public Participant(Integer id, String name, String gender, Integer age, String profile, String email) {
+	public Participant(Integer id, String name, String email, Integer age, String gender, String profile) {
 		super();
 		this.id = id;
 		this.name = name;

@@ -23,7 +23,7 @@ export class AppComponent implements OnInit{
   error_str:string;
   study:Study;
   typeDisabled=false;
-  participants:Participant[];
+  participants:Participant[]=[];
   
   constructor(
     private appService: AppService,

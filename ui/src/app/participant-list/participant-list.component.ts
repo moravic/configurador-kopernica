@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit, ViewChild, OnChanges } from '@angular/core';
+import { Component, ElementRef, OnInit, Input, AfterViewInit, ViewChild, OnChanges, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormArray, FormGroup, FormBuilder } from '@angular/forms';
 import { Participant } from '../participant';
@@ -9,31 +9,46 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { Observable} from 'rxjs';
 import { map, startWith} from 'rxjs/operators';
 import { FormControl, ReactiveFormsModule} from '@angular/forms';
+import { ParticipantService } from '../participant.service';
+import { ImportService } from '../import.service';
+import { ExportService } from '../export.service';
+
 
 @Component({
   selector: 'participant-list',
   templateUrl: './participant-list.component.html',
   styleUrls: ['./participant-list.component.css']
 })
+
 export class ParticipantListComponent implements OnInit, AfterViewInit {
 
   title = 'Participants Table';
   @Input()
   participants:Participant[];
+  @Input()
+  project:string;
+  @Input()
+  study:string;
   
-  elistMatTableDataSource = new MatTableDataSource<Participant>();
+  elistMatTableDataSource = new MatTableDataSource<any>();
   displayedColumns: string[];
   todaysDate: Date;
   profileOptions: Observable<string[]>[] = [];
   profileListItems:string[]=['Vegano','No Vegano', 'Vegana'];
-  
+
   form: FormGroup;
   myProfileControl=[];
+  error_str:string;
+  formData = new FormData();
     
   constructor(
+    private participantService:ParticipantService,
+    private importService:ImportService,
+    private exportService:ExportService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef
   ){
 
     this.displayedColumns = [
@@ -49,11 +64,15 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('importInput') importInput: ElementRef;
   
   ngAfterViewInit() {
     this.elistMatTableDataSource.paginator = this.paginator;
     this.elistMatTableDataSource.sort = this.sort;
-    
+  }
+  
+  ngAfterContentChecked() : void {
+     this.cdr.detectChanges();
   }
     
   private _filter(value: string): string[] {
@@ -72,41 +91,66 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   ngOnChanges() {
     console.log("ngOnChanges " + this.participants);
-    this.elistMatTableDataSource = new MatTableDataSource<Participant>(this.participants);
-    
+    this.updateParticipants();
+  }
+  
+  updateParticipants() {
+    if (!this.participants)
+      return;
+      
+    console.log("updateParticipants " + this.participants);
+ 
     this.form= this.formBuilder.group({
        participants: this.formBuilder.array([])
     });
     
     this.setParticipantsForm();
-    this.form.get('participants').valueChanges.subscribe(
+    /*this.form.get('participants').valueChanges.subscribe(
         participants => {console.log('participants', participants)}
-    );
+    );*/
+    
+    this.elistMatTableDataSource = new MatTableDataSource((this.participantFormArray as FormArray).controls);
+    this.elistMatTableDataSource.paginator = this.paginator;
+    this.elistMatTableDataSource.sort = this.sort;
   }
   
   private setParticipantsForm(){
-    const participantCtrl = this.form.get('participants') as FormArray;
     let index = 0;
-    this.elistMatTableDataSource.data.forEach((participant)=>{
+    this.participants.forEach((participant)=>{
       console.log("participant.name: " + participant.name);
+      this.setFormGroup(participant, index);
+      this.participantFormArray.controls[index].valueChanges.subscribe(
+        participant => {
+			this.saveParticipant(participant);
+        	console.log('participant', participant)
+      });
+      index++;
+    })
+  };
+  
+  get participantFormArray():FormArray {
+     return this.form.get('participants') as FormArray;
+  }
+ 
+  private setFormGroup(participant:Participant, index:number){
       var formGroup = this.setParticipantsFormArray(participant);
-      participantCtrl.push(formGroup);
+      this.participantFormArray.push(formGroup);
       
-      this.profileOptions[index++] = formGroup.get('profile').valueChanges.pipe(
+      this.profileOptions[index] = formGroup.get('profile').valueChanges.pipe(
       	startWith<string | Participant>(''),
 	      map(value => typeof value === 'string' ? value : value.profile),
 	      map(profile => profile ? this._filter(profile) : this.profileListItems.slice())
       );
-    })
-  };
-   
+  }
+  
   private setParticipantsFormArray(participant){
     return this.formBuilder.group({
-        name:[participant.name],
-        email:[participant.email],
-        age:[participant.age], 
-        gender:[participant.gender],
-        profile:[participant.profile]
+        id:participant.id,
+        name:participant.name,
+        email:participant.email,
+        age:participant.age, 
+        gender:participant.gender,
+        profile:participant.profile
     });
   }
   
@@ -119,47 +163,136 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     // do API operation
   }
   
-  importCsv():void{
-  
-  console.log('importCsv');
+  //importExcel(files):void{
+  importExcel():void{
+    if (!this.project || !this.study)
+      return;
+  	console.log('importExcel');
+  	//const file = files[0];
+    //this.formData.append("file", file );
+    //this.importService.importParticipantExcelFile(this.formData)
+    this.importService.importParticipantExcelFile(this.project, this.study)
+	      .subscribe(data => {
+	  console.log('Excel Imported ' + data);
+	  this.participants = data;
+	  this.updateParticipants();
+    }, error =>  this.error_str=error.error.message);
   }
   
-  exportCsv():void{
-  console.log('exportCsv');
+  exportExcel():void{
+    if (!this.project || !this.study)
+      return;
+    console.log('exportExcel');
+    this.exportService.exportParticipantExcelFile(this.project, this.study)
+	      .subscribe(data => {
+	  console.log('Excel Exported');
+    }, error =>  this.error_str=error.error.message);
+    
   }
   
   addNew():void{
   	console.log('addNew');
-    this.elistMatTableDataSource.data.push({
+  	const participant:Participant = {
+      id:0,
       name:'',
       email:'',
       age:'',
       gender:'',
       profile:''
-   	 });
+   	 };
    	 
-   	 //this.elistMatTableDataSource.filter = "";
-   	 console.log('addNew 2');
+     //this.elistMatTableDataSource.data.push(participant);
+   	 
+   	 this.setFormGroup(participant, this.form.controls.participants.value.length);
+   	 this.participantFormArray.controls[this.form.controls.participants.value.length-1].valueChanges.subscribe(
+        participant => {
+		this.saveParticipant(participant);
+	 });
+	 this.elistMatTableDataSource.filter = "";
   }
   
-  deleteParticipant(item){
-  	console.log('deleteParticipant');
+  deleteParticipant(id){
+  	console.log('deleteParticipant: ' + id);
+    this.participantService.deleteParticipant((this.participantFormArray.controls[id] as FormGroup).controls.id.value).subscribe(data => {
+	    console.log("Delete " + data);
+     }, error =>  this.error_str=error.error.message);
     // find item and remove ist
-    this.elistMatTableDataSource.data.splice(this.elistMatTableDataSource.data.indexOf(item.id), 1);
+    //this.elistMatTableDataSource.data.splice(id, 1);
+    this.participantFormArray.controls.splice(id, 1);
     //this.elistMatTableDataSource.filter = "";
   }
 
   deleteAll():void{
     console.log('deleteAll');
   	this.elistMatTableDataSource.data = [];
+  	this.participantService.deleteAllParticipant().subscribe(data => {
+	    console.log("Delete " + data);
+     }, error =>  this.error_str=error.error.message);
   }
   
-  onRowChanged(row,index) {
-    this.displayedColumns.forEach( (column) => {
-    	//console.log("Valid form: ",  this.ngForm.form.controls[column+index].valid);
-	});
-    
-    //console.log('Row changed: ', row);
+  saveParticipant(participant){
+	var index =  this.participantFormArray.value.findIndex(part => part.id === participant.id);
+    if (this.form.controls.participants.valid) {
+      this.participantService.saveParticipant(participant)
+      .subscribe(data => {
+        console.log("Save " + data);
+        /*this.elistMatTableDataSource.data[index].id = data;
+        this.elistMatTableDataSource.data[index].name = participant.name;
+        this.elistMatTableDataSource.data[index].email = participant.email;
+        this.elistMatTableDataSource.data[index].age = participant.age;
+        this.elistMatTableDataSource.data[index].gender = participant.gender;
+        this.elistMatTableDataSource.data[index].profile = participant.profile;*/
+        
+        if (this.participantFormArray.value[index].id != data) {
+            this.participantFormArray.value[index].id = data;
+	        this.participantFormArray.controls[index].setValue({
+		        id:data,
+		        name:participant.name,
+		        email:participant.email,
+		        age:participant.age, 
+		        gender:participant.gender,
+		        profile:participant.profile
+		    });
+	    }
+        this.elistMatTableDataSource.paginator = this.paginator;
+        this.elistMatTableDataSource.sort = this.sort;
+      }, error =>  this.error_str=error.error.message);
+    }
+  }
+  
+  onRowChanged(row, index) {
+    /*if (this.form.controls.participants.valid) {
+      this.participantChanged = this.participantFormArray.value[index];
+      this.participantService.saveParticipant(this.participantChanged)
+	      .subscribe(data => {
+	        console.log("Save " + data);
+	        this.elistMatTableDataSource.data[index].id = data;
+	        this.elistMatTableDataSource.data[index].name = this.participantChanged.name;
+	        this.elistMatTableDataSource.data[index].email = this.participantChanged.email;
+	        this.elistMatTableDataSource.data[index].age = this.participantChanged.age;
+	        this.elistMatTableDataSource.data[index].gender = this.participantChanged.gender;
+	        this.elistMatTableDataSource.data[index].profile = this.participantChanged.profile;
+	        this.participantFormArray.value[index].id = data;
+	        //this.participantFormArray.controls[index] = this.setParticipantsFormArray(this.elistMatTableDataSource.data[index]);
+	        this.participantFormArray.controls[index].setValue({
+		        id:data,
+		        name:this.participantChanged.name,
+		        email:this.participantChanged.email,
+		        age:this.participantChanged.age, 
+		        gender:this.participantChanged.gender,
+		        profile:this.participantChanged.profile
+		    });
+		    
+	        //this.elistMatTableDataSource.filter = "";
+	        //this.elistMatTableDataSource.paginator = this.paginator;
+            //this.elistMatTableDataSource.sort = this.sort;
+	      }, error =>  this.error_str=error.error.message);
+    }*/
+    //console.log('Row changed');
+  }
+  
+  getActualIndex(index : number)  {
+    return index + this.paginator.pageSize * this.paginator.pageIndex;
   }
 
 

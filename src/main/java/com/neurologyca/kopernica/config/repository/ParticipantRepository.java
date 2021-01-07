@@ -116,6 +116,29 @@ public class ParticipantRepository {
 		
 	}
 	
+	public void deleteParticipant(Integer id) throws Exception{
+	    String deleteSql = "DELETE FROM participants where id=" + id;
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteSql);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
 	public List<Participant> getParticipantList() throws Exception{
 	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email FROM participants";
 	    Participant participant;

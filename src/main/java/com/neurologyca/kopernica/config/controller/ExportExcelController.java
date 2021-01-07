@@ -7,6 +7,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
+import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
 @RequestMapping("export-excel")
 public class ExportExcelController {
-	 
-	@PostMapping("/participants")
-    public void exportParticipantExcelFile(@RequestBody List<Participant> participantList) throws Exception {
+	
+	@Value("${base.path}")
+	private String basePath;
+	
+    @Autowired
+    private ParticipantRepository participantRepository;
+    
+	@PostMapping("/participants/{project}/{study}")
+    public void exportParticipantExcelFile(@PathVariable String project, @PathVariable String study) throws Exception {
 	    String[] columns = {"Id", "Nombre", "Género", "Edad", "Perfil", "Email"};
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet worksheet = workbook.createSheet("Participantes");
@@ -35,6 +45,7 @@ public class ExportExcelController {
         }     
       //Escribe valores
         int index=1;
+        List<Participant> participantList = participantRepository.getParticipantList();
         for (Participant participant: participantList) {	
                 Row row = worksheet.createRow(index++);     
                 row.createCell(0).setCellValue(participant.getId());
@@ -49,7 +60,7 @@ public class ExportExcelController {
         	worksheet.autoSizeColumn(i);
         }   
       // Escribe el fichero de salida
-        FileOutputStream fileOut = new FileOutputStream("Participantes.xlsx");
+        FileOutputStream fileOut = new FileOutputStream(basePath + "\\" + project + "\\" + study + "\\" + "Participantes.xlsx");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();

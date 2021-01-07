@@ -3,10 +3,11 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>Participantes</mat-card-title>
-      <button mat-icon-button (click)="importCsv()" color="primary">
+      <!--input #importInput type="file" style="display: none" (change)="importExcel($event.target.files)" accept=".xlsx, .xls"/-->
+      <button mat-icon-button (click)="importExcel()" color="primary">
          <mat-icon svgIcon="import-csv"></mat-icon>
       </button>
-      <button mat-icon-button (click)="exportCsv()" color="primary">
+      <button mat-icon-button (click)="exportExcel()" color="primary">
          <mat-icon svgIcon="export-csv"></mat-icon>
       </button>
       <button mat-icon-button (click)="addNew()" color="primary">
@@ -17,12 +18,12 @@
       </button>
     </mat-card-header>
     <mat-card-content>
-	  <mat-table [dataSource]="elistMatTableDataSource" formArrayName="participants" matSort>
+	  <mat-table [dataSource]="elistMatTableDataSource" formControlName="participants" matSort>
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 250px">
             Nombre
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
               <input matInput formControlName="name" placeholder="Nombre"
@@ -38,7 +39,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Email
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
               <input matInput formControlName="email" placeholder="Email" required>
@@ -53,7 +54,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Edad
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
               <input matInput formControlName="age" placeholder="Edad" required style="text-overflow: ellipsis;">
@@ -68,7 +69,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Género
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
               <mat-select matInput formControlName="gender" placeholder="Género" required>
@@ -86,7 +87,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             Perfil
           </mat-header-cell>
-          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
               <input matInput placeholder="Perfil"
@@ -108,15 +109,15 @@
         <!-- Delete Column -->
         <ng-container matColumnDef="deleteParticipant">
 			<mat-header-cell *matHeaderCellDef> Borrado </mat-header-cell>
-			<mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroupName]="rowIdx">
-	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteParticipant(rowIdx)">
+			<mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
+	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteParticipant(getActualIndex(rowIdx))">
 	        		<mat-icon svgIcon="delete-bin"></mat-icon>
 	      		</button>
     		</mat-cell>
  		</ng-container>
   
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row (input)="onRowChanged(row, i)" *matRowDef="let row; columns: displayedColumns; let i = index;">
+        <mat-row (click)="onRowChanged(row, getActualIndex(i))" (input)="onRowChanged(row, getActualIndex(i))" *matRowDef="let row; columns: displayedColumns; let i = index;">
         </mat-row>
       </mat-table>
       <mat-paginator [pageSizeOptions]="[10, 15, 20]" showFirstLastButtons></mat-paginator>

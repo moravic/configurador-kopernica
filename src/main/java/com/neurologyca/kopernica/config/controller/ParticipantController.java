@@ -26,12 +26,18 @@ public class ParticipantController {
 	}
     
     @PostMapping()
-    public Integer createParticipant(@RequestBody Participant participant) throws Exception {
+    public Integer saveParticipant(@RequestBody Participant participant) throws Exception {
     	//System.out.println("createParticipant");
         return participantRepository.save(participant);
     }
     
-    @DeleteMapping()
+    @DeleteMapping("/deleteParticipant/{id}")
+    public void deleteParticipant(@PathVariable Integer id) throws Exception {
+    	//System.out.println("createParticipant");
+        participantRepository.deleteParticipant(id);
+    }
+    
+    @DeleteMapping("/deleteAllParticipant/")
     public void deleteAllParticipants() throws Exception {
     	//System.out.println("createParticipant");
         participantRepository.deleteAll();
