@@ -12,7 +12,8 @@ import { AbstractControl, FormControl, ReactiveFormsModule} from '@angular/forms
 import { ParticipantService } from '../participant.service';
 import { ImportService } from '../import.service';
 import { ExportService } from '../export.service';
-
+import { MatDialogOkComponent } from '../mat-dialog-ok/mat-dialog-ok.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'participant-list',
@@ -48,7 +49,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ){
 
     this.displayedColumns = [
@@ -200,6 +202,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	  console.log('Excel Imported ' + data);
 	  this.participants = data;
 	  this.updateParticipants();
+	  this.openDialog("Info", "Los participantes han sido importados.");
     }, error =>  this.error_str=error.error.message);
   }
   
@@ -209,6 +212,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     console.log('exportExcel');
     this.exportService.exportParticipantExcelFile(this.project, this.study)
 	      .subscribe(data => {
+	  this.openDialog("Info", "Los participantes han sido exportados.");
 	  console.log('Excel Exported');
     }, error =>  this.error_str=error.error.message);
     
@@ -254,6 +258,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   	this.profileListItems = [];
   	this.participantService.deleteAllParticipant().subscribe(data => {
 	    console.log("Delete " + data);
+	    this.openDialog("Info", "Los participantes han sido borrados.");
      }, error =>  this.error_str=error.error.message);
   }
   
@@ -322,6 +327,21 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   getActualIndex(index : number)  {
     return index + this.paginator.pageSize * this.paginator.pageIndex;
+  }
+  
+  openDialog(title, content) {
+    let dialogRef = this.dialog.open(MatDialogOkComponent, {
+      data: {
+        title: title,
+        content: content
+      }
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'confirm') {
+        console.log('Confirmado');
+      }
+    })
   }
 
 

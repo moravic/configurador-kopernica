@@ -19,6 +19,7 @@ import { ProjectTypeRadioComponent } from './projectType-radio/projectType-radio
 import { ParticipantDataStoreService } from './participant-list/participant-list.service';
 import { PreguntaDataStoreService } from './pregunta-list/pregunta-list.service';
 import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service';
+import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service'
     EstimuloListComponent,
     ProjectComboComponent,
     StudyComboComponent,
-    ProjectTypeRadioComponent
+    ProjectTypeRadioComponent,
+    MatDialogOkComponent
   ],
   imports: [
     BrowserModule,
