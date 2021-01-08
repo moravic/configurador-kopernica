@@ -8,7 +8,7 @@ import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Observable} from 'rxjs';
 import { map, startWith} from 'rxjs/operators';
-import { FormControl, ReactiveFormsModule} from '@angular/forms';
+import { AbstractControl, FormControl, ReactiveFormsModule} from '@angular/forms';
 import { ParticipantService } from '../participant.service';
 import { ImportService } from '../import.service';
 import { ExportService } from '../export.service';
@@ -34,7 +34,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[];
   todaysDate: Date;
   profileOptions: Observable<string[]>[] = [];
-  profileListItems:string[]=['Vegano','No Vegano', 'Vegana'];
+  profileListItems:string[];
 
   form: FormGroup;
   myProfileControl=[];
@@ -66,6 +66,14 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('importInput') importInput: ElementRef;
   
+  private uniques(arr) {
+    var a = [];
+    for (var i=0, l=arr.length; i<l; i++)
+        if (a.indexOf(arr[i].profile) === -1 && arr[i].profile !== '')
+            a.push(arr[i].profile);
+    return a;
+  }
+
   ngAfterViewInit() {
     this.elistMatTableDataSource.paginator = this.paginator;
     this.elistMatTableDataSource.sort = this.sort;
@@ -86,7 +94,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     return results;
   }
   
-  ngOnInit() {    
+  ngOnInit() {
+
   }
   
   ngOnChanges() {
@@ -97,9 +106,11 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   updateParticipants() {
     if (!this.participants)
       return;
-      
+        
     console.log("updateParticipants " + this.participants);
- 
+    
+    this.profileListItems = this.uniques(this.participants);
+        
     this.form= this.formBuilder.group({
        participants: this.formBuilder.array([])
     });
@@ -110,8 +121,21 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     );*/
     
     this.elistMatTableDataSource = new MatTableDataSource((this.participantFormArray as FormArray).controls);
+    
+    // adjust filtering and sorting logic to support AbstractControl object.
+  	this.elistMatTableDataSource.sortingDataAccessor = (data: AbstractControl, sortHeaderId: string) => {
+      const value: any = data.value[sortHeaderId];
+      return typeof value === "string" ? value.toLowerCase() : value;
+    };
+    
+    const filterPredicate = this.elistMatTableDataSource.filterPredicate;
+    this.elistMatTableDataSource.filterPredicate = (data: AbstractControl, filter) => {
+      return filterPredicate.call(this.elistMatTableDataSource, data.value, filter);
+    };
+    
     this.elistMatTableDataSource.paginator = this.paginator;
     this.elistMatTableDataSource.sort = this.sort;
+   
   }
   
   private setParticipantsForm(){
@@ -211,20 +235,23 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	 this.elistMatTableDataSource.filter = "";
   }
   
-  deleteParticipant(id){
-  	console.log('deleteParticipant: ' + id);
-    this.participantService.deleteParticipant((this.participantFormArray.controls[id] as FormGroup).controls.id.value).subscribe(data => {
+  deleteParticipant(participant){
+  	console.log('deleteParticipant: ' + participant.controls.id.value);
+  	var index =  this.participantFormArray.controls.findIndex(fg => fg.value.id === participant.controls.id.value);
+    this.participantService.deleteParticipant(participant.controls.id.value).subscribe(data => {
 	    console.log("Delete " + data);
      }, error =>  this.error_str=error.error.message);
     // find item and remove ist
-    //this.elistMatTableDataSource.data.splice(id, 1);
-    this.participantFormArray.controls.splice(id, 1);
-    //this.elistMatTableDataSource.filter = "";
+    this.elistMatTableDataSource.data.splice(index, 1);
+    this.participantFormArray.controls.splice(index, 1);
+    this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
+    this.elistMatTableDataSource.filter = "";
   }
 
   deleteAll():void{
     console.log('deleteAll');
   	this.elistMatTableDataSource.data = [];
+  	this.profileListItems = [];
   	this.participantService.deleteAllParticipant().subscribe(data => {
 	    console.log("Delete " + data);
      }, error =>  this.error_str=error.error.message);
@@ -232,7 +259,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   saveParticipant(participant){
 	var index =  this.participantFormArray.value.findIndex(part => part.id === participant.id);
-    if (this.form.controls.participants.valid) {
+    if ((this.form.controls.participants as FormArray).controls[index].valid) {
       this.participantService.saveParticipant(participant)
       .subscribe(data => {
         console.log("Save " + data);
@@ -243,6 +270,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         this.elistMatTableDataSource.data[index].gender = participant.gender;
         this.elistMatTableDataSource.data[index].profile = participant.profile;*/
         
+        this.profileListItems = this.uniques(this.participantFormArray.value);
+            
         if (this.participantFormArray.value[index].id != data) {
             this.participantFormArray.value[index].id = data;
 	        this.participantFormArray.controls[index].setValue({

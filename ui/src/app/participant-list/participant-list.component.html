@@ -110,7 +110,7 @@
         <ng-container matColumnDef="deleteParticipant">
 			<mat-header-cell *matHeaderCellDef> Borrado </mat-header-cell>
 			<mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
-	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteParticipant(getActualIndex(rowIdx))">
+	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteParticipant(participant)">
 	        		<mat-icon svgIcon="delete-bin"></mat-icon>
 	      		</button>
     		</mat-cell>
