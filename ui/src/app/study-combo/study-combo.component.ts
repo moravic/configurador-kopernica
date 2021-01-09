@@ -24,6 +24,7 @@ export class StudyComboComponent implements OnInit {
   
   filteredOptions: Observable<string[]>;
   notFound:string;
+  filterValueTmp:string;
   
   @Output() shareItemToParent = new EventEmitter();
     
@@ -35,11 +36,13 @@ export class StudyComboComponent implements OnInit {
   }
   
   private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
+    //const filterValue = value.toLowerCase();   
+    this.filterValueTmp = value;
+    const filterValue = this.filterValueTmp.toLowerCase();
     
-    this.shareItemToParent.emit(filterValue);
-    console.log('filterValue ' + filterValue);
-    const results = this.listItems.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
+    this.shareItemToParent.emit(value);
+    console.log('filterValue ' + value);
+    const results = this.listItems;
     
     if (!results.length && filterValue) this.notFound = 'No existe el estudio ' + filterValue + ', se creará uno nuevo.'
     else this.notFound = '';
