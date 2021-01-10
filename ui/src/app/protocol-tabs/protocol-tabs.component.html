@@ -1,0 +1,29 @@
+<mat-tab-group [selectedIndex]="selected.value"
+               (selectedIndexChange)="selected.setValue($event)">
+  <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
+    <div class="container">
+    	<div class="row">
+        	<div class="col">
+			    <segment></segment>
+			</div>
+	     </div>
+	     <div class="row">
+        	<div class="col">
+			    <button mat-raised-button
+			            class="example-delete-tab-button"
+			            [disabled]="tabs.length === 1"
+			            (click)="removeTab(index)">
+			      Delete Tab
+			    </button>
+			</div>
+	     </div>
+	</div>
+  </mat-tab>
+  <mat-tab>
+   <ng-template mat-tab-label>
+      <button mat-icon-button (click)="addTab()" color="primary">
+         <mat-icon svgIcon="add-new"></mat-icon>
+      </button>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

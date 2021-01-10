@@ -20,6 +20,8 @@ import { ParticipantDataStoreService } from './participant-list/participant-list
 import { PreguntaDataStoreService } from './pregunta-list/pregunta-list.service';
 import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service';
 import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
+import { ProtocolTabsComponent } from './protocol-tabs/protocol-tabs.component';
+import { SegmentComponent } from './segment/segment.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
     ProjectComboComponent,
     StudyComboComponent,
     ProjectTypeRadioComponent,
-    MatDialogOkComponent
+    MatDialogOkComponent,
+    ProtocolTabsComponent,
+    SegmentComponent
   ],
   imports: [
     BrowserModule,
