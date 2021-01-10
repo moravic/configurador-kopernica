@@ -25,6 +25,7 @@ export class AppComponent implements OnInit{
   typeDisabled=false;
   participants:Participant[]=[];
   addStudyDisabled=true;
+  listComponentsDisabled=true;
   
   constructor(
     private appService: AppService,
@@ -60,7 +61,9 @@ export class AppComponent implements OnInit{
      this.study.type=this.typeSelected;
      this.studyService.addStudy(this.study)
      	.subscribe(resp => {
-     	    console.log(resp)
+     	    console.log(resp);
+     	    this.listComponentsDisabled=false;
+     	    this.addStudyDisabled=true;
 	      }, error =>  this.error_str=error.error.message);
 	      this.error_str=""; 
 	      
@@ -118,10 +121,12 @@ export class AppComponent implements OnInit{
 		    	this.typeSelected=""+data; 
 		    	this.typeDisabled=true;
 		    	this.addStudyDisabled=true;
+		    	this.listComponentsDisabled=false;
 		 	} else {
 		    	this.typeSelected='1'; 
 		    	this.typeDisabled=false;
 		    	this.addStudyDisabled=false;
+		    	this.listComponentsDisabled=false;
 		 	}
 		 	console.log("getParticipants");
          	this.participantService.getParticipants(this.projectSelected, this.studySelected)
@@ -135,11 +140,13 @@ export class AppComponent implements OnInit{
 	        	this.typeSelected='1'; 
 		    	this.typeDisabled=false;
 		    	this.addStudyDisabled=false;
+		    	this.listComponentsDisabled=true;
 		    	this.participants.length=0;});
 	  	}, error => {console.log(error);
 	      	this.typeSelected='1'; 
 		  	this.typeDisabled=false;
 		  	this.addStudyDisabled=false;
+		  	this.listComponentsDisabled=true;
 		  	this.participants.length=0;});
    	  }
    }

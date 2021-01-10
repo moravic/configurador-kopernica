@@ -27,12 +27,12 @@
       	 <projectType-radio (shareItemToParent) = shareChangeType($event) [selectedItem]="typeSelected" disabled="{{typeDisabled}}"></projectType-radio>
       </div>
       <div class="col">
-            <button type="submit" [disabled]="addStudyDisabled" (click)="addStudy()" style="border:none;background:none;"><img src="/config-kopernica/assets/add.png" width="25" height="25"/></button>
+            <button type="submit" [disabled]="addStudyDisabled" (click)="addStudy()" style="border:none;background:none;"><img src="../../config-kopernica/assets/add-new.svg" width="25" height="25"/></button>
       </div> 
     </div>
     <div class="row">
       <div class="col-12">
-        <participant-list [participants]="participants" [project]="projectSelected" [study]="studySelected"></participant-list>
+        <participant-list [participants]="participants" [project]="projectSelected" [study]="studySelected" disabled="{{listComponentsDisabled}}"></participant-list>
       </div>
     </div>
     <div class="row">

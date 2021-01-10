@@ -30,6 +30,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   project:string;
   @Input()
   study:string;
+   @Input()
+  disabled: boolean;
   
   elistMatTableDataSource = new MatTableDataSource<any>();
   displayedColumns: string[];
