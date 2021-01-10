@@ -24,6 +24,7 @@ export class AppComponent implements OnInit{
   study:Study;
   typeDisabled=false;
   participants:Participant[]=[];
+  addStudyDisabled=true;
   
   constructor(
     private appService: AppService,
@@ -62,9 +63,17 @@ export class AppComponent implements OnInit{
      	    console.log(resp)
 	      }, error =>  this.error_str=error.error.message);
 	      this.error_str=""; 
+	      
+	//Se actualiza el listado de proyectos
+     this.appService.getListProjects()
+	      .subscribe(data => {
+	        //console.log(data)
+	        this.listProjects = data;
+	      }, error =>  this.error_str=error.error.message);
    }
   
   ngOnInit() {
+    this.addStudyDisabled=true;
   	this.appService.getListProjects()
 	      .subscribe(data => {
 	        //console.log(data)
@@ -76,48 +85,61 @@ export class AppComponent implements OnInit{
   shareItemToParent(itemSelected:string){
      console.log("shareProjectToParent " + itemSelected);	
      
-        this.projectSelected = itemSelected;
+       if (itemSelected) {
+        console.log("ITEM SELECTED");
+        this.projectSelected = itemSelected; 
         this.studySelected = "";
+        this.listEstudios.length = 0;
+        
+        this.addStudyDisabled=true;
        	this.appService.getListEstudios(itemSelected)
 	      .subscribe(data => {
 	        console.log(data)
 	        this.listEstudios = data;
 	        this.shareEstudioToParent(data[0]);
-	      }, error =>  this.error_str=error.error.message);
+	      }, error => this.error_str=error.error.message);
 	      this.error_str="";
+	      }
      
    }
-   
+  
    shareEstudioToParent(itemSelected:string){
-     //console.log("shareEstudioToParent " + itemSelected);	
-     this.studySelected = itemSelected;
+     if (itemSelected) {
+     	console.log("shareEstudioToParent " + itemSelected);	
+     	this.studySelected = itemSelected;
      
-     if (!this.projectSelected || !this.studySelected) return;
-     this.appService.setProperties(this.projectSelected, this.studySelected).subscribe(data => {
-	     console.log(data);
-	     this.error_str="";
-	     this.studyService.getTypeStudy(this.projectSelected, this.studySelected).subscribe(data => {
-	     if (data){
-		    this.typeSelected=""+data; 
-		    this.typeDisabled=true;
-		 } else {
-		    this.typeSelected='1'; 
-		    this.typeDisabled=false;
-		 }
-		 console.log("getParticipants");
-         this.participantService.getParticipants(this.projectSelected, this.studySelected)
-	      .subscribe(data => {
-	        console.log(data);
-	        this.participants = data;
-	      }, error =>  this.error_str=error.error.message);
+     	this.addStudyDisabled=true;
+     	if (!this.projectSelected || !this.studySelected) return;
+     	this.appService.setProperties(this.projectSelected, this.studySelected).subscribe(data => {
+	     	console.log(data);
+	     	this.error_str="";
+	     	this.studyService.getTypeStudy(this.projectSelected, this.studySelected).subscribe(data => {
+	     	if (data){
+		    	this.typeSelected=""+data; 
+		    	this.typeDisabled=true;
+		    	this.addStudyDisabled=true;
+		 	} else {
+		    	this.typeSelected='1'; 
+		    	this.typeDisabled=false;
+		    	this.addStudyDisabled=false;
+		 	}
+		 	console.log("getParticipants");
+         	this.participantService.getParticipants(this.projectSelected, this.studySelected)
+	      		.subscribe(data => {
+	        		console.log(data);
+	        		this.participants = data;
+	      		}, error =>  this.error_str=error.error.message);
 	      
-	      console.log("type: " + data);
-	     }, error => {console.log(error);
-	        this.typeSelected='1'; 
-		    this.typeDisabled=false;});
-	  }, error => {console.log(error);
-	      this.typeSelected='1'; 
-		  this.typeDisabled=false;});
+	      		console.log("type: " + data);
+	     		}, error => {console.log(error);
+	        	this.typeSelected='1'; 
+		    	this.typeDisabled=false;
+		    	this.addStudyDisabled=false;});
+	  	}, error => {console.log(error);
+	      	this.typeSelected='1'; 
+		  	this.typeDisabled=false;
+		  	this.addStudyDisabled=false;});
+   	  }
    }
    
     shareChangeType(itemSelected:string){

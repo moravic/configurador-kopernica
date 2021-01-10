@@ -21,6 +21,7 @@ export class ProjectComboComponent implements OnInit {
   
   filteredOptions: Observable<string[]>;
   notFound:string;
+  filterValueTmp:string;
   
   @Output() shareItemToParent = new EventEmitter();
     
@@ -32,10 +33,11 @@ export class ProjectComboComponent implements OnInit {
   }
   
   private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
+    this.filterValueTmp = value;
+    const filterValue = this.filterValueTmp.toLowerCase();
     
-    this.shareItemToParent.emit(filterValue);
-    console.log('filterValue ' + filterValue);
+    this.shareItemToParent.emit(value);
+    console.log('filterValue ' + value);
     const results = this.listItems.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
     
     if (!results.length && filterValue) this.notFound = 'No existe el proyecto ' + filterValue + ', se creará uno nuevo.'
