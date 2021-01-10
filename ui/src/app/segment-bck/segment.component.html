@@ -1,0 +1,29 @@
+<h2>Aplicar a</h2>
+<form [formGroup]="segmentForm">
+    <div formArrayName="segments" *ngFor="let segment of segments?.controls; let i=index">
+         <ng-container [formGroupName]="i">
+           <ng-container>
+			    <mat-form-field appearance="fill">
+				  <mat-label>Elige...</mat-label>
+				  <mat-select formControlName="opcion">
+				    <mat-option value="1">Edad</mat-option>
+	                <mat-option value="2">Género</mat-option>
+	                <mat-option value="3">Perfil</mat-option>
+				  </mat-select>
+				</mat-form-field>
+  			</ng-container>
+  			<ng-container *ngIf="segment.value.opcion==='2'">
+	  			<mat-form-field  appearance="fill">
+				  <mat-label>Elige...</mat-label>
+				  <mat-select formControlName="valor">
+				    <mat-option value="1">Mujer</mat-option>
+	                <mat-option value="2">Hombre</mat-option>
+				  </mat-select>
+				</mat-form-field>
+  			</ng-container>
+		</ng-container>
+	</div>
+ </form>
+ <p>
+  <button type="button" (click)="addSegments()">Add</button>
+</p>
