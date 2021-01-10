@@ -134,11 +134,13 @@ export class AppComponent implements OnInit{
 	     		}, error => {console.log(error);
 	        	this.typeSelected='1'; 
 		    	this.typeDisabled=false;
-		    	this.addStudyDisabled=false;});
+		    	this.addStudyDisabled=false;
+		    	this.participants.length=0;});
 	  	}, error => {console.log(error);
 	      	this.typeSelected='1'; 
 		  	this.typeDisabled=false;
-		  	this.addStudyDisabled=false;});
+		  	this.addStudyDisabled=false;
+		  	this.participants.length=0;});
    	  }
    }
    
