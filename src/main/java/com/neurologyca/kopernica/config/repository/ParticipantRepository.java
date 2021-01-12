@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.Profile;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -177,6 +178,45 @@ public class ParticipantRepository {
         }
 		
 	    return participantList;
+		
+	}
+	
+	public List<Profile> getProfiles() throws Exception{
+	    String getProfileSql = "select row_number() over (order by profile desc)  id, profile\r\n"
+	    		+ "from \r\n"
+	    		+ "(SELECT distinct profile FROM participants)";
+	    Profile profile;
+	    List<Profile> profileList = new ArrayList<Profile>();
+	           
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                createTableParticipants(conn);
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getProfileSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				profile = new Profile();
+				profile.setId(rs.getInt("id"));
+				profile.setType(rs.getString("profile"));
+
+				profileList.add(profile);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	    return profileList;
 		
 	}
 }

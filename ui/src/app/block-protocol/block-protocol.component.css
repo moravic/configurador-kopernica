@@ -1,8 +1,13 @@
- ::ng-deep .mat-card-section{
-    border: 1px solid #000;
-    border-radius: 15px !important;
+.block-form {
+  min-width: 100px;
+  max-width: 250px;
+  width: 100%;
 }
-   
+
+.block {
+  width: 100%;
+}
+
 .example-flex-container {
   display: flex;
   justify-content: space-between;

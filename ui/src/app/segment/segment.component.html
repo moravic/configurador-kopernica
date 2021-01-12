@@ -1,55 +1,69 @@
-<h2>Aplicar a</h2>
-<form [formGroup]="segmentForm">
-   <ng-container>
-	    <mat-form-field appearance="fill">
-		  <mat-label>Elige...</mat-label>
-		  <mat-select formControlName="type">
-		    <mat-option *ngFor="let type of typeArray;" [value]="type.id">
-		        {{type.type}}
-		     </mat-option>
-		  </mat-select>
-		</mat-form-field>
-	</ng-container>
-	<ng-container *ngIf="segmentForm.value.type===1">
-		<mat-form-field  appearance="fill">
-		   <mat-label>Edad Mínima</mat-label>
-    	   <input matInput placeholder="Edad Mínima" formControlName="value_age_min">
-		</mat-form-field>
-		<mat-form-field  appearance="fill">
-		   <mat-label>Edad Máxima</mat-label>
-		   <input matInput placeholder="Edad Máxima" formControlName="value_age_max">
-		</mat-form-field>
-	</ng-container>
-	<ng-container *ngIf="segmentForm.value.type===2">
-		<mat-form-field  appearance="fill">
-		  <mat-label>Elige...</mat-label>
-		  <mat-select formControlName="value_gender">
-		    <mat-option *ngFor="let gender of genderArray;" [value]="gender.id">
-		        {{gender.type}}
-		    </mat-option>
-		  </mat-select>
-		</mat-form-field>
-	</ng-container>
-	<ng-container *ngIf="segmentForm.value.type===3">
-		<mat-form-field  appearance="fill">
-		  <mat-label>Elige...</mat-label>
-		  <mat-select formControlName="value_profile">
-		    <mat-option value="1">profile1</mat-option>
-            <mat-option value="2">profile2</mat-option>
-		  </mat-select>
-		</mat-form-field>
-	</ng-container>
- </form>
- <p>
-  <button type="button" (click)="addSegment()">Add</button>
-</p>
-<mat-list>
- <mat-list-item *ngFor="let segment of segments; let i = index">
-     <div *ngIf="segment.type===1">Edad: {{segment.value_age_min}}-{{segment.value_age_max}}</div>
-     <div *ngIf="segment.type===2">Género: {{segment.value_gender}}</div>
-     <div *ngIf="segment.type===3">Perfil: {{segment.value_profile}}</div>
-     <mat-action-list>
-	  <button mat-list-item (click)="removeSegment($event, i)"> Delete </button>
-	</mat-action-list>
- </mat-list-item>
-</mat-list>
+<br>
+<mat-card class="mat-card-section">
+	<mat-card-header>
+    	<mat-card-title>Aplicar a</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+		<form [formGroup]="segmentForm">
+	   		<ng-container>
+			    <mat-form-field appearance="fill">
+				  <mat-label>Elige...</mat-label>
+				  <mat-select formControlName="type">
+				    <mat-option *ngFor="let type of typeArray;" [value]="type.id">
+				        {{type.type}}
+				     </mat-option>
+				  </mat-select>
+				</mat-form-field>
+			</ng-container>
+			<ng-container *ngIf="segmentForm.value.type===1">
+				<mat-form-field  appearance="fill">
+				   <mat-label>Edad Mínima</mat-label>
+		    	   <input matInput placeholder="Edad Mínima" formControlName="value_age_min">
+				</mat-form-field>
+				<mat-form-field  appearance="fill">
+				   <mat-label>Edad Máxima</mat-label>
+				   <input matInput placeholder="Edad Máxima" formControlName="value_age_max">
+				</mat-form-field>
+			</ng-container>
+			<ng-container *ngIf="segmentForm.value.type===2">
+				<mat-form-field  appearance="fill">
+				  <mat-label>Elige...</mat-label>
+				  <mat-select formControlName="value_gender">
+				    <mat-option *ngFor="let gender of genderArray;" [value]="gender.id">
+				        {{gender.type}}
+				    </mat-option>
+				  </mat-select>
+				</mat-form-field>
+			</ng-container>
+			<ng-container *ngIf="segmentForm.value.type===3">
+				<mat-form-field  appearance="fill">
+				  <mat-label>Elige...</mat-label>
+				  <mat-select formControlName="value_profile">
+				    <mat-option *ngFor="let profile of profileArray;" [value]="profile.id">
+				        {{profile.type}}
+				    </mat-option>
+				  </mat-select>
+				</mat-form-field>
+			</ng-container>
+			<ng-container *ngIf="(segmentForm.value.type===3 && segmentForm.value.value_profile) || (segmentForm.value.type===2 && segmentForm.value.value_gender) || (segmentForm.value.type===1 && segmentForm.value.value_age_min && segmentForm.value.value_age_max)">
+			  <button mat-icon-button (click)="addSegment()" color="black">
+		         <mat-icon svgIcon="add-new"></mat-icon>
+		      </button>
+		    </ng-container>
+ 		</form>
+		<mat-list>
+		 <mat-list-item *ngFor="let segment of segments; let i = index">
+		     <div class="example-label" *ngIf="segment.type===1"><strong>Edad:</strong> desde {{segment.value_age_min}} a {{segment.value_age_max}} años</div>
+		     <div class="example-label" *ngIf="segment.type===2"><strong>Género:</strong> {{genderArray[segment.value_gender-1].type}}</div>
+		     <div class="example-label" *ngIf="segment.type===3"><strong>Perfil:</strong> {{profileArray[segment.value_profile-1].type}}</div>
+		     <mat-action-list>
+		       <div>
+			      <button mat-icon-button (click)="removeSegment($event, i)" color="black">
+			         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
+			      </button>
+			   </div>
+			 </mat-action-list>
+		 </mat-list-item>
+		</mat-list>
+	</mat-card-content>
+</mat-card>

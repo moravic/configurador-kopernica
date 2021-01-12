@@ -22,6 +22,7 @@ import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service'
 import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
 import { ProtocolTabsComponent } from './protocol-tabs/protocol-tabs.component';
 import { SegmentComponent } from './segment/segment.component';
+import { BlockProtocolComponent } from './block-protocol/block-protocol.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SegmentComponent } from './segment/segment.component';
     ProjectTypeRadioComponent,
     MatDialogOkComponent,
     ProtocolTabsComponent,
-    SegmentComponent
+    SegmentComponent,
+    BlockProtocolComponent
   ],
   imports: [
     BrowserModule,

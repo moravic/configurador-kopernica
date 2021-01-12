@@ -46,6 +46,10 @@ export class AppComponent implements OnInit{
       this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/add-new.svg")
     );
     this.matIconRegistry.addSvgIcon(
+      "minus-delete",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/minus-delete.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "delete-bin",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/delete-bin.svg")
     );
