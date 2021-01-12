@@ -4,16 +4,16 @@
     <mat-card-header>
       <mat-card-title>Participantes</mat-card-title>
       <!--input #importInput type="file" style="display: none" (change)="importExcel($event.target.files)" accept=".xlsx, .xls"/-->
-      <button mat-icon-button (click)="importExcel()" color="primary">
+      <button mat-icon-button (click)="importExcel()" color="primary" disabled="{{disabled}}">
          <mat-icon svgIcon="import-csv"></mat-icon>
       </button>
-      <button mat-icon-button (click)="exportExcel()" color="primary">
+      <button mat-icon-button (click)="exportExcel()" color="primary" disabled="{{disabled}}">
          <mat-icon svgIcon="export-csv"></mat-icon>
       </button>
-      <button mat-icon-button (click)="addNew()" color="black">
+      <button mat-icon-button (click)="addNew()" color="primary" disabled="{{disabled}}">
          <mat-icon svgIcon="add-new"></mat-icon>
       </button>
-      <button mat-icon-button (click)="deleteAll()" color="primary">
+      <button mat-icon-button (click)="deleteAll()" color="primary" disabled="{{disabled}}">
          <mat-icon svgIcon="delete-bin"></mat-icon>
       </button>
     </mat-card-header>
@@ -42,7 +42,7 @@
           <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput formControlName="email" placeholder="Email" required>
+              <input matInput formControlName="email" placeholder="Email" email="true" required>
               <mat-error *ngIf="email?.invalid">
                 <div *ngIf="email.errors.required">Email is required</div>
               </mat-error>
@@ -57,9 +57,10 @@
           <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput formControlName="age" placeholder="Edad" required style="text-overflow: ellipsis;">
+              <input matInput type="number" formControlName="age" placeholder="Edad" required style="text-overflow: ellipsis;" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" min="0">
               <mat-error *ngIf="age?.invalid">
                 <div *ngIf="age.errors.required">La edad es obligatoria</div>
+                <div *ngIf="age.errors.min">La edad debe ser mayor que 0</div>
               </mat-error>
             </mat-form-field>
           </mat-cell>
