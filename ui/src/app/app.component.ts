@@ -6,6 +6,8 @@ import { Study } from './study';
 import { StudyService } from './study.service';
 import { ParticipantService } from './participant.service';
 import { Participant } from './participant';
+import { QuestionService } from './question.service';
+import { Question } from './question';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +26,7 @@ export class AppComponent implements OnInit{
   study:Study;
   typeDisabled=false;
   participants:Participant[]=[];
+  questions:Question[]=[];
   addStudyDisabled=true;
   listComponentsDisabled=true;
   
@@ -31,6 +34,7 @@ export class AppComponent implements OnInit{
     private appService: AppService,
     private studyService: StudyService,
     private participantService:ParticipantService,
+    private questionService:QuestionService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ){
@@ -45,6 +49,10 @@ export class AppComponent implements OnInit{
     this.matIconRegistry.addSvgIcon(
       "add-new",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/add-new.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "minus-delete",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/minus-delete.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "delete-bin",
@@ -134,20 +142,28 @@ export class AppComponent implements OnInit{
 	        		console.log(data);
 	        		this.participants = data;
 	      		}, error =>  this.error_str=error.error.message);
-	      
+	      	console.log("getQuestions");
+         	this.questionService.getQuestions(this.projectSelected, this.studySelected)
+	      		.subscribe(data => {
+	        		console.log(data);
+	        		this.questions = data;
+	      		}, error =>  this.error_str=error.error.message);
+	     		
 	      		console.log("type: " + data);
 	     		}, error => {console.log(error);
 	        	this.typeSelected='1'; 
 		    	this.typeDisabled=false;
 		    	this.addStudyDisabled=false;
 		    	this.listComponentsDisabled=true;
-		    	this.participants.length=0;});
+		    	this.participants.length=0;
+		    	this.questions.length=0;});	        		
 	  	}, error => {console.log(error);
 	      	this.typeSelected='1'; 
 		  	this.typeDisabled=false;
 		  	this.addStudyDisabled=false;
 		  	this.listComponentsDisabled=true;
-		  	this.participants.length=0;});
+		  	this.participants.length=0;
+		  	this.questions.length=0;});
    	  }
    }
    

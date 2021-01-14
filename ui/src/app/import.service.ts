@@ -19,5 +19,9 @@ export class ImportService {
   importParticipantExcelFile(project: string, study: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/participants/${project}/${study}`, null);
   }
+  
+  importQuestionExcelFile(project: string, study: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/questions/${project}/${study}`, null);
+  }
 
 }

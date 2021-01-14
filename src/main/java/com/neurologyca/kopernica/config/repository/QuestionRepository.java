@@ -122,4 +122,50 @@ public class QuestionRepository {
 		
 		return questionList;	
 	}
+	
+	public void deleteAll() throws Exception{
+	    String deleteAllSql = "DELETE FROM questions";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
+	public void deleteQuestion(Integer id) throws Exception{
+	    String deleteSql = "DELETE FROM questions where id=" + id;
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteSql);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
 }

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
+import com.neurologyca.kopernica.config.repository.QuestionRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
@@ -34,6 +35,9 @@ public class ImportExcelController {
 	
     @Autowired
     private ParticipantRepository participantRepository;
+    
+    @Autowired
+    private QuestionRepository questionRepository;
     
 	@PostMapping("/participants/{project}/{study}")
     public ResponseEntity<List<Participant>> importParticipantExcelFile(@PathVariable("project") String project, @PathVariable("study") String study) throws Exception {
@@ -98,13 +102,17 @@ public class ImportExcelController {
         return new ResponseEntity<>(stimulusList, status);
     }
 	
-	@PostMapping("/questions")
-    public ResponseEntity<List<Question>> importQuestionExcelFile(@RequestParam("file") MultipartFile files) throws Exception {
-        HttpStatus status = HttpStatus.OK;
+	@PostMapping("/questions/{project}/{study}")
+    public ResponseEntity<List<Question>> importQuestionExcelFile(@PathVariable("project") String project, @PathVariable("study") String study) throws Exception {
+		HttpStatus status = HttpStatus.OK;
         List<Question> questionList = new ArrayList<>();
-
-        XSSFWorkbook workbook = new XSSFWorkbook(files.getInputStream());
+        
+        final File file = new File(basePath + "\\" + project + "\\" + study + "\\Preguntas.xlsx");
+        final InputStream targetStream = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(targetStream);
         XSSFSheet worksheet = workbook.getSheetAt(0);
+        
+        questionRepository.deleteAll();
 
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
@@ -113,7 +121,7 @@ public class ImportExcelController {
                 question.setId((int) row.getCell(0).getNumericCellValue());              
                 question.setQuestion((String) row.getCell(1).getStringCellValue());
 
-                //stimulus.toString();
+                questionRepository.save(question);
                 
                 questionList.add(question);
 

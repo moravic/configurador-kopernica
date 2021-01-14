@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
+import com.neurologyca.kopernica.config.repository.QuestionRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
@@ -29,6 +30,9 @@ public class ExportExcelController {
 	
     @Autowired
     private ParticipantRepository participantRepository;
+    
+    @Autowired
+    private QuestionRepository questionRepository;
     
 	@PostMapping("/participants/{project}/{study}")
     public void exportParticipantExcelFile(@PathVariable String project, @PathVariable String study) throws Exception {
@@ -66,8 +70,8 @@ public class ExportExcelController {
         workbook.close();
     }
 	
-	@PostMapping("/questions")
-    public void exportQuestionExcelFile(@RequestBody List<Question> questionList) throws Exception {
+	@PostMapping("/questions/{project}/{study}")
+    public void exportQuestionExcelFile(@PathVariable String project, @PathVariable String study) throws Exception {
 	    String[] columns = {"Id", "Pregunta"};
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet worksheet = workbook.createSheet("Preguntas");
@@ -81,6 +85,7 @@ public class ExportExcelController {
         }     
       //Escribe valores
         int index=1;
+        List<Question> questionList = questionRepository.getQuestionList();
         for (Question question: questionList) {	
                 Row row = worksheet.createRow(index++);      
                 row.createCell(0).setCellValue(question.getId());
@@ -91,7 +96,7 @@ public class ExportExcelController {
         	worksheet.autoSizeColumn(i);
         }   
       // Escribe el fichero de salida
-        FileOutputStream fileOut = new FileOutputStream("Preguntas.xlsx");
+        FileOutputStream fileOut = new FileOutputStream(basePath + "\\" + project + "\\" + study + "\\" + "Preguntas.xlsx");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();

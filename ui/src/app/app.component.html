@@ -37,7 +37,7 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <pregunta-list></pregunta-list>
+        <pregunta-list [questions]="questions" [project]="projectSelected" [study]="studySelected" disabled="{{listComponentsDisabled}}"></pregunta-list>
       </div>
     </div>
     <div class="row">
