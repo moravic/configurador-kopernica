@@ -1,8 +1,22 @@
- ::ng-deep .mat-card-section{
-    border: 1px solid #000;
-    border-radius: 15px !important;
+.formblock {
+  min-width: 100px;
+  max-width: 500px;
+  width: 100%;
 }
-   
+
+.divheader {
+  font-weight: bold;
+}
+
+.blockSelect {
+  width: 45%;
+}
+
+.elementSelect {
+  width: 45%;
+  padding-left: 15px;
+}
+
 .example-flex-container {
   display: flex;
   justify-content: space-between;

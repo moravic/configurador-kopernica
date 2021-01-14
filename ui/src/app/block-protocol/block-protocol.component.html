@@ -1,0 +1,61 @@
+<br>
+<mat-card>
+	<mat-card-header>
+    	<mat-card-title>Bloques</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+		<form [formGroup]="blockForm" class="formblock">
+		  <mat-form-field class="blockSelect">
+		    <input type="text"
+		           placeholder="Elige/Crea un bloque"
+		           aria-label="Number"
+		           matInput
+		           [formControl]="blockForm.controls.blockName"
+		           [matAutocomplete]="auto">
+		    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+		      <mat-option *ngFor="let item of filteredOptions | async" [value]="item">
+		        {{item}}
+		      </mat-option>
+		    </mat-autocomplete>
+		  </mat-form-field>
+	      <mat-form-field  appearance="fill" class="elementSelect">
+			  <mat-label>Elige...</mat-label>
+			  <mat-select>
+			    <mat-option *ngFor="let elementSelect of blockElementsSelect;" [value]="elementSelect.id">
+			        {{elementSelect.text}}
+			    </mat-option>
+			  </mat-select>
+	      </mat-form-field>
+		  <button mat-icon-button (click)="addBlock()" color="black">
+	         <mat-icon svgIcon="add-new"></mat-icon>
+	      </button>
+		</form>
+		<label id="blockLabel">{{notFound}}</label>
+		    <form [formGroup]="protocolBlockForm">
+		       <div formArrayName="blockArray" *ngFor="let block of protocolBlockForm.controls.blockArray?.value; let i = index" >
+          		    <hr style="height: 3px;">
+          			<ng-container [formGroupName]="i">
+          			  <div class="divheader">{{block.blockName}}
+          			     <button mat-icon-button (click)="removeBlockElement($event, i)" color="black">
+					         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
+					      </button>
+          			  </div>
+				   	  <div>
+						  <mat-list>
+							 <mat-list-item *ngFor="let blockElement of protocolBlockForm.controls.blockArray.value[i].blockElementList.blockElement; let i = index">
+							     <div class="example-label"><strong>{{i}})</strong> {{blockElement.text}}</div>
+							     <mat-action-list>
+							       <div>
+								      <button mat-icon-button (click)="removeBlockElement($event, i)" color="black">
+								         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
+								      </button>
+								   </div>
+								 </mat-action-list>
+							 </mat-list-item>
+						  </mat-list>
+					   </div>
+            		</ng-container>
+       		    </div>	
+			</form>
+	</mat-card-content>
+</mat-card>

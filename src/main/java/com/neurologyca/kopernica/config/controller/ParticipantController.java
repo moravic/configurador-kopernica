@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.Profile;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 
 @RestController
@@ -23,6 +24,11 @@ public class ParticipantController {
     @GetMapping("/getParticipants/{project}/{study}")
 	public List<Participant> getParticipantList(@PathVariable String project, @PathVariable String study) throws Exception {
 		return participantRepository.getParticipantList();
+	}
+    
+    @GetMapping("/getProfiles/{project}/{study}")
+	public List<Profile> getProfiles(@PathVariable String project, @PathVariable String study) throws Exception {
+		return participantRepository.getProfiles();
 	}
     
     @PostMapping()

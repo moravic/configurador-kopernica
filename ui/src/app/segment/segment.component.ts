@@ -36,6 +36,17 @@ export class SegmentComponent {
 	    }
 	  ];
 	  
+    this.profileArray=[
+	    {
+	      id: 1,
+	      type: 'Profile1'
+	    },
+	    {
+	      id: 2,
+	      type: 'Profile2'
+	    }
+	  ];
+	
     this.segmentForm = this.createFormGroup();
   }
   
@@ -45,6 +56,7 @@ export class SegmentComponent {
   segmentForm: FormGroup;
   typeArray;
   genderArray;
+  profileArray;
     
   createFormGroup() {
 	  return new FormGroup({
