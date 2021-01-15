@@ -1,9 +1,9 @@
-import { Pregunta } from './pregunta';
+import { Question } from './question';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class PreguntaDataStoreService {
-  private eData: Pregunta[] = [];
+  private eData: Question[] = [];
 
   public getPreguntas() {
     const json = `[

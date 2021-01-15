@@ -1,28 +1,50 @@
-<form #testForm="ngForm" (ngSubmit)="testForm.form.valid" novalidate>
+<br>
+<form [formGroup]="form">
   <mat-card>
     <mat-card-header>
       <mat-card-title>Preguntas</mat-card-title>
+      <button mat-icon-button (click)="importExcel()" color="primary" disabled="{{disabled}}">
+         <mat-icon svgIcon="import-csv"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="exportExcel()" color="primary" disabled="{{disabled}}">
+         <mat-icon svgIcon="export-csv"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="addNew()" color="primary" disabled="{{disabled}}">
+         <mat-icon svgIcon="add-new"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="deleteAll()" color="primary" disabled="{{disabled}}">
+         <mat-icon svgIcon="delete-bin"></mat-icon>
+      </button>
     </mat-card-header>
     <mat-card-content>
-      <mat-table [dataSource]="elistMatTableDataSource">
-        <ng-container matColumnDef="text">
-          <mat-header-cell *matHeaderCellDef>
+      <mat-table [dataSource]="elistMatTableDataSource" formControlName="questions">
+        <ng-container matColumnDef="question">
+          <mat-header-cell *matHeaderCellDef style="width: 250px">
             Introduzca las preguntas que se guardarán en orden
           </mat-header-cell>
-          <mat-cell *matCellDef="let pregunta; let rowIdx = index;">
+          <mat-cell *matCellDef="let question; let rowIdx = index;" [formGroup]="question">
             <mat-form-field>
               <mat-label></mat-label>
-              <input matInput #name="ngModel" name="txtName{{rowIdx}}" placeholder="Texto" [(ngModel)]="pregunta.text"
-                required>
-              <mat-error *ngIf="text?.invalid">
-                <div *ngIf="name.errors.required">La pregunta es obligatoria</div>
+              <input matInput formControlName="question" placeholder="Pregunta" required>
+              <mat-error *ngIf="question?.invalid">
+                <div *ngIf="question.errors && question.errors.required">La pregunta es obligatoria</div>
               </mat-error>
             </mat-form-field>
           </mat-cell>
         </ng-container>
         
+        <!-- Delete Column -->
+        <ng-container matColumnDef="deleteQuestion">
+			<mat-header-cell *matHeaderCellDef> Borrado </mat-header-cell>
+			<mat-cell *matCellDef="let question; let rowIdx = index;" [formGroup]="question">
+	       		<button mat-icon-button color="primary" aria-label="" (click)="deleteQuestion(question)">
+	        		<mat-icon svgIcon="delete-bin"></mat-icon>
+	      		</button>
+    		</mat-cell>
+ 		</ng-container>
+  
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;">
+        <mat-row (click)="onRowChanged(row, getActualIndex(i))" (input)="onRowChanged(row, getActualIndex(i))" *matRowDef="let row; columns: displayedColumns; let i = index;">
         </mat-row>
       </mat-table>
     </mat-card-content>

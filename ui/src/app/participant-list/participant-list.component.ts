@@ -249,7 +249,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
      }, error =>  this.error_str=error.error.message);
     // find item and remove ist
     this.elistMatTableDataSource.data.splice(index, 1);
-    this.participantFormArray.controls.splice(index, 1);
+    //this.participantFormArray.controls.splice(index, 1);
     this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
     this.elistMatTableDataSource.filter = "";
   }

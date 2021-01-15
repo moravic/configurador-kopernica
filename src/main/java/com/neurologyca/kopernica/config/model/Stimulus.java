@@ -31,7 +31,7 @@ public class Stimulus {
 
 	@Override
 	public String toString() {
-		return "Participant [id=" + id + ", name=" + name + "]";
+		return "Stimulus [id=" + id + ", name=" + name + "]";
 	}
 
 }
