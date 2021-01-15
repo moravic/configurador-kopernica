@@ -19,6 +19,7 @@ import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.repository.QuestionRepository;
+import com.neurologyca.kopernica.config.repository.StimulusRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
@@ -33,6 +34,9 @@ public class ExportExcelController {
     
     @Autowired
     private QuestionRepository questionRepository;
+    
+    @Autowired
+    private StimulusRepository stimulusRepository;
     
 	@PostMapping("/participants/{project}/{study}")
     public void exportParticipantExcelFile(@PathVariable String project, @PathVariable String study) throws Exception {
@@ -102,9 +106,9 @@ public class ExportExcelController {
         workbook.close();
     }
 	
-	@PostMapping("/stimuli")
-    public void exportStimulusExcelFile(@RequestBody List<Stimulus> stimulusList) throws Exception {
-	    String[] columns = {"Id", "Nombre"};
+	@PostMapping("/stimuli/{project}/{study}")
+    public void exportStimulusExcelFile(@PathVariable String project, @PathVariable String study) throws Exception {
+	    String[] columns = {"Id", "Estimulo"};
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet worksheet = workbook.createSheet("Estimulos");
 
@@ -117,6 +121,7 @@ public class ExportExcelController {
         }     
       //Escribe valores
         int index=1;
+        List<Stimulus> stimulusList = stimulusRepository.getStimulusList();
         for (Stimulus stimulus: stimulusList) {	
                 Row row = worksheet.createRow(index++);      
                 row.createCell(0).setCellValue(stimulus.getId());
@@ -126,8 +131,9 @@ public class ExportExcelController {
         for(int i = 0; i < columns.length; i++) {
         	worksheet.autoSizeColumn(i);
         }   
-      // Escribe el fichero de salida
-        FileOutputStream fileOut = new FileOutputStream("Estimulos.xlsx");
+
+        // Escribe el fichero de salida
+        FileOutputStream fileOut = new FileOutputStream(basePath + "\\" + project + "\\" + study + "\\" + "Estimulos.xlsx");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();

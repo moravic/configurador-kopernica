@@ -18,4 +18,8 @@ export class ExportService {
   exportQuestionExcelFile(project: string, study: string): Observable<any> {
      return this.http.post(`${this.baseUrl}/questions/${project}/${study}`, null);
   }
+  
+  exportStimulusExcelFile(project: string, study: string): Observable<any> {
+     return this.http.post(`${this.baseUrl}/stimuli/${project}/${study}`, null);
+  }  
 }

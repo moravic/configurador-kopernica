@@ -1,20 +1,20 @@
-import { Estimulo } from './Estimulo';
+import { Stimulus } from './Stimulus';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class EstimuloDataStoreService {
-  private eData: Estimulo[] = [];
+  private eData: Stimulus[] = [];
 
-  public getEstimulos() {
+  public getStimulus() {
     const json = `[
             {
-              "text": "Video 1, coche rojo"
+              "name": "Video 1, coche rojo"
             },
             {
-               "text": "Video 2, coche verde"
+               "name": "Video 2, coche verde"
             },
             {
-               "text": "Sonido 1"
+               "name": "Sonido 1"
             }
           ]`;
 

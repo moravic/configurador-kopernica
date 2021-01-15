@@ -8,6 +8,8 @@ import { ParticipantService } from './participant.service';
 import { Participant } from './participant';
 import { QuestionService } from './question.service';
 import { Question } from './question';
+import { StimulusService } from './stimulus.service';
+import { Stimulus } from './stimulus';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +29,7 @@ export class AppComponent implements OnInit{
   typeDisabled=false;
   participants:Participant[]=[];
   questions:Question[]=[];
+  stimuli:Stimulus[]=[];
   addStudyDisabled=true;
   listComponentsDisabled=true;
   
@@ -35,6 +38,7 @@ export class AppComponent implements OnInit{
     private studyService: StudyService,
     private participantService:ParticipantService,
     private questionService:QuestionService,
+    private stimulusService:StimulusService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ){
@@ -141,13 +145,22 @@ export class AppComponent implements OnInit{
 	      		.subscribe(data => {
 	        		console.log(data);
 	        		this.participants = data;
-	      		}, error =>  this.error_str=error.error.message);
+	      		}, error =>  {this.error_str=error.error.message; 
+	      					  this.participants.length=0;});
 	      	console.log("getQuestions");
          	this.questionService.getQuestions(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {
 	        		console.log(data);
 	        		this.questions = data;
-	      		}, error =>  this.error_str=error.error.message);
+	      		}, error =>  {this.error_str=error.error.message; 
+	      					  this.questions.length=0;});
+	        console.log("getStimuli");
+         	this.stimulusService.getStimuliList(this.projectSelected, this.studySelected)
+	      		.subscribe(data => {
+	        		console.log(data);
+	        		this.stimuli = data;
+	      		}, error =>  {this.error_str=error.error.message; 
+	      				      this.stimuli.length=0;});		
 	     		
 	      		console.log("type: " + data);
 	     		}, error => {console.log(error);
@@ -156,13 +169,15 @@ export class AppComponent implements OnInit{
 		    	this.addStudyDisabled=false;
 		    	this.listComponentsDisabled=true;
 		    	this.participants.length=0;
-		    	this.questions.length=0;});	        		
+		    	this.questions.length=0;
+		    	this.stimuli.length=0;});	        		
 	  	}, error => {console.log(error);
 	      	this.typeSelected='1'; 
 		  	this.typeDisabled=false;
 		  	this.addStudyDisabled=false;
 		  	this.listComponentsDisabled=true;
 		  	this.participants.length=0;
+		  	this.questions.length=0;
 		  	this.questions.length=0;});
    	  }
    }

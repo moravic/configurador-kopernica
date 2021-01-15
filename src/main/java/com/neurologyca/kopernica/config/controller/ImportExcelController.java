@@ -24,6 +24,7 @@ import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.repository.QuestionRepository;
+import com.neurologyca.kopernica.config.repository.StimulusRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
@@ -38,6 +39,9 @@ public class ImportExcelController {
     
     @Autowired
     private QuestionRepository questionRepository;
+    
+    @Autowired
+    private StimulusRepository stimulusRepository;
     
 	@PostMapping("/participants/{project}/{study}")
     public ResponseEntity<List<Participant>> importParticipantExcelFile(@PathVariable("project") String project, @PathVariable("study") String study) throws Exception {
@@ -76,14 +80,18 @@ public class ImportExcelController {
         return new ResponseEntity<>(participantList, status);
     }
 	
-	@PostMapping("/stimuli")
-    public ResponseEntity<List<Stimulus>> importStimulusExcelFile(@RequestParam("file") MultipartFile files) throws Exception {
+	@PostMapping("/stimuli/{project}/{study}")
+    public ResponseEntity<List<Stimulus>> importStimulusExcelFile(@PathVariable("project") String project, @PathVariable("study") String study) throws Exception {
         HttpStatus status = HttpStatus.OK;
         List<Stimulus> stimulusList = new ArrayList<>();
 
-        XSSFWorkbook workbook = new XSSFWorkbook(files.getInputStream());
+        final File file = new File(basePath + "\\" + project + "\\" + study + "\\Estimulos.xlsx");
+        final InputStream targetStream = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(targetStream);
         XSSFSheet worksheet = workbook.getSheetAt(0);
-
+        
+        stimulusRepository.deleteAll();
+        
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
                 Stimulus stimulus = new Stimulus();
@@ -91,7 +99,7 @@ public class ImportExcelController {
                 stimulus.setId((int) row.getCell(0).getNumericCellValue());              
                 stimulus.setName((String) row.getCell(1).getStringCellValue());
 
-                //stimulus.toString();
+                stimulusRepository.save(stimulus);
                 
                 stimulusList.add(stimulus);
 
