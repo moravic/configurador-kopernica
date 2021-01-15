@@ -21,7 +21,7 @@ import java.util.List;
 public class StimulusRepository {
 	
     private void createTableStimulus(Connection conn) throws Exception{
-		String createTableQuery = "CREATE TABLE IF NOT EXISTS stimuli ("
+		String createTableQuery = "CREATE TABLE IF NOT EXISTS stimulus ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, "
 				+ "study_id integer NOT NULL, "
 				+ "FOREIGN KEY(study_id) REFERENCES studies(id))";
@@ -49,7 +49,7 @@ public class StimulusRepository {
    }
 	
     private void insertStimulus(Connection conn, Stimulus stimulus) throws Exception {
-    	 String insertSql = "INSERT OR REPLACE INTO stimuli(id, name, study_id) "
+    	 String insertSql = "INSERT OR REPLACE INTO stimulus(id, name, study_id) "
     	 		+ "VALUES(?,?,1)";
     	 
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	 
@@ -88,7 +88,7 @@ public class StimulusRepository {
 	}
 	
 	public List<Stimulus> getStimulusList() throws Exception{
-	    String getStimulusSql = "SELECT id, name FROM stimuli";
+	    String getStimulusSql = "SELECT id, name FROM stimulus";
 	    Stimulus stimulus;
 	    List<Stimulus> stimulusList = new ArrayList<Stimulus>();
 	    
