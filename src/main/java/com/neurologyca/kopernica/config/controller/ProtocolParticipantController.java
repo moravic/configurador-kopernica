@@ -12,10 +12,10 @@ public class ProtocolParticipantController {
     @Autowired
     private ProtocolParticipantRepository protocolParticipantRepository;
     
-    @PostMapping("/applyConditions")
-    public Integer applyConditions() throws Exception {
-    	System.out.println("applyConditions");
-        return protocolParticipantRepository.applyConditions();
+    @PostMapping("/applyConfiguration")
+    public Integer applyConfiguration() throws Exception {
+    	System.out.println("applyConfiguration");
+        return protocolParticipantRepository.applyConfiguration();
     }
 
 }
