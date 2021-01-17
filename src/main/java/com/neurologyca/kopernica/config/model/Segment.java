@@ -18,6 +18,10 @@ public class Segment {
 		this.valueGender = valueGender;
 		this.valueProfile = valueProfile;
 	}
+	
+	public Segment() {
+		super();
+	}
 
 	public Integer getId() {
 		return id;
