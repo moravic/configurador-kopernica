@@ -1,6 +1,8 @@
+import { Question } from './question';
+import { Stimulus } from './stimulus';
+
 export class BlockElement {
     id: number;
-    questionId: number;
-	stimulusId: number;
-	text: string;
+    question: Question;
+	stimulus: Stimulus;
 }

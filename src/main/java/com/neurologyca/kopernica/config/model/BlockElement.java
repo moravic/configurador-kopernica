@@ -12,6 +12,10 @@ public class BlockElement {
 		this.stimulus = stimulus;
 	}
 
+	public BlockElement() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Integer getId() {
 		return id;
 	}

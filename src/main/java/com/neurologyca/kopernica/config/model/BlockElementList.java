@@ -4,12 +4,16 @@ import java.util.List;
 
 public class BlockElementList {
 	private Integer id;
-    private List<BlockElement> blockElementArray;
+    private BlockElement blockElement;
     
-	public BlockElementList(Integer id, List<BlockElement> blockElementArray) {
+	public BlockElementList(Integer id, BlockElement blockElement) {
 		super();
 		this.id = id;
-		this.blockElementArray = blockElementArray;
+		this.blockElement = blockElement;
+	}
+
+	public BlockElementList() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public Integer getId() {
@@ -20,17 +24,17 @@ public class BlockElementList {
 		this.id = id;
 	}
 
-	public List<BlockElement> getBlockElementArray() {
-		return blockElementArray;
+	public BlockElement getBlockElement() {
+		return blockElement;
 	}
 
-	public void setBlockElementArray(List<BlockElement> blockElementArray) {
-		this.blockElementArray = blockElementArray;
+	public void setBlockElement(BlockElement blockElement) {
+		this.blockElement = blockElement;
 	}
 
 	@Override
 	public String toString() {
-		return "BlockElementList [id=" + id + ", blockElementArray=" + blockElementArray + "]";
+		return "BlockElementList [id=" + id + ", blockElement=" + blockElement + "]";
 	}
 	
 }

@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.neurologyca.kopernica</groupId>
-	<artifactId>dashboard</artifactId>
+	<artifactId>config</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dashboard</name>
-	<description>Dashboard project for Kopernica</description>
+	<name>config</name>
+	<description>Configurator project for Kopernica</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -86,7 +86,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>dashboard</finalName>
+		<finalName>config</finalName>
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
@@ -104,7 +104,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.neurologyca.kopernica.dashboard.DashboardApplication</mainClass>
+							<mainClass>com.neurologyca.kopernica.config.ConfigApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

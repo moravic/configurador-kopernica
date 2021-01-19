@@ -10,7 +10,7 @@
 		           placeholder="Elige/Crea un bloque"
 		           aria-label="Number"
 		           matInput
-		           [formControl]="blockForm.controls.blockName"
+		           [formControl]="myBlockControl"
 		           [matAutocomplete]="auto">
 		    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
 		      <mat-option *ngFor="let item of filteredOptions | async" [value]="item">
@@ -20,9 +20,9 @@
 		  </mat-form-field>
 	      <mat-form-field  appearance="fill" class="elementSelect">
 			  <mat-label>Elige...</mat-label>
-			  <mat-select>
-			    <mat-option *ngFor="let elementSelect of blockElementsSelect;" [value]="elementSelect.id">
-			        {{elementSelect.text}}
+			  <mat-select formArrayName="blockElementListArray" (selectionChange)="blockElementListSelection($event)">
+			    <mat-option *ngFor="let blockElementList of blockForm.controls.blockElementListArray.value" [value]="blockElementList.id">
+			        {{blockElementList.blockElement.question?.question}}{{blockElementList.blockElement.stimulus?.name}}
 			    </mat-option>
 			  </mat-select>
 	      </mat-form-field>
@@ -32,21 +32,21 @@
 		</form>
 		<label id="blockLabel">{{notFound}}</label>
 		    <form [formGroup]="protocolBlockForm">
-		       <div formArrayName="blockArray" *ngFor="let block of protocolBlockForm.controls.blockArray?.value; let i = index" >
+		       <div formArrayName="blockListArray" *ngFor="let blockList of protocolBlockForm.controls.blockListArray?.value; let iBlock = index" >
           		    <hr style="height: 3px;">
-          			<ng-container [formGroupName]="i">
-          			  <div class="divheader">{{block.blockName}}
-          			     <button mat-icon-button (click)="removeBlockElement($event, i)" color="black">
+          			<!--ng-container [formGroupName]="i"-->
+          			  <div class="divheader">{{blockList.block.blockName}}
+          			     <button mat-icon-button (click)="removeBlock(iBlock)" color="black">
 					         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 					      </button>
           			  </div>
 				   	  <div>
 						  <mat-list>
-							 <mat-list-item *ngFor="let blockElement of protocolBlockForm.controls.blockArray.value[i].blockElementList.blockElement; let i = index">
-							     <div class="example-label"><strong>{{i}})</strong> {{blockElement.text}}</div>
+							 <mat-list-item *ngFor="let blockElementList of protocolBlockForm.controls.blockListArray.value[iBlock].block.blockElementListArray; let iBlockElement = index">
+							     <div class="example-label"><strong>{{iBlockElement}})</strong> {{blockElementList.blockElement.question?.question}}{{blockElementList.blockElement.stimulus?.name}}</div>
 							     <mat-action-list>
 							       <div>
-								      <button mat-icon-button (click)="removeBlockElement($event, i)" color="black">
+								      <button mat-icon-button (click)="removeBlockElement(iBlock, iBlockElement)" color="black">
 								         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 								      </button>
 								   </div>
@@ -54,7 +54,7 @@
 							 </mat-list-item>
 						  </mat-list>
 					   </div>
-            		</ng-container>
+            		<!--/ng-container-->
        		    </div>	
 			</form>
 	</mat-card-content>

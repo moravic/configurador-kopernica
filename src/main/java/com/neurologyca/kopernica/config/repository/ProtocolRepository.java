@@ -12,8 +12,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.neurologyca.kopernica.config.controller.AppController;
+import com.neurologyca.kopernica.config.model.Block;
+import com.neurologyca.kopernica.config.model.BlockElement;
+import com.neurologyca.kopernica.config.model.BlockElementList;
+import com.neurologyca.kopernica.config.model.BlockList;
 import com.neurologyca.kopernica.config.model.Protocol;
+import com.neurologyca.kopernica.config.model.Question;
 import com.neurologyca.kopernica.config.model.Segment;
+import com.neurologyca.kopernica.config.model.SegmentList;
+import com.neurologyca.kopernica.config.model.Stimulus;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -100,18 +107,18 @@ order by pr.id, p.id, b.id, no_order
 				//protocol.setId(selectProtocolMaxId(conn) + 1);
 			}
 
-			for (Segment segment : protocol.getSegmentList().getSegmentArray()) {
-				if (segment.getId() == 0) {
+			//for (Segment segment : protocol.getSegmentList().getSegmentArray()) {
+				//if (segment.getId() == 0) {
 					//segment.setId(selectSegmentMaxId(conn) + 1);
-				}
-				pstmt.setInt(1, segment.getId());
+				//}
+		/*		pstmt.setInt(1, segment.getId());
 				pstmt.setString(2, segment.getType());
 				pstmt.setInt(3, segment.getValueAgeMin());
 				pstmt.setInt(4, segment.getValueAgeMax());
 				pstmt.setString(5, segment.getValueGender());
-				pstmt.setString(6, segment.getValueProfile());
+				pstmt.setString(6, segment.getValueProfile());*/
 
-			}
+			//}
 
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -122,8 +129,55 @@ order by pr.id, p.id, b.id, no_order
 	public List<Protocol> getProtocols() throws Exception {
 		List<Protocol> protocols = new ArrayList<Protocol>();
 
-		String getTypeStudy = "SELECT type FROM studies";
-
+		/*String getAll = "SELECT\r\n"
+				+ "CASE\r\n"
+				+ "  WHEN pr.id = LAG(pr.id) OVER (ORDER BY pr.id) THEN null\r\n"
+				+ "  ELSE pr.id\r\n"
+				+ "END AS protocol_id,\r\n"
+				+ "pr.name protocol_name,\r\n"
+				+ "CASE\r\n"
+				+ "  WHEN bl.id = LAG(bl.id) OVER (ORDER BY pr.id, bl.id) THEN null\r\n"
+				+ "  ELSE bl.id\r\n"
+				+ "END AS blocklist_id,\r\n"
+				+ "CASE\r\n"
+				+ "  WHEN b.id = LAG(b.id) OVER (ORDER BY pr.id, bl.id, b.id) THEN null\r\n"
+				+ "  ELSE b.id\r\n"
+				+ "END AS block_id,\r\n"
+				+ "b.block_name,\r\n"
+				+ "bel.id blockElementList_id,\r\n"
+				+ "be.id blockElement_id,\r\n"
+				+ "be.question_id, be.stimulus_id, q.question, s.name stimulus\r\n"
+				+ "FROM protocols pr\r\n"
+				+ "join block_list bl on (pr.id=bl.protocol_id)\r\n"
+				+ "join blocks b on (b.id=bl.block_id)\r\n"
+				+ "join blockelement_list bel on (bel.block_id=b.id)\r\n"
+				+ "join blockelement be on (be.id=bel.blockElement_id)\r\n"
+				+ "left join questions q on (q.id=be.question_id)\r\n"
+				+ "left join stimulus s on (s.id=be.stimulus_id)\r\n"
+				+ "order by pr.id, bl.block_id, bel.id";*/
+        
+		String getProtocols = "select id, name FROM protocols order by id";
+		String getSegment = "select sl.id segmentlist_id, s.id, s.type, s.value_age_min, s.value_age_max, s.value_gender, s.value_profile "
+				+ "FROM segment_list sl JOIN segment s on (sl.segment_id=s.id) "
+				+ "WHERE protocol_id=? "
+				+ "order by s.id";
+		String getBlock = "select bl.id blocklist_id, bl.block_id, b.block_name "
+				+ "FROM block_list bl JOIN blocks b on (b.id=bl.block_id) "
+				+ "WHERE protocol_id=? "
+				+ "order by bl.block_id";
+		String getBlockElement = " SELECT bel.id blockElementList_id, "
+				+ "be.id blockElement_id, "
+				+ "be.question_id, "
+				+ "be.stimulus_id, "
+				+ "q.question, "
+				+ "s.name stimulus "
+				+ "FROM blockelement_list bel "
+				+ "join blockelement be on (be.id=bel.blockElement_id) "
+				+ "left join questions q on (q.id=be.question_id) "
+				+ "left join stimulus s on (s.id=be.stimulus_id) "
+				+ "where bel.block_id = ?"
+				+ "order by bel.id";
+		
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
@@ -135,11 +189,94 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("A new database has been created.");
 			}
 
-			PreparedStatement pstmt = conn.prepareStatement(getTypeStudy);
+			PreparedStatement pstmtProtocol = conn.prepareStatement(getProtocols);
 
-			ResultSet rs = pstmt.executeQuery();
+			ResultSet rsProtocol = pstmtProtocol.executeQuery();
 
-			rs.next();
+			while (rsProtocol.next()) {
+				Protocol protocol = new Protocol();
+				protocol.setId(rsProtocol.getInt("protocol_id"));
+				protocol.setName(rsProtocol.getString("protocol_name"));
+				
+				PreparedStatement pstmtSegment = conn.prepareStatement(getSegment);
+				pstmtSegment.setInt(1, protocol.getId());
+				
+				ResultSet rsSegment = pstmtSegment.executeQuery();
+				
+				List<SegmentList> segmentListArray = new ArrayList<SegmentList>();
+				
+				while (rsSegment.next()) {
+					SegmentList segmentList = new SegmentList();
+					Segment segment = new Segment();
+					
+					segmentList.setId(rsSegment.getInt("segmentlist_id"));
+					segment.setId(rsSegment.getInt("id"));
+					segment.setType(rsSegment.getString("type"));
+					segment.setValueAgeMin(rsSegment.getInt("value_age_min"));
+					segment.setValueAgeMax(rsSegment.getInt("value_age_max"));
+					segment.setValueGender(rsSegment.getString("value_gender"));
+					segment.setValueProfile(rsSegment.getString("value_profile"));
+					
+					segmentListArray.add(segmentList);
+				}
+				
+				protocol.setSegmentListArray(segmentListArray);
+				
+				PreparedStatement pstmtBlock = conn.prepareStatement(getBlock);
+				pstmtBlock.setInt(1, protocol.getId());
+				
+				ResultSet rsBlock = pstmtBlock.executeQuery();
+				
+				List<BlockList> blockListArray = new ArrayList<BlockList>();
+				
+				while (rsBlock.next()) {
+					
+					BlockList blockList = new BlockList();
+					Block block = new Block();
+					blockList.setId(rsBlock.getInt("blocklist_id"));
+					block.setId(rsBlock.getInt("block_id"));
+					block.setName(rsBlock.getString("block_name"));
+					blockList.setBlock(block);
+	
+					PreparedStatement pstmtBlockElement = conn.prepareStatement(getBlockElement);
+					pstmtBlockElement.setInt(1, block.getId());
+					
+					ResultSet rsBlockElement = pstmtBlockElement.executeQuery();
+					
+					List<BlockElementList> blockElementListArray = new ArrayList<BlockElementList>();
+					
+					while (rsBlockElement.next()) {
+						BlockElementList blockElementList = new BlockElementList();
+						blockElementList.setId(rsBlockElement.getInt("blockElementList_id"));
+
+						BlockElement blockElement = new BlockElement();
+						blockElement.setId(rsBlockElement.getInt("blockElement_id"));
+						
+						Question question = new Question();
+						if (rsBlockElement.getInt("question_id")!=0) {
+							question.setId(rsBlockElement.getInt("question_id"));
+							question.setQuestion(rsBlockElement.getString("question"));
+						}
+						
+						Stimulus stimulus = new Stimulus();
+						if (rsBlockElement.getInt("stimulus_id")!=0) {
+							stimulus.setId(rsBlockElement.getInt("stimulus_id"));
+							stimulus.setName(rsBlockElement.getString("stimulus"));
+						}
+							
+						blockElement.setQuestion(question);
+						blockElement.setStimulus(stimulus);
+						blockElementList.setBlockElement(blockElement);
+						blockElementListArray.add(blockElementList);
+					}
+					
+					blockListArray.add(blockList);
+					block.setBlockElementListArray(blockElementListArray);
+				}
+				
+				protocol.setBlockListArray(blockListArray);
+				protocols.add(protocol);
+			}
 
 			return protocols;
 

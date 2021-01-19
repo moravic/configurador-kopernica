@@ -1,15 +1,21 @@
 package com.neurologyca.kopernica.config.model;
 
+import java.util.List;
+
 public class Block {
 	private Integer id;
 	private String name;
-	private BlockElementList blockElementList;
+	private List<BlockElementList> blockElementListArray;
 	
-	public Block(Integer id, String name, BlockElementList blockElementList) {
+	public Block(Integer id, String name, List<BlockElementList> blockElementListArray) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.blockElementList = blockElementList;
+		this.blockElementListArray = blockElementListArray;
+	}
+
+	public Block() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public Integer getId() {
@@ -28,17 +34,17 @@ public class Block {
 		this.name = name;
 	}
 
-	public BlockElementList getBlockElementList() {
-		return blockElementList;
+	public List<BlockElementList> getBlockElementListArray() {
+		return blockElementListArray;
 	}
 
-	public void setBlockElementList(BlockElementList blockElementList) {
-		this.blockElementList = blockElementList;
+	public void setBlockElementListArray(List<BlockElementList> blockElementListArray) {
+		this.blockElementListArray = blockElementListArray;
 	}
 
 	@Override
 	public String toString() {
-		return "Block [id=" + id + ", name=" + name + ", blockElementList=" + blockElementList + "]";
+		return "Block [id=" + id + ", name=" + name + ", blockElementListArray=" + blockElementListArray + "]";
 	}
 
 }

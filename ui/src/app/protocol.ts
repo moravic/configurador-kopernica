@@ -1,9 +1,9 @@
-import { Block } from './block';
-import { Segment } from './segment';
+import { BlockList } from './blockList';
+import { SegmentList } from './segmentList';
 
 export class Protocol {
     id: number;
     protocolName: string;
-    segmentArray: Segment[];
-	blockArray: Block[];
+    segmentListArray: SegmentList[];
+	blockListArray: BlockList[];
 }

@@ -20,117 +20,236 @@ export class BlockProtocolComponent {
 	    {
 	      id: 1,
 	      blockName: 'Bloque 1',
-	      blockElementList: {
-	      	id: 1,
-	      	blockElementArray: [{
-				id: 1,
-				questionId: 1,
-				stimulusId: 0,
-				text: 'Question 1'
-	      	},
+	      blockElementListArray: [
 	        {
-				id: 2,
-				questionId: 2,
-				stimulusId: 0,
-				text: 'Question 2'
+		      	id: 1,
+		      	blockElement: {
+					id: 1,
+					question: {
+						id: 1,
+						question: 'Question 1'
+					},
+					stimulus: null	
+		      	}
+		    },
+		    {
+				id: 1,
+		      	blockElement: {
+					id: 2,
+					question: {
+						id: 2,
+						question: 'Question 2'
+					},
+					stimulus: null	
+				}
 	      	},
 	      	{
 				id: 3,
-				questionId: 0,
-				stimulusId: 1,
-				text: 'Stimulus 1'
-	      	}]
-	      }
+				blockElement: {
+					id: 3,
+					question: {
+						id: 3,
+						question: 'Question 3'
+					},
+					stimulus: null	
+	            }
+	        }]
 	    },
 	    {
 	        id: 2,
 	        blockName: 'Bloque 2',
-	        blockElementList: {
-		      	id: 2,
-		        blockElementArray: [{
+	        blockElementListArray: [
+		        {
 					id: 1,
-					questionId: 1,
-					stimulusId: 0,
-					text: 'Question 1'
-	        	},
-	            {
-					id: 3,
-					questionId: 0,
-					stimulusId: 1,
-					text: 'Stimulus 1'
-	      	    }]
-	         }
-	     }];
+			      	blockElement: {
+						id: 2,
+						question: {
+							id: 2,
+							question: 'Question 2'
+						},
+						stimulus: null
+				   }
+		      	},
+		      	{
+					id: 5,
+					blockElement: {
+						id: 5,
+						question: null,
+						stimulus: {
+							id: 1,
+							name: 'Stimulus 1'
+						}	
+		            }
+		       }
+		    ]
+		  }
+	    ];
 	
 	this.protocol={
 	    id: 1,
 	    protocolName: 'Protocol 1',
-	    segmentArray: [],
-	    blockArray: [
-	    {
-	      id: 1,
-	      blockName: 'Bloque 1',
-	      blockElementList: {
-	      	id: 1,
-	      	blockElementArray: [{
+        segmentListArray: [{
+            id: 1,
+	        segment: {
+	            id: 1,
+				type: 'Todos',
+				value_age_min: null,
+				value_age_max: null,
+				value_gender: null,
+				value_profile: null
+	        }
+        }],
+        blockListArray: [
+        {
+            id: 1,
+	        block: {
+		      id: 1,
+		      blockName: 'Bloque 1',
+		      blockElementListArray: [
+		       {
+			      	id: 1,
+			      	blockElement: {
+						id: 1,
+						question: {
+							id: 1,
+							question: 'Question 1'
+						},
+						stimulus: null	
+			      	}
+			    },
+		        {
+					id: 1,
+			      	blockElement: {
+						id: 2,
+						question: {
+							id: 2,
+							question: 'Question 2'
+						},
+						stimulus: null
+				   }
+		      	},
+		      	{
+					id: 3,
+					blockElement: {
+						id: 3,
+						question: {
+							id: 3,
+							question: 'Question 3'
+						},
+						stimulus: null	
+		           }
+		       }]
+		   }
+        },
+        {
+            id: 2,
+	        block: {
+		        id: 2,
+		        blockName: 'Bloque 2',
+		        blockElementListArray: [
+		           {
+						id: 1,
+				      	blockElement: {
+							id: 2,
+							question: {
+								id: 2,
+								question: 'Question 2'
+							},
+							stimulus: null	
+					    }
+			      	},
+			      	{
+						id: 5,
+						blockElement: {
+							id: 5,
+							question: null,
+							stimulus: {
+								id: 2,
+								name: 'Stimulus 2'
+							}	
+			           }
+			       }
+		 	    ]
+			}
+	    }]
+   };
+	 
+   this.blockElementsSelect=[{
 				id: 1,
-				questionId: 1,
-				stimulusId: 0,
-				text: 'Question 1'
-	      	}]
-	      }
-	    },
-	    {
-	        id: 2,
-	        blockName: 'Bloque 2',
-	        blockElementList: {
-		      	id: 2,
-		        blockElementArray: [{
+				blockElement: {
 					id: 1,
-					questionId: 1,
-					stimulusId: 0,
-					text: 'Question 1'
-	        	},
-	            {
-					id: 3,
-					questionId: 0,
-					stimulusId: 1,
-					text: 'Stimulus 1'
-	      	    }]
-	         }
-	     }]
-	 };
-	 
-	 this.blockElementsSelect=[{
-					id: 1,
-					questionId: 1,
-					stimulusId: 0,
-					text: 'Question 1'
-	        	},{
+					question: {
+						id: 1,
+						question: 'Question 1'
+					},
+					stimulus: null
+				}
+	      	},
+	      	{
+				id: 2,
+				blockElement: {
 					id: 2,
-					questionId: 2,
-					stimulusId: 0,
-					text: 'Question 2'
-	        	},{
+					question: {
+						id: 2,
+						question: 'Question 2'
+					},
+					stimulus: null
+				}
+	      	},
+	      	{
+				id: 3,
+				blockElement: {
 					id: 3,
-					questionId: 0,
-					stimulusId: 1,
-					text: 'Stimulus 1'
-	      	    },
-	            {
+					question: {
+						id: 3,
+						question: 'Question 3'
+					},
+					stimulus: null
+				}
+	      	},
+	      	{
+				id: 4,
+				blockElement: {
 					id: 4,
-					questionId: 0,
-					stimulusId: 1,
-					text: 'Stimulus 2'
-	      	    }];
+					question: null,
+					stimulus: {
+						id: 1,
+						name: 'Stimulus 1'
+					}
+				}
+            },
+	      	{
+				id: 5,
+				blockElement: {
+					id: 5,
+					question: null,
+					stimulus: {
+						id: 2,
+						name: 'Stimulus 2'
+					}
+				}
+            },
+	      	{
+				id: 6,
+				blockElement: {
+					id: 6,
+					question: null,
+					stimulus: {
+						id: 3,
+						name: 'Stimulus 3'
+					}
+				}
+            }];
 	 
-     this.blockForm = this.createFormGroup();
+     this.blockForm = this.createBlockFormGroup();
      this.protocolBlockForm = this.createProtocolBlockFormGroup();
   }
   
+  myBlockControl = new FormControl();
+  
   //@Input()
   blocks:Block[] = [];
-  blockElementsSelect:BlockElement[] = [];
+  blockElementsSelect:BlockElementList[] = [];
   
   protocol:Protocol;
     
@@ -141,116 +260,170 @@ export class BlockProtocolComponent {
   notFound:string;
   filterValueTmp:string;
   
-  createFormGroup() {
+  blockElementListSelected;
+  
+  createBlockFormGroup() {
+	  
+	  var blockElementListArrayFG=new FormArray([]);
+	  
+	  this.blockElementsSelect.forEach( (blockElementList) => {
+			var blockElementListFG = new FormGroup({
+			      id: new FormControl(blockElementList.id),
+			      blockElement: new FormGroup({
+			        id: new FormControl(blockElementList.blockElement.id),
+			        question: new FormGroup({
+			        	id: new FormControl(blockElementList.blockElement.question?.id),
+			        	question: new FormControl(blockElementList.blockElement.question?.question)
+			        }),
+			        stimulus: new FormGroup({
+			        	id: new FormControl(blockElementList.blockElement.stimulus?.id),
+			        	name: new FormControl(blockElementList.blockElement.stimulus?.name)
+			        })
+		        })
+		   });
+		   
+		   blockElementListArrayFG.push(blockElementListFG);
+	  });
+	  
 	  return new FormGroup({
-	    id: new FormControl(),
-	    blockName: new FormControl(),
-	    blockElementList: new FormGroup({
-	      id: new FormControl(),
-	      blockElement: new FormArray([
-			new FormGroup({
-		      id: new FormControl(),
-		      questionId: new FormControl(),
-			  stimulusId: new FormControl(),
-		      text: new FormControl()
-	      })])
-	    })
+		   id: new FormControl(),
+		   blockName: new FormControl(''),
+		   blockElementListArray: blockElementListArrayFG
 	  });
   }
   
   createProtocolBlockFormGroup() {
       
-      var blockArrayFG=new FormArray([]);
+      var blockListArrayFG=new FormArray([]);
       
-      this.protocol.blockArray.forEach( (block) => {
-         var blockElementArrayFG=new FormArray([]);
-         block.blockElementList.blockElementArray.forEach( (blockElement) => {
-           var blockElementFG = new FormGroup({
-			      id: new FormControl(blockElement.id),
-			      questionId: new FormControl(blockElement.questionId),
-				  stimulusId: new FormControl(blockElement.stimulusId),
-			      text: new FormControl(blockElement.text)
-		      });
-		   blockElementArrayFG.push(blockElementFG);
+      this.protocol.blockListArray.forEach( (blockList) => {
+         var blockElementListArrayFG=new FormArray([]);
+         blockList.block.blockElementListArray.forEach( (blockElementList) => {
+           var blockElementListFG = new FormGroup({
+			      id: new FormControl(blockElementList.id),
+			      blockElement: new FormGroup({
+			        id: new FormControl(blockElementList.blockElement.id),
+			        question: new FormGroup({
+			        	id: new FormControl(blockElementList.blockElement.question?.id),
+			        	question: new FormControl(blockElementList.blockElement.question?.question)
+			        }),
+			        stimulus: new FormGroup({
+			        	id: new FormControl(blockElementList.blockElement.stimulus?.id),
+			        	name: new FormControl(blockElementList.blockElement.stimulus?.name)
+			        })
+		        })
+		   });
+		   blockElementListArrayFG.push(blockElementListFG);
          });
           
-         var blockElementListFG = new FormGroup({
-         	id: new FormControl(block.blockElementList.id),
-         	blockElement: blockElementArrayFG
-          });
-          
-          var blockFG =  new FormGroup({
-			   id: new FormControl(block.id),
-			   blockName: new FormControl(block.blockName),
-			   blockElementList: blockElementListFG
-		  });
-		  
-		  blockArrayFG.push(blockFG);
-		  
+         var blockListFG =  new FormGroup({
+           id: new FormControl(blockList.id),
+           block: new FormGroup({
+			   id: new FormControl(blockList.block.id),
+			   blockName: new FormControl(blockList.block.blockName),
+			   blockElementListArray: blockElementListArrayFG
+			})
+		 });
+		 
+		 blockListArrayFG.push(blockListFG);
       });
       
       var protocolBlockFG = new FormGroup({
 	    id: new FormControl(this.protocol.id),
 	    protocolName: new FormControl(this.protocol.protocolName),
-	    blockArray:blockArrayFG
+	    blockListArray:blockListArrayFG
 	  });
 	  
 	  return protocolBlockFG;
-	   
-	  /*return new FormGroup({
-	    id: new FormControl(),
-	    protocolName: new FormControl(),
-	    blockArray: new FormArray([
-	      new FormGroup({
-	        id: new FormControl(),
-	        blockName: new FormControl(),
-	    	blockElementList: new FormGroup({
-		      id: new FormControl(),
-		      blockElementArray: new FormArray([
-		        new FormGroup({
-			      id: new FormControl(),
-			      questionId: new FormControl(),
-				  stimulusId: new FormControl(),
-			      text: new FormControl()
-		      })])
-		    })
-		 })])
-	  });*/
   }
   	
   addBlock() {
     console.log("addBlock");
-    var block:Block = {
-       id: this.blockForm.value.id,
-       blockName: this.blockForm.value.blockName,
-       blockElementList: {
-         id: this.blockForm.value.blockElementList.id,
-         blockElementArray: []
-       }
-	};
-
-    this.blocks.push(block);
+    
+    if (!this.myBlockControl.value)
+      return;
+    
+    const bl = this.blocks.filter(option => option.blockName.toLowerCase().indexOf(this.myBlockControl.value.toLowerCase()) === 0);
+    
+    var block:Block;
+    
+    if (!bl.length || bl.length>1) {
+	   block = {
+	       id: null,
+	       blockName: this.myBlockControl.value,
+	       blockElementListArray: []
+		};
+		
+	   this.blocks.push(block);
+	} else
+		block = bl[0];
+    
+    this.filteredOptions = this.myBlockControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    );
+    
+	this.addBlockElement(block);
   }
   
-  /*addBlockElement() {
+  blockElementListSelection (event){
+  	console.log("blockElementListSelection");
+  	
+  	this.blockElementListSelected = this.blockForm.controls.blockElementListArray.value[event.value-1];
+  }
+  
+  addBlockElement(block) {
     console.log("addBlockElement");
-    var blockElement:BlockElement = {
-       blockId: this.blockForm.value.id,
-       blockName: this.blockForm.value.blockName,
-       blockElementList: []
-	   }
-    };
-
-    this.blockElements.push(blockElement);
-  }*/
- 
-  removeBlockElement(event, index) {
+    
+    var blockElementListArrayFG;
+    var blockElementListFG=blockElementListFG = new FormGroup({
+      id: new FormControl(this.blockElementListSelected.id),
+      blockElement: new FormGroup({
+        id: new FormControl(this.blockElementListSelected.blockElement.id),
+        question: new FormGroup({
+        	id: new FormControl(this.blockElementListSelected.blockElement.question?.id),
+        	question: new FormControl(this.blockElementListSelected.blockElement.question?.question)
+        }),
+        stimulus: new FormGroup({
+        	id: new FormControl(this.blockElementListSelected.blockElement.stimulus?.id),
+        	name: new FormControl(this.blockElementListSelected.blockElement.stimulus?.name)
+        })
+      })
+    });
+    
+    var blockFG = (this.protocolBlockForm.controls.blockListArray as FormArray).controls.find(blockElementList => {return blockElementList.value.block.id === block.id});
+        
+    if (!(blockFG === undefined)) {
+        blockElementListArrayFG=((blockFG as FormGroup).controls.block as FormGroup).controls.blockElementListArray;
+        blockElementListArrayFG.push(blockElementListFG);
+    } else {
+    	blockElementListArrayFG=new FormArray([]);
+    	blockElementListArrayFG.push(blockElementListFG);
+    	var blockListFG =  new FormGroup({
+		   id: new FormControl(),
+		   block: new FormGroup({
+			   id: new FormControl(block.id),
+			   blockName: new FormControl(block.blockName),
+			   blockElementListArray: blockElementListArrayFG
+			})
+		 });
+		 
+	    (this.protocolBlockForm.controls.blockListArray as FormArray).push(blockListFG);
+    }
+  }
+  
+  removeBlock(iBlock:number) {
+    console.log("removeBlock");
+    (this.protocolBlockForm.controls.blockListArray as FormArray).removeAt(iBlock);
+  }
+  
+  removeBlockElement(iBlock, iBlockElement) {
     console.log("removeBlockElement");
-    this.blocks[1].blockElementList.blockElementArray.splice(index, 1);
+    ((((this.protocolBlockForm.controls.blockListArray as FormArray).controls[iBlock] as FormGroup).controls.block as FormGroup).controls.blockElementListArray as FormArray).removeAt(iBlockElement);
   }
 
   ngOnInit() {
-    this.filteredOptions = this.blockForm.controls.blockName.valueChanges.pipe(
+    this.filteredOptions = this.myBlockControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value))
     );
@@ -265,7 +438,7 @@ export class BlockProtocolComponent {
     console.log('filterValue ' + filterValue);
     const results = this.blocks.filter(option => option.blockName.toLowerCase().indexOf(filterValue) === 0);
     
-    if (!results.length && filterValue) this.notFound = 'No existe el bloque ' + filterValue + ', se creará uno nuevo.'
+    if ((!results.length && filterValue) || (results.length>1 && filterValue)) this.notFound = 'No existe el bloque ' + value + ', se creará uno nuevo.'
     else this.notFound = '';
     
     const blockNames = results.map(a => a.blockName);

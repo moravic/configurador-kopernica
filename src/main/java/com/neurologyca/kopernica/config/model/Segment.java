@@ -19,6 +19,10 @@ public class Segment {
 		this.valueProfile = valueProfile;
 	}
 
+	public Segment() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Integer getId() {
 		return id;
 	}

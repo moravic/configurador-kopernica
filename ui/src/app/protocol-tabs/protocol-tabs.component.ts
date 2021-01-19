@@ -13,10 +13,12 @@ export class ProtocolTabsComponent {
   addTab() {
     this.tabs.push('Protocolo ' + (this.tabs.length + 1));
 
-    this.selected.setValue(this.tabs.length - 2);
+	console.log("addTab");
+    this.selected.setValue(this.tabs.length - 1);
   }
 
   removeTab(index: number) {
     this.tabs.splice(index, 1);
   }
+  
 }

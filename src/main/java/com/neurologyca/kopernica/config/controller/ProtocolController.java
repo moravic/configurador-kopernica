@@ -19,14 +19,14 @@ public class ProtocolController {
     @Autowired
     private ProtocolRepository protocolRepository;
 
-	@GetMapping("/getProtocols/{project}")
-	public List<Protocol> getProtocols(@PathVariable String project) throws Exception {
+	@GetMapping("/getProtocols")
+	public List<Protocol> getProtocols() throws Exception {
 		return protocolRepository.getProtocols();
 	}
 	
     @PostMapping()
     public Integer saveProtocol(@RequestBody Protocol protocol) throws Exception {
-    	System.out.println("createProtocol");
+    	System.out.println("saveProtocol");
         return protocolRepository.saveProtocol(protocol);
     }
 

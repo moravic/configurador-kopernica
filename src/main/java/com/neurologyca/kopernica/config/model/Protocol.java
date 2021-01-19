@@ -1,17 +1,19 @@
 package com.neurologyca.kopernica.config.model;
 
+import java.util.List;
+
 public class Protocol {
 	private Integer id;
 	private String name;
-	private SegmentList segmentList;
-	private Integer blockList;
+	private List<SegmentList> segmentListArray;
+	private List<BlockList> blockListArray;
 
-	public Protocol(Integer id, String name, SegmentList segmentList, Integer blockList) {
+	public Protocol(Integer id, String name, List<SegmentList> segmentListArray, List<BlockList> blockListArray) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.segmentList = segmentList;
-		this.blockList = blockList;
+		this.segmentListArray = segmentListArray;
+		this.blockListArray = blockListArray;
 	}
 
 	public Protocol() {
@@ -34,26 +36,26 @@ public class Protocol {
 		this.name = name;
 	}
 
-	public SegmentList getSegmentList() {
-		return segmentList;
+	public List<SegmentList> getSegmentListArray() {
+		return segmentListArray;
 	}
 
-	public void setSegmentList(SegmentList segmentList) {
-		this.segmentList = segmentList;
+	public void setSegmentListArray(List<SegmentList> segmentListArray) {
+		this.segmentListArray = segmentListArray;
 	}
 
-	public Integer getBlockList() {
-		return blockList;
+	public List<BlockList> getBlockListArray() {
+		return blockListArray;
 	}
 
-	public void setBlockList(Integer blockList) {
-		this.blockList = blockList;
+	public void setBlockListArray(List<BlockList> blockListArray) {
+		this.blockListArray = blockListArray;
 	}
 
 	@Override
 	public String toString() {
-		return "Protocol [id=" + id + ", name=" + name + ", segmentList=" + segmentList + ", blockList="
-				+ blockList + "]";
+		return "Protocol [id=" + id + ", name=" + name + ", segmentListArray=" + segmentListArray + ", blockListArray=" + blockListArray
+				+ "]";
 	}
 
 }

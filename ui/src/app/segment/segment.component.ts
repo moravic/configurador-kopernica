@@ -11,16 +11,20 @@ export class SegmentComponent {
 
   constructor() {
     this.typeArray=[
-	    {
+       {
 	      id: 1,
-	      type: 'Edad'
+	      type: 'Todos'
 	    },
 	    {
 	      id: 2,
-	      type: 'Género'
+	      type: 'Edad'
 	    },
 	    {
 	      id: 3,
+	      type: 'Género'
+	    },
+	    {
+	      id: 4,
 	      type: 'Perfil'
 	    }
 	  ];
