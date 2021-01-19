@@ -18,6 +18,10 @@ public class Segment {
 		this.valueGender = valueGender;
 		this.valueProfile = valueProfile;
 	}
+	
+	public Segment() {
+		super();
+	}
 
 	public Segment() {
 		// TODO Auto-generated constructor stub
