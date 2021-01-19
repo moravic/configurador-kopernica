@@ -23,10 +23,6 @@ public class Segment {
 		super();
 	}
 
-	public Segment() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public Integer getId() {
 		return id;
 	}
