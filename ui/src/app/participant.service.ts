@@ -22,6 +22,10 @@ export class ParticipantService {
     return this.http.get(`${this.baseUrl}/getParticipants/${project}/${study}`);
   }
 
+  getProfiles(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getProfiles/`);
+  }
+  
   deleteParticipant(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/deleteParticipant/${id}`, { responseType: 'text' });
   }

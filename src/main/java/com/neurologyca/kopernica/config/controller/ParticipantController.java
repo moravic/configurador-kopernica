@@ -26,8 +26,8 @@ public class ParticipantController {
 		return participantRepository.getParticipantList();
 	}
     
-    @GetMapping("/getProfiles/{project}/{study}")
-	public List<Profile> getProfiles(@PathVariable String project, @PathVariable String study) throws Exception {
+    @GetMapping("/getProfiles")
+	public List<Profile> getProfiles() throws Exception {
 		return participantRepository.getProfiles();
 	}
     

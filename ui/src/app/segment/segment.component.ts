@@ -1,6 +1,9 @@
-import { Component, Input } from '@angular/core';
-import { Segment } from '../segment';
+import { Component, Input, OnChanges } from '@angular/core';
+import { SegmentList } from '../segmentList';
 import { FormGroup, FormControl } from '@angular/forms';
+import { Observable} from 'rxjs';
+import { ProtocolService } from '../protocol.service';
+import { ParticipantService } from '../participant.service';
 
 @Component({
   selector: 'segment',
@@ -9,7 +12,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class SegmentComponent {
 
-  constructor() {
+  constructor(private participantService:ParticipantService,
+              private protocolService:ProtocolService) {
     this.typeArray=[
        {
 	      id: 1,
@@ -40,55 +44,97 @@ export class SegmentComponent {
 	    }
 	  ];
 	  
-    this.profileArray=[
-	    {
-	      id: 1,
-	      type: 'Profile1'
-	    },
-	    {
-	      id: 2,
-	      type: 'Profile2'
-	    }
-	  ];
-	
+   	this.participantService.getProfiles()
+  		.subscribe(data => {
+          //console.log("getProfiles " + data);
+          this.profileArray = data;
+  		}, error =>  {
+  		this.error_str=error.error.message;});
+  		
     this.segmentForm = this.createFormGroup();
   }
   
   @Input()
-  segments:Segment[] = [];
+  segmentListArray:SegmentList[] = [];
+  @Input()
+  protocolId;
+  @Input()
+  protocolName;
   
   segmentForm: FormGroup;
   typeArray;
   genderArray;
   profileArray;
-    
+  error_str:string;
+   
+  ngOnChanges() {
+
+  }
+  
+  typeSelection (event){
+  	console.log("typeSelection");
+  	
+    this.segmentForm.controls.valueAgeMin.setValue(null);
+    this.segmentForm.controls.valueAgeMax.setValue(null);
+    this.segmentForm.controls.valueGender.setValue(null);
+    this.segmentForm.controls.valueProfile.setValue(null);
+	       
+  	this.participantService.getProfiles()
+  		.subscribe(data => {
+          //console.log("getProfiles " + data);
+          this.profileArray = data;
+  		}, error =>  {
+  		this.error_str=error.error.message;});
+  }
+  
   createFormGroup() {
 	  return new FormGroup({
 	    id: new FormControl(),
 	    type: new FormControl(),
-	    value_age_min: new FormControl(),
-	    value_age_max: new FormControl(),
-	    value_gender: new FormControl(),
-	    value_profile: new FormControl()
+	    valueAgeMin: new FormControl(),
+	    valueAgeMax: new FormControl(),
+	    valueGender: new FormControl(),
+	    valueProfile: new FormControl()
 	  });
   }
 
-  addSegment() {
-    console.log("addSegment");
-    var segment:Segment = {
-       id: 0,
-       type: this.segmentForm.value.type,
-       value_age_min: this.segmentForm.value.value_age_min,
-       value_age_max: this.segmentForm.value.value_age_max,
-       value_gender: this.segmentForm.value.value_gender,
-       value_profile: this.segmentForm.value.value_profile
-    }
-    this.segments.push(segment);
+  addSegmentList() {
+    console.log("addSegmentList");
+    var segmentList:SegmentList = {
+        id: null,
+	    segment: {
+	       id: null,
+	       type: this.typeArray[this.segmentForm.value.type-1].type,
+	       valueAgeMin: this.segmentForm.value.valueAgeMin,
+	       valueAgeMax: this.segmentForm.value.valueAgeMax,
+	       valueGender: this.segmentForm.value.valueGender,
+	       valueProfile: this.segmentForm.value.valueProfile
+	    }
+	};
+	
+    this.segmentListArray.push(segmentList);
+    
+    this.save();
   }
  
-  removeSegment(event, index) {
-    console.log("removeSegment");
-    this.segments.splice(index, 1);
+  removeSegmentList(event, index) {
+    console.log("removeSegmentList");
+    
+    if (this.segmentListArray.length==1)
+     return;
+     
+    this.segmentListArray.splice(index, 1);
+    
+    this.save();
+    
   }
-
+  
+  save(){
+  	console.log("saveSegmentList");
+  	
+  	this.protocolService.saveSegmentList(this.protocolId, this.protocolName, this.segmentListArray)
+      .subscribe(data => {
+        console.log("Save " + data); 
+    }); 
+  }
 }

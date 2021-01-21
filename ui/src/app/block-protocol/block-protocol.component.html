@@ -35,7 +35,7 @@
 		       <div formArrayName="blockListArray" *ngFor="let blockList of protocolBlockForm.controls.blockListArray?.value; let iBlock = index" >
           		    <hr style="height: 3px;">
           			<!--ng-container [formGroupName]="i"-->
-          			  <div class="divheader">{{blockList.block.blockName}}
+          			  <div class="divheader">{{blockList.block.name}}
           			     <button mat-icon-button (click)="removeBlock(iBlock)" color="black">
 					         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 					      </button>

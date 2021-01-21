@@ -1,18 +1,16 @@
 package com.neurologyca.kopernica.config.model;
 
-import java.util.List;
-
 public class SegmentList {
 	private Integer id;
-    private List<Segment> segmentArray;
+    private Segment segment;
 	
 	public SegmentList() {
 	}
 	
-	public SegmentList(Integer id, List<Segment> segmentArray) {
+	public SegmentList(Integer id, Segment segment) {
 		super();
 		this.id = id;
-		this.segmentArray = segmentArray;
+		this.segment = segment;
 	}
 
 	public Integer getId() {
@@ -23,17 +21,17 @@ public class SegmentList {
 		this.id = id;
 	}
 
-	public List<Segment> getSegmentArray() {
-		return segmentArray;
+	public Segment getSegment() {
+		return segment;
 	}
 
-	public void setSegmentArray(List<Segment> segmentArray) {
-		this.segmentArray = segmentArray;
+	public void setSegment(Segment segment) {
+		this.segment = segment;
 	}
 
 	@Override
 	public String toString() {
-		return "SegmentList [id=" + id + ", segmentArray=" + segmentArray + "]";
+		return "SegmentList [id=" + id + ", segment=" + segment + "]";
 	}
 
 }

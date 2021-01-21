@@ -3,7 +3,7 @@ import { SegmentList } from './segmentList';
 
 export class Protocol {
     id: number;
-    protocolName: string;
+    name: string;
     segmentListArray: SegmentList[];
 	blockListArray: BlockList[];
 }

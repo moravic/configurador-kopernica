@@ -4,12 +4,12 @@
     <div class="container">
     	<div class="row">
         	<div class="col">
-			    <segment></segment>
+			    <segment [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [segmentListArray]="protocols[index].segmentListArray"></segment>
 			</div>
 	     </div>
 		 <div class="row">
         	<div class="col">
-			    <block-protocol></block-protocol>
+			    <block-protocol [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [blockListArray]="protocols[index].blockListArray"></block-protocol>
 			</div>
 	     </div>
 	     <div class="row">

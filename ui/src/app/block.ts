@@ -2,6 +2,6 @@ import { BlockElementList } from './blockElementList';
 
 export class Block {
     id: number;
-	blockName: string;
+	name: string;
 	blockElementListArray: BlockElementList[];
 }

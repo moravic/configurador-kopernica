@@ -10,6 +10,8 @@ import { QuestionService } from './question.service';
 import { Question } from './question';
 import { StimulusService } from './stimulus.service';
 import { Stimulus } from './stimulus';
+import { ProtocolService } from './protocol.service';
+import { Protocol } from './protocol';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +34,7 @@ export class AppComponent implements OnInit{
   stimuli:Stimulus[]=[];
   addStudyDisabled=true;
   listComponentsDisabled=true;
+  protocols:Protocol[]=[];
   
   constructor(
     private appService: AppService,
@@ -39,6 +42,7 @@ export class AppComponent implements OnInit{
     private participantService:ParticipantService,
     private questionService:QuestionService,
     private stimulusService:StimulusService,
+    private protocolService:ProtocolService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ){
@@ -126,7 +130,7 @@ export class AppComponent implements OnInit{
      	this.addStudyDisabled=true;
      	if (!this.projectSelected || !this.studySelected) return;
      	this.appService.setProperties(this.projectSelected, this.studySelected).subscribe(data => {
-	     	console.log(data);
+	     	//console.log(data);
 	     	this.error_str="";
 	     	this.studyService.getTypeStudy(this.projectSelected, this.studySelected).subscribe(data => {
 	     	if (data){
@@ -143,14 +147,14 @@ export class AppComponent implements OnInit{
 		 	console.log("getParticipants");
          	this.participantService.getParticipants(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {
-	        		console.log(data);
+	        		//console.log(data);
 	        		this.participants = data;
 	      		}, error =>  {this.error_str=error.error.message; 
 	      					  this.participants.length=0;});
 	      	console.log("getQuestions");
          	this.questionService.getQuestions(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {
-	        		console.log(data);
+	        		//console.log(data);
 	        		this.questions = data;
 	      		}, error =>  {this.error_str=error.error.message; 
 	      					  this.questions.length=0;});
@@ -162,7 +166,7 @@ export class AppComponent implements OnInit{
 	      		}, error =>  {this.error_str=error.error.message; 
 	      				      this.stimuli.length=0;});		
 	     		
-	      		console.log("type: " + data);
+	      		//console.log("type: " + data);
 	     		}, error => {console.log(error);
 	        	this.typeSelected='1'; 
 		    	this.typeDisabled=false;
@@ -179,10 +183,17 @@ export class AppComponent implements OnInit{
 		  	this.participants.length=0;
 		  	this.questions.length=0;
 		  	this.questions.length=0;});
+		console.log("getProtocols");
+     	this.protocolService.getProtocols()
+      		.subscribe(data => {
+        		//console.log(data);
+        		this.protocols = data;
+      		}, error =>  {this.error_str=error.error.message; 
+      					  this.protocols.length=0;});
    	  }
    }
    
-    shareChangeType(itemSelected:string){
+   shareChangeType(itemSelected:string){
         console.log("changeType " + itemSelected);	 
         this.typeSelected = itemSelected;   
    }

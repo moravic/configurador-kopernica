@@ -8,7 +8,7 @@
 	   		<ng-container>
 			    <mat-form-field appearance="fill" style="padding-left: 15px;">
 				  <mat-label>Elige...</mat-label>
-				  <mat-select formControlName="type">
+				  <mat-select formControlName="type" (selectionChange)="typeSelection($event)">
 				    <mat-option *ngFor="let type of typeArray;" [value]="type.id">
 				        {{type.type}}
 				     </mat-option>
@@ -18,18 +18,18 @@
 			<ng-container *ngIf="segmentForm.value.type===2">
 				<mat-form-field  appearance="fill">
 				   <mat-label>Edad Mínima</mat-label>
-		    	   <input matInput placeholder="Edad Mínima" formControlName="value_age_min">
+		    	   <input matInput placeholder="Edad Mínima" formControlName="valueAgeMin">
 				</mat-form-field>
 				<mat-form-field  appearance="fill">
 				   <mat-label>Edad Máxima</mat-label>
-				   <input matInput placeholder="Edad Máxima" formControlName="value_age_max">
+				   <input matInput placeholder="Edad Máxima" formControlName="valueAgeMax">
 				</mat-form-field>
 			</ng-container>
 			<ng-container *ngIf="segmentForm.value.type===3">
 				<mat-form-field  appearance="fill">
 				  <mat-label>Elige...</mat-label>
-				  <mat-select formControlName="value_gender">
-				    <mat-option *ngFor="let gender of genderArray;" [value]="gender.id">
+				  <mat-select formControlName="valueGender">
+				    <mat-option *ngFor="let gender of genderArray;" [value]="gender.type">
 				        {{gender.type}}
 				    </mat-option>
 				  </mat-select>
@@ -38,27 +38,28 @@
 			<ng-container *ngIf="segmentForm.value.type===4">
 				<mat-form-field  appearance="fill">
 				  <mat-label>Elige...</mat-label>
-				  <mat-select formControlName="value_profile">
-				    <mat-option *ngFor="let profile of profileArray;" [value]="profile.id">
+				  <mat-select formControlName="valueProfile">
+				    <mat-option *ngFor="let profile of profileArray;" [value]="profile.type">
 				        {{profile.type}}
 				    </mat-option>
 				  </mat-select>
 				</mat-form-field>
 			</ng-container>
-			<ng-container *ngIf="(segmentForm.value.type===4 && segmentForm.value.value_profile) || (segmentForm.value.type===3 && segmentForm.value.value_gender) || (segmentForm.value.type===2 && segmentForm.value.value_age_min && segmentForm.value.value_age_max)">
-			  <button mat-icon-button (click)="addSegment()" color="black">
+			<ng-container *ngIf="(segmentForm.value.type===1) || (segmentForm.value.type===4 && segmentForm.value.valueProfile) || (segmentForm.value.type===3 && segmentForm.value.valueGender) || (segmentForm.value.type===2 && segmentForm.value.valueAgeMin && segmentForm.value.valueAgeMax)">
+			  <button mat-icon-button (click)="addSegmentList()" color="black">
 		         <mat-icon svgIcon="add-new"></mat-icon>
 		      </button>
 		    </ng-container>
  		</form>
 		<mat-list>
-		 <mat-list-item *ngFor="let segment of segments; let i = index">
-		     <div class="example-label" *ngIf="segment.type===2"><strong>Edad:</strong> desde {{segment.value_age_min}} a {{segment.value_age_max}} años</div>
-		     <div class="example-label" *ngIf="segment.type===3"><strong>Género:</strong> {{genderArray[segment.value_gender-1].type}}</div>
-		     <div class="example-label" *ngIf="segment.type===4"><strong>Perfil:</strong> {{profileArray[segment.value_profile-1].type}}</div>
+		 <mat-list-item *ngFor="let segmentList of segmentListArray; let i = index">
+		     <div class="example-label" *ngIf="segmentList.segment.type==='Todos'"><strong>Todos</strong></div>
+		     <div class="example-label" *ngIf="segmentList.segment.type==='Edad'"><strong>Edad:</strong> desde {{segmentList.segment.valueAgeMin}} a {{segmentList.segment.valueAgeMax}} años</div>
+		     <div class="example-label" *ngIf="segmentList.segment.type==='Género'"><strong>Género:</strong> {{segmentList.segment.valueGender}}</div>
+		     <div class="example-label" *ngIf="segmentList.segment.type==='Perfil'"><strong>Perfil:</strong> {{segmentList.segment.valueProfile}}</div>
 		     <mat-action-list>
 		       <div>
-			      <button mat-icon-button (click)="removeSegment($event, i)" color="black">
+			      <button mat-icon-button (click)="removeSegmentList($event, i)" color="black">
 			         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 			      </button>
 			   </div>
