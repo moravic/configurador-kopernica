@@ -32,8 +32,18 @@ export class ProtocolTabsComponent {
   }
   
   addTab() {
+  
+    var protocol:Protocol = {
+	    id: this.protocols.length + 1,
+	    name: 'Protocolo ' + (this.protocols.length + 1),
+	    segmentListArray: [],
+		blockListArray: []
+    }
+    
     this.tabs.push('Protocolo ' + (this.tabs.length + 1));
-
+        
+    this.protocols.push(protocol);
+    
 	console.log("addTab");
     this.selected.setValue(this.tabs.length - 1);
   }

@@ -35,7 +35,7 @@ public class ProtocolRepository {
 	@Value("${base.path}")
 	private String basePath;
 
-	private void createProtocolTables(Connection conn) throws Exception {
+	private void createProtocolTables() throws Exception {
 		String create_SEGMENTS = "CREATE TABLE IF NOT EXISTS segments (id INTEGER PRIMARY KEY, type TEXT NOT NULL, value_age_min INTEGER NULL, value_age_max INTEGER NULL, value_gender TEXT NULL, value_profile TEXT NULL)";
 		String create_SEGMENT_LIST = "CREATE TABLE IF NOT EXISTS segment_list (id INTEGER, segment_id INTEGER NOT NULL, protocol_id INTEGER NOT NULL, FOREIGN KEY(segment_id) REFERENCES segments(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id), PRIMARY KEY(id))";
 		String create_BLOCKELEMENT = "CREATE TABLE IF NOT EXISTS blockelement (id INTEGER PRIMARY KEY, question_id INTEGER NULL, stimulus_id INTEGER NULL, FOREIGN KEY(stimulus_id) REFERENCES stimulus(id), FOREIGN KEY(question_id) REFERENCES questions(id))";
@@ -68,7 +68,8 @@ left join stimulus s on (s.id=be.stimulus_id)
 order by pr.id, p.id, b.id, no_order
 
 		 */
-		try {
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			
 			Statement stmt = conn.createStatement();
 			stmt.execute(create_PARTICIPANT_PROTOCOL_ORDER);
 			stmt.execute(create_PARTICIPANT_PROTOCOL);
@@ -248,16 +249,27 @@ order by pr.id, p.id, b.id, no_order
 
 	public List<BlockElementList> getBlockElementsList() throws Exception {
 		
-		String getBlockElement = "SELECT bel.id blockElementList_id, "
-				+ "be.id blockElement_id, "
-				+ "be.question_id, "
-				+ "be.stimulus_id, "
+		String getBlockElement = "SELECT row_number() over (order by stimulus_id, question_id) blockElementList_id, "
+				+ "blockElement_id, "
+				+ "question_id, "
+				+ "stimulus_id, "
+				+ "question, "
+				+ "stimulus "
+				+ "FROM (SELECT null blockElementList_id, "
+				+ "null blockElement_id, "
+				+ "q.id question_id, "
+				+ "null stimulus_id, "
 				+ "q.question, "
+				+ "null stimulus "
+				+ "FROM questions q "
+				+ "union all "
+				+ "SELECT null blockElementList_id, "
+				+ "null blockElement_id, "
+				+ "null question_id, "
+				+ "s.id stimulus_id, "
+				+ "null question, "
 				+ "s.name stimulus "
-				+ "FROM blockelement_list bel "
-				+ "join blockelement be on (be.id=bel.blockElement_id) "
-				+ "left join questions q on (q.id=be.question_id) "
-				+ "left join stimulus s on (s.id=be.stimulus_id) "
+				+ "FROM stimulus s) "
 				+ "order by stimulus_id, question_id";
 		
 		if (AppController.fullDatabaseUrl == null) {
@@ -394,51 +406,116 @@ order by pr.id, p.id, b.id, no_order
 		}
 
 	}
-    private Integer selectMaxSegmentListId(Connection conn) throws Exception {
-     	 String selectMaxIdSql = "SELECT MAX(id) id FROM SEGMENT_LIST";
-     	 ResultSet rs;
-     	 
-          try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
-          	Statement stmt = conn.createStatement();
-          	rs = stmt.executeQuery(selectMaxIdSql);
-          } catch (SQLException e) {
-         	 throw new Exception(e.getMessage());
-          }
-          return rs.getInt("id");
+    
+	private Integer selectMaxSegmentListId() throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM SEGMENT_LIST";
+		ResultSet rs;
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+
+			try (Statement stmt = conn.createStatement()) {
+				rs = stmt.executeQuery(selectMaxIdSql);
+				
+				int id = rs.getInt("id");
+				
+				conn.close();
+				
+				return id;
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
     }
     
-    private Integer selectMaxBlockListId(Connection conn) throws Exception {
-    	 String selectMaxIdSql = "SELECT MAX(id) id FROM BLOCK_LIST";
-    	 ResultSet rs;
-    	 
-         try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
-         	Statement stmt = conn.createStatement();
-         	rs = stmt.executeQuery(selectMaxIdSql);
-         } catch (SQLException e) {
-        	 throw new Exception(e.getMessage());
-         }
-         return rs.getInt("id");
+	private Integer selectMaxSegmentId() throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM SEGMENTS";
+		ResultSet rs;
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+
+			try (Statement stmt = conn.createStatement()) {
+				rs = stmt.executeQuery(selectMaxIdSql);
+				
+				int id = rs.getInt("id");
+				
+				conn.close();
+				
+				return id;
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+    }
+    private Integer selectMaxBlockListId() throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM BLOCK_LIST";
+		ResultSet rs;
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+
+			try (Statement stmt = conn.createStatement()){
+				rs = stmt.executeQuery(selectMaxIdSql);
+				
+				int id = rs.getInt("id");
+				
+				conn.close();
+				
+				return id;
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
     }
     
-    private Integer selectMaxBlockElementListId(Connection conn) throws Exception {
-   	 String selectMaxIdSql = "SELECT MAX(id) id FROM BLOCKELEMENT_LIST";
-   	 ResultSet rs;
-   	 
-        try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
-        	Statement stmt = conn.createStatement();
-        	rs = stmt.executeQuery(selectMaxIdSql);
-        } catch (SQLException e) {
-       	 throw new Exception(e.getMessage());
-        }
-        return rs.getInt("id");
+    private Integer selectMaxBlockId() throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM BLOCKS";
+		ResultSet rs;
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+
+			try (Statement stmt = conn.createStatement()) {
+				rs = stmt.executeQuery(selectMaxIdSql);
+				
+				int id = rs.getInt("id");
+				
+				conn.close();
+				
+				return id;
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+
    }
     
-    public void deleteSegments(Integer protocolId) throws Exception{
-		String deleteAllSegmentsSql = "DELETE FROM SEGMENTS WHERE ID IN (SELECT SEGMENT_ID FROM SEGMENT_LIST WHERE protocol_id = ?)";
+    private Integer selectMaxBlockElementListId() throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM BLOCKELEMENT_LIST";
+		ResultSet rs;
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+
+			try (Statement stmt = conn.createStatement()) {
+				rs = stmt.executeQuery(selectMaxIdSql);
+				
+				return rs.getInt("id");
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+			
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+   }
+    
+    public void deleteSegments(Integer protocolId, Integer segmentId) throws Exception{
+		String deleteAllSegmentsSql = "DELETE FROM SEGMENTS WHERE ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
+
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
             if (conn != null) {
             	// Si no existe se crea la bbdd
@@ -448,18 +525,17 @@ order by pr.id, p.id, b.id, no_order
             }
             
             PreparedStatement pstmt = conn.prepareStatement(deleteAllSegmentsSql);
-            pstmt.setInt(1, protocolId);
-			
+            pstmt.setInt(1, segmentId);
+            
             pstmt.executeUpdate();
-
+            conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
-        }
-		
+        } 
 	}
 	
-	public void deleteSegmentList(Integer protocolId) throws Exception{
-		String deleteAllSegmentListSql = "DELETE FROM SEGMENT_LIST WHERE protocol_id = ?";
+	public void deleteSegmentList(Integer protocolId, Integer segmentListId) throws Exception{
+		String deleteAllSegmentListSql = "DELETE FROM SEGMENT_LIST WHERE protocol_id = ? and ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -474,9 +550,11 @@ order by pr.id, p.id, b.id, no_order
             
             PreparedStatement pstmt = conn.prepareStatement(deleteAllSegmentListSql);
             pstmt.setInt(1, protocolId);
+            pstmt.setInt(2, segmentListId);
 			
             pstmt.executeUpdate();
 
+            conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
@@ -484,7 +562,7 @@ order by pr.id, p.id, b.id, no_order
 	}
 	
 	public void deleteBlockElement(Integer blockId) throws Exception{
-		String deleteAllBlockElementSql = "DELETE FROM BLOCK_ELEMENT WHERE ID IN (SELECT BLOCKELEMENT_ID FROM BLOCKELEMENT_LIST WHERE block_id = ?)";
+		String deleteAllBlockElementSql = "DELETE FROM BLOCKELEMENT WHERE ID IN (SELECT BLOCKELEMENT_ID FROM BLOCKELEMENT_LIST WHERE block_id = ?)";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -501,7 +579,32 @@ order by pr.id, p.id, b.id, no_order
             pstmt.setInt(1, blockId);
 			
             pstmt.executeUpdate();
-
+            conn.close();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
+	public void deleteBlockElementId(Integer blockElementId) throws Exception{
+		String deleteAllBlockElementSql = "DELETE FROM BLOCKELEMENT WHERE ID = ?";
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementSql);
+            pstmt.setInt(1, blockElementId);
+			
+            pstmt.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
@@ -527,14 +630,40 @@ order by pr.id, p.id, b.id, no_order
 			
             pstmt.executeUpdate();
 
+            conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
 		
 	}
 	
+	public void deleteBlockElementListId(Integer blockElementListId) throws Exception{
+		String deleteAllBlockElementListSql = "DELETE FROM BLOCKELEMENT_LIST WHERE ID = ?";
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementListSql);
+            pstmt.setInt(1, blockElementListId);
+			
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
 	public void deleteBlock(Integer blockId) throws Exception{
-		String deleteBlockSql = "DELETE FROM BLOCKS WHERE ID IN (SELECT BLOCK_ID FROM BLOCK_LIST WHERE block_id = ?)";
+		String deleteBlockSql = "DELETE FROM BLOCKS WHERE ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -551,7 +680,7 @@ order by pr.id, p.id, b.id, no_order
             pstmt.setInt(1, blockId);
 			
             pstmt.executeUpdate();
-
+            conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
@@ -576,14 +705,14 @@ order by pr.id, p.id, b.id, no_order
             pstmt.setInt(1, blockId);
 			
             pstmt.executeUpdate();
-
+            conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
 		
 	}
 	
-	public void saveSegmentList(Integer protocolId, String protocolName, List<SegmentList> segmentListArray) throws Exception {
+	public SegmentList saveSegmentList(Integer protocolId, String protocolName, SegmentList segmentList) throws Exception {
 
 		String insertProtocolSql = "INSERT OR REPLACE INTO PROTOCOLS (id, name) "
 				+ "VALUES(?,?)";
@@ -597,6 +726,8 @@ order by pr.id, p.id, b.id, no_order
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
+		
+		createProtocolTables();
 
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
@@ -606,55 +737,99 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("A new database has been created.");
 			}
 
-			createProtocolTables(conn);
-
 			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
-				
+
 				pstmt.setInt(1, protocolId);
 				pstmt.setString(2, protocolName);
 
 				pstmt.executeUpdate();
-				
-				deleteSegments(protocolId);
-				deleteSegmentList(protocolId);
-				
-				int index=selectMaxSegmentListId(conn)+1;
-				for (SegmentList segmentlist : segmentListArray) {
-					try (PreparedStatement pstmtSegment = conn.prepareStatement(insertSegmentsSql)) {
-						
-						Segment segment = segmentlist.getSegment();
-						
-						pstmtSegment.setInt(1, index);
-						pstmtSegment.setString(2, segment.getType());
-						pstmtSegment.setObject(3, segment.getValueAgeMin(), java.sql.Types.INTEGER);
-						pstmtSegment.setObject(4, segment.getValueAgeMax(), java.sql.Types.INTEGER);
-						pstmtSegment.setString(5, segment.getValueGender());
-						pstmtSegment.setString(6, segment.getValueProfile());
-						
-						pstmtSegment.executeUpdate();
-						
-					} catch (SQLException e) {
-						throw new Exception(e.getMessage());
-					}
-					
-					try (PreparedStatement pstmtSegmentlist = conn.prepareStatement(insertSegmentListSql)) {
-						pstmtSegmentlist.setInt(1, index);
-						pstmtSegmentlist.setInt(2, index++);
-						pstmtSegmentlist.setInt(3, protocolId);
-						
-						pstmtSegmentlist.executeUpdate();
-					} catch (SQLException e) {
-						throw new Exception(e.getMessage());
-					}
-				
+
+				int segmentId;
+				int segmentListId;
+				try {
+					Connection connSegment = DriverManager.getConnection(AppController.fullDatabaseUrl);
+					PreparedStatement pstmtSegment = connSegment.prepareStatement(insertSegmentsSql);
+
+					Segment segment = segmentList.getSegment();
+
+					if (segment.getId() == null) {
+						segmentId = selectMaxSegmentId() + 1;
+						segment.setId(segmentId);
+					} else
+						segmentId = segment.getId();
+
+					pstmtSegment.setInt(1, segmentId);
+					pstmtSegment.setString(2, segment.getType());
+					pstmtSegment.setObject(3, segment.getValueAgeMin(), java.sql.Types.INTEGER);
+					pstmtSegment.setObject(4, segment.getValueAgeMax(), java.sql.Types.INTEGER);
+					pstmtSegment.setString(5, segment.getValueGender());
+					pstmtSegment.setString(6, segment.getValueProfile());
+
+					pstmtSegment.executeUpdate();
+
+				} catch (SQLException e) {
+					throw new Exception(e.getMessage());
 				}
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
+				try {
+					Connection connSegmentList = DriverManager.getConnection(AppController.fullDatabaseUrl);
+					PreparedStatement pstmtSegmentlist = connSegmentList.prepareStatement(insertSegmentListSql);
+					if (segmentList.getId() == null) {
+						segmentListId = selectMaxSegmentListId() + 1;
+						segmentList.setId(segmentListId);
+					}
+
+					pstmtSegmentlist.setInt(1, segmentList.getId());
+					pstmtSegmentlist.setInt(2, segmentId);
+					pstmtSegmentlist.setInt(3, protocolId);
+
+					pstmtSegmentlist.executeUpdate();
+
+				} catch (SQLException e) {
+					throw new Exception(e.getMessage());
+				}
+				return segmentList;
 			}
 		}
 	}
 	
-	public void blockSegmentList(Integer protocolId, String protocolName, BlockList blockList) throws Exception {
+	public void deleteSegmentList(Integer protocolId, String protocolName, Integer segmentListId, Integer segmentId) throws Exception {
+		
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		
+		createProtocolTables();
+		
+		deleteSegmentList(protocolId, segmentListId);
+		deleteSegments(protocolId, segmentId);				
+	}
+	
+	public void deleteBlockList(Integer protocolId, String protocolName, Integer blockListId, Integer blockId) throws Exception {
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		
+		createProtocolTables();
+		
+		deleteBlockElement(blockId);
+		deleteBlockElementList(blockId);
+		deleteBlockList(blockListId);	
+		deleteBlock(blockId);
+
+	}
+	
+	public void deleteBlockElementList(Integer protocolId, String protocolName, Integer blockElementListId, Integer blockElementId) throws Exception {
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		
+		createProtocolTables();
+		
+		deleteBlockElementListId(blockElementListId);
+		deleteBlockElementId(blockElementId);
+	}
+	
+	public BlockList saveblockList(Integer protocolId, String protocolName, BlockList blockList) throws Exception {
 
 		String insertProtocolSql = "INSERT OR REPLACE INTO PROTOCOLS (id, name) "
 				+ "VALUES(?,?)";
@@ -662,19 +837,21 @@ order by pr.id, p.id, b.id, no_order
 		String insertBlockListSql = "INSERT OR REPLACE INTO BLOCK_LIST(id, block_id, protocol_id) "
 				+ "VALUES(?,?,?)";
 		
-		String insertBlocksSql = "INSERT OR REPLACE INTO BLOCKS(id, name) "
+		String insertBlocksSql = "INSERT OR REPLACE INTO BLOCKS(id, block_name) "
 				+ "VALUES(?,?)";
 		
 		String insertBlockElementListSql = "INSERT OR REPLACE INTO BLOCKELEMENT_LIST(id, block_id, blockElement_id) "
 				+ "VALUES(?,?,?)";
 		
-		String insertBlockElementSql = "INSERT OR REPLACE INTO BLOCK_ELEMENT(id, question_id, stimulus_id) "
+		String insertBlockElementSql = "INSERT OR REPLACE INTO BLOCKELEMENT(id, question_id, stimulus_id) "
 				+ "VALUES(?,?,?)";
 		
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
 
+		createProtocolTables();
+		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
@@ -683,77 +860,105 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("A new database has been created.");
 			}
 
-			createProtocolTables(conn);
-
 			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
 				
 				pstmt.setInt(1, protocolId);
 				pstmt.setString(2, protocolName);
 
 				pstmt.executeUpdate();
-
 				
-				int index=selectMaxBlockListId(conn)+1;
-
-				deleteBlockElement(blockList.getBlock().getId());
-				deleteBlockElementList(blockList.getBlock().getId());
-				deleteBlock(blockList.getBlock().getId());
-				deleteBlockList(blockList.getBlock().getId());
+				if (blockList.getBlock().getBlockElementListArray()==null || blockList.getBlock().getBlockElementListArray().size()==0)
+					return blockList;
 				
-				try (PreparedStatement pstmtBlock = conn.prepareStatement(insertBlocksSql)) {
+				int index;
+				int indexBlock;
+				if (blockList.getId()==null) {
+				   index=selectMaxBlockListId()+1;
+				   indexBlock=selectMaxBlockId()+1;
+				}else  {
+					index=blockList.getId();
+					indexBlock=blockList.getBlock().getId();
+				};
+				
+				try ( Connection connBlock = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+					
+					try (PreparedStatement pstmtBlock = connBlock.prepareStatement(insertBlocksSql)) {
 					
 					Block block = blockList.getBlock();
 					
-					pstmtBlock.setInt(1, index);
+					blockList.getBlock().setId(indexBlock);
+					pstmtBlock.setInt(1, indexBlock);
 					pstmtBlock.setString(2, block.getName());
 					
 					pstmtBlock.executeUpdate();
 					
+					} catch (SQLException e) {
+						throw new Exception(e.getMessage());
+					}
 				} catch (SQLException e) {
 					throw new Exception(e.getMessage());
 				}
 				
-				try (PreparedStatement pstmtBlocklist = conn.prepareStatement(insertBlockListSql)) {
-					pstmtBlocklist.setInt(1, index);
-					pstmtBlocklist.setInt(2, index);
-					pstmtBlocklist.setInt(3, protocolId);
+				try ( Connection connBlockList = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 					
-					pstmtBlocklist.executeUpdate();
+					try (PreparedStatement pstmtBlocklist = connBlockList.prepareStatement(insertBlockListSql)) {
+						blockList.setId(index);
+						pstmtBlocklist.setInt(1, index);
+						pstmtBlocklist.setInt(2, indexBlock);
+						pstmtBlocklist.setInt(3, protocolId);
+						
+						pstmtBlocklist.executeUpdate();
+					} catch (SQLException e) {
+						throw new Exception(e.getMessage());
+					}
 				} catch (SQLException e) {
 					throw new Exception(e.getMessage());
 				}
 				
-				int indexBlockElement=selectMaxBlockElementListId(conn)+1;
+				int indexBlockElement=selectMaxBlockElementListId()+1;
 				for (BlockElementList blockElementlist : blockList.getBlock().getBlockElementListArray()) {
-					try (PreparedStatement pstmtBlockElement = conn.prepareStatement(insertBlockElementSql)) {
+					try ( Connection connBlockElement = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 						
-						BlockElement blockElement = blockElementlist.getBlockElement();
-						
-						pstmtBlockElement.setInt(1, indexBlockElement);
-						pstmtBlockElement.setObject(2, blockElement.getQuestion().getId(), java.sql.Types.INTEGER);
-						pstmtBlockElement.setObject(3, blockElement.getQuestion().getId(), java.sql.Types.INTEGER);
-						
-						pstmtBlockElement.executeUpdate();
-						
+						try (PreparedStatement pstmtBlockElement = connBlockElement.prepareStatement(insertBlockElementSql)) {
+							
+							BlockElement blockElement = blockElementlist.getBlockElement();
+							
+							blockElementlist.setId(indexBlockElement);
+							blockElement.setId(indexBlockElement);
+							pstmtBlockElement.setInt(1, indexBlockElement);
+							pstmtBlockElement.setObject(2, blockElement.getQuestion().getId(), java.sql.Types.INTEGER);
+							pstmtBlockElement.setObject(3, blockElement.getStimulus().getId(), java.sql.Types.INTEGER);
+							
+							pstmtBlockElement.executeUpdate();
+							
+						} catch (SQLException e) {
+							throw new Exception(e.getMessage());
+						}
 					} catch (SQLException e) {
 						throw new Exception(e.getMessage());
 					}
 					
-					try (PreparedStatement pstmtBlockElementlist = conn.prepareStatement(insertBlockElementListSql)) {
-						pstmtBlockElementlist.setInt(1, indexBlockElement++);
-						pstmtBlockElementlist.setInt(2, blockList.getBlock().getId());
-						pstmtBlockElementlist.setInt(3, protocolId);
+					try ( Connection connBlockElementList = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 						
-						pstmtBlockElementlist.executeUpdate();
+						try (PreparedStatement pstmtBlockElementlist = connBlockElementList.prepareStatement(insertBlockElementListSql)) {
+							pstmtBlockElementlist.setInt(1, indexBlockElement);
+							pstmtBlockElementlist.setInt(2, indexBlock);
+							pstmtBlockElementlist.setInt(3, indexBlockElement);
+							
+							pstmtBlockElementlist.executeUpdate();
+						} catch (SQLException e) {
+							throw new Exception(e.getMessage());
+						}
 					} catch (SQLException e) {
 						throw new Exception(e.getMessage());
 					}
-				
 				}
 				
 			} catch (SQLException e) {
 				throw new Exception(e.getMessage());
-			}
+			} 
+			
+			return blockList;
 		}
 	}
 }

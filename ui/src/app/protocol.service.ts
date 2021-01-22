@@ -28,9 +28,21 @@ export class ProtocolService {
     return this.http.put(`${this.baseUrl}/saveSegmentList/${protocolId}/${protocolName}`, segmentListArray);
   }
   
+  deleteSegmentList(protocolId, protocolName, segmentListId, segmentId): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/deleteSegmentList/${protocolId}/${protocolName}/${segmentListId}/${segmentId}`);
+  }
+  
   saveBlockList(protocolId, protocolName, blockList): Observable<any> {
     console.log(blockList);
-    return this.http.put(`${this.baseUrl}/saveSegmentList/${protocolId}/${protocolName}`, blockList);
+    return this.http.put(`${this.baseUrl}/saveBlockList/${protocolId}/${protocolName}`, blockList);
+  }
+  
+  deleteBlockList(protocolId, protocolName, blockListId, blockId): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/deleteBlockList/${protocolId}/${protocolName}/${blockListId}/${blockId}`);
+  }
+  
+  deleteBlockElementList(protocolId, protocolName, blockElementListId, blockElementId): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/deleteBlockElementList/${protocolId}/${protocolName}/${blockElementListId}/${blockElementId}`);
   }
   
 }

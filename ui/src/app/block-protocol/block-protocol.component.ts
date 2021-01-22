@@ -49,7 +49,10 @@ export class BlockProtocolComponent {
   
   ngOnChanges() {
      console.log("ngOnChanges");
-     
+     this.update(true);
+  }
+  
+  update(withForms) {
      this.protocolService.getBlockElementsList()
   		.subscribe(data => {
           //console.log("getBlockElementsList " + data);
@@ -61,12 +64,13 @@ export class BlockProtocolComponent {
 	          this.blocks = data;
 	  		}, error =>  {
 	  		this.error_str=error.error.message;});
-
-           this.blockForm = this.createBlockFormGroup();
-           this.protocolBlockForm = this.createProtocolBlockFormGroup();
+           
+           if (withForms){
+         	  this.blockForm = this.createBlockFormGroup();
+         	  this.protocolBlockForm = this.createProtocolBlockFormGroup();
+  		   }
   	}, error =>  {this.error_str=error.error.message;});
   }
-  
   
   createBlockFormGroup() {
 	  
@@ -153,7 +157,7 @@ export class BlockProtocolComponent {
     
     var block:Block;
     
-    if (!bl.length || bl.length>1) {
+    if (!bl.length) {
 	   block = {
 	       id: null,
 	       name: this.myBlockControl.value,
@@ -176,7 +180,7 @@ export class BlockProtocolComponent {
   blockElementListSelection (event){
   	console.log("blockElementListSelection");
   	
-  	this.blockElementListSelected = this.blockForm.controls.blockElementListArray.value[event.value-1];
+  	this.blockElementListSelected = this.blockForm.controls.blockElementListArray.value[event.value];
   }
   
   addBlockElement(block) {
@@ -184,9 +188,9 @@ export class BlockProtocolComponent {
     
     var blockElementListArrayFG;
     var blockElementListFG=blockElementListFG = new FormGroup({
-      id: new FormControl(this.blockElementListSelected.id),
+      id: new FormControl(),
       blockElement: new FormGroup({
-        id: new FormControl(this.blockElementListSelected.blockElement.id),
+        id: new FormControl(),
         question: new FormGroup({
         	id: new FormControl(this.blockElementListSelected.blockElement.question?.id),
         	question: new FormControl(this.blockElementListSelected.blockElement.question?.question)
@@ -198,15 +202,15 @@ export class BlockProtocolComponent {
       })
     });
     
-    var blockFG = (this.protocolBlockForm.controls.blockListArray as FormArray).controls.find(blockElementList => {return blockElementList.value.block.id === block.id});
+    var blockListFG = (this.protocolBlockForm.controls.blockListArray as FormArray).controls.find(blockList => {return blockList.value.block.id === block.id});
         
-    if (!(blockFG === undefined)) {
-        blockElementListArrayFG=((blockFG as FormGroup).controls.block as FormGroup).controls.blockElementListArray;
+    if (!(blockListFG === undefined)) {
+        blockElementListArrayFG=((blockListFG as FormGroup).controls.block as FormGroup).controls.blockElementListArray;
         blockElementListArrayFG.push(blockElementListFG);
     } else {
     	blockElementListArrayFG=new FormArray([]);
     	blockElementListArrayFG.push(blockElementListFG);
-    	var blockListFG =  new FormGroup({
+    	blockListFG =  new FormGroup({
 		   id: new FormControl(),
 		   block: new FormGroup({
 			   id: new FormControl(block.id),
@@ -218,17 +222,53 @@ export class BlockProtocolComponent {
 	    (this.protocolBlockForm.controls.blockListArray as FormArray).push(blockListFG);
     }
     
-    this.save(blockListFG.value);
+    this.protocolService.saveBlockList(this.protocolId, this.protocolName, blockListFG.value)
+      .subscribe(data => {
+        var blockList = data;
+        blockListFG = (this.protocolBlockForm.controls.blockListArray as FormArray).controls.find(blockElementList => {return blockElementList.value.block.id === block.id});
+        (blockListFG as FormGroup).controls.id.setValue(blockList.id);
+        ((blockListFG as FormGroup).controls.block as FormGroup).controls.id.setValue(blockList.block.id);
+        blockElementListArrayFG = ((blockListFG as FormGroup).controls.block as FormGroup).controls.blockElementListArray;
+        var last = blockElementListArrayFG.controls[blockElementListArrayFG.length - 1];
+        last.controls.id.setValue(blockList.block.blockElementListArray[blockList.block.blockElementListArray.length-1].id);
+        last.controls.blockElement.controls.id.setValue(blockList.block.blockElementListArray[blockList.block.blockElementListArray.length-1].blockElement.id);
+        this.update(false);
+        console.log("Save " + data); 
+    });
+    
   }
   
   removeBlock(iBlock:number) {
-    console.log("removeBlock");
+   
+   console.log("removeBlock");
+   const blockListId = this.protocolBlockForm.value.blockListArray[iBlock].id;
+   const blockId = this.protocolBlockForm.value.blockListArray[iBlock].block.id;
+   this.protocolService.deleteBlockList(this.protocolId, this.protocolName, blockListId, blockId)
+      .subscribe(data => {
+        this.update(false);
+        console.log("Save " + data); 
+    });
+    
     (this.protocolBlockForm.controls.blockListArray as FormArray).removeAt(iBlock);
+    
   }
   
   removeBlockElement(iBlock, iBlockElement) {
     console.log("removeBlockElement");
-    ((((this.protocolBlockForm.controls.blockListArray as FormArray).controls[iBlock] as FormGroup).controls.block as FormGroup).controls.blockElementListArray as FormArray).removeAt(iBlockElement);
+    
+   var blockElementListArray = ((((this.protocolBlockForm.controls.blockListArray as FormArray).controls[iBlock] as FormGroup).controls.block as FormGroup).controls.blockElementListArray as FormArray);
+   
+   const blockElementListId = blockElementListArray.value[iBlockElement].id;
+   const blockElementId = blockElementListArray.value[iBlockElement].blockElement.id;
+   
+   this.protocolService.deleteBlockElementList(this.protocolId, this.protocolName, blockElementListId, blockElementId)
+      .subscribe(data => {
+        this.update(false);
+        console.log("Save " + data); 
+    });
+    
+    blockElementListArray.removeAt(iBlockElement);
+    
   }
 
   ngOnInit() {
@@ -259,14 +299,5 @@ export class BlockProtocolComponent {
     this.protocolBlockForm.controls.id.setValue(this.protocolId);
     this.protocolBlockForm.controls.name.setValue(this.protocolName);    
   }
-  
-  save(saveBlockList){
-  	console.log("saveBlockList");
-  	
-  	this.protocolService.saveBlockList(this.protocolId, this.protocolName, saveBlockList)
-      .subscribe(data => {
-        console.log("Save " + data); 
-    });
-  }
-  
+    
 }

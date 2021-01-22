@@ -3,6 +3,7 @@ package com.neurologyca.kopernica.config.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,15 +42,32 @@ public class ProtocolController {
 	}
 	
 	@PutMapping("/saveSegmentList/{protocolId}/{protocolName}")
-	public void saveSegmentList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody List<SegmentList> segmentListArray) throws Exception
+	public SegmentList saveSegmentList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody SegmentList segmentList) throws Exception
 	{
-		protocolRepository.saveSegmentList(protocolId, protocolName, segmentListArray);
+		return protocolRepository.saveSegmentList(protocolId, protocolName, segmentList);
 	}
 
-	@PostMapping("/saveBlockList/{protocolId}/{protocolName}")
-	public void saveBlockList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody BlockList blockList) throws Exception {
+	@DeleteMapping("/deleteSegmentList/{protocolId}/{protocolName}/{segmentListId}/{segmentId}")
+	public void deleteSegmentList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody @PathVariable Integer segmentListId, @RequestBody @PathVariable Integer segmentId) throws Exception
+	{
+		protocolRepository.deleteSegmentList(protocolId, protocolName, segmentListId, segmentId);
+	}
+	
+	@PutMapping("/saveBlockList/{protocolId}/{protocolName}")
+	public BlockList saveBlockList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody BlockList blockList) throws Exception {
 		//System.out.println("saveBlockList");
-		protocolRepository.blockSegmentList(protocolId, protocolName, blockList);
+		return protocolRepository.saveblockList(protocolId, protocolName, blockList);
 	}
 
+	@DeleteMapping("/deleteBlockList/{protocolId}/{protocolName}/{blockListId}/{blockId}")
+	public void deleteBlockList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody @PathVariable Integer blockListId, @RequestBody @PathVariable Integer blockId) throws Exception
+	{
+		protocolRepository.deleteBlockList(protocolId, protocolName, blockListId, blockId);
+	}
+	
+	@DeleteMapping("/deleteBlockElementList/{protocolId}/{protocolName}/{blockElementListId}/{blockElementId}")
+	public void deleteBlockElementList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody @PathVariable Integer blockElementListId, @RequestBody @PathVariable Integer blockElementId) throws Exception
+	{
+		protocolRepository.deleteBlockElementList(protocolId, protocolName, blockElementListId, blockElementId);
+	}
 }

@@ -111,10 +111,14 @@ export class SegmentComponent {
 	       valueProfile: this.segmentForm.value.valueProfile
 	    }
 	};
-	
-    this.segmentListArray.push(segmentList);
+	    
+    this.protocolService.saveSegmentList(this.protocolId, this.protocolName, segmentList)
+      .subscribe(data => {
+        segmentList = data;
+        this.segmentListArray.push(segmentList);
+        console.log("Save " + data); 
+    }); 
     
-    this.save();
   }
  
   removeSegmentList(event, index) {
@@ -122,19 +126,13 @@ export class SegmentComponent {
     
     if (this.segmentListArray.length==1)
      return;
-     
-    this.segmentListArray.splice(index, 1);
-    
-    this.save();
-    
-  }
-  
-  save(){
-  	console.log("saveSegmentList");
-  	
-  	this.protocolService.saveSegmentList(this.protocolId, this.protocolName, this.segmentListArray)
+         
+    this.protocolService.deleteSegmentList(this.protocolId, this.protocolName, this.segmentListArray[index].id, this.segmentListArray[index].segment.id)
       .subscribe(data => {
         console.log("Save " + data); 
-    }); 
+     }); 
+    
+    this.segmentListArray.splice(index, 1);
   }
+  
 }
