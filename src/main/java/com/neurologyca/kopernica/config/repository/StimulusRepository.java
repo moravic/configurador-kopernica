@@ -36,7 +36,7 @@ public class StimulusRepository {
 	 }
 
     private Integer selectMaxId(Connection conn) throws Exception {
-   	 String selectMaxIdSql = "SELECT MAX(id) id FROM stimuli";
+   	 String selectMaxIdSql = "SELECT MAX(id) id FROM stimulus";
    	 ResultSet rs;
    	 
         try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
@@ -125,7 +125,7 @@ public class StimulusRepository {
 	}
 	
 	public void deleteAll() throws Exception{
-	    String deleteAllSql = "DELETE FROM stimuli";
+	    String deleteAllSql = "DELETE FROM stimulus";
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -148,7 +148,7 @@ public class StimulusRepository {
 	}
 	
 	public void deleteStimulus(Integer id) throws Exception{
-	    String deleteSql = "DELETE FROM stimuli where id=" + id;
+	    String deleteSql = "DELETE FROM stimulus where id=" + id;
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");

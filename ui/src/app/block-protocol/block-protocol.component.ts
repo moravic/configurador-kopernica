@@ -180,7 +180,7 @@ export class BlockProtocolComponent {
   blockElementListSelection (event){
   	console.log("blockElementListSelection");
   	
-  	this.blockElementListSelected = this.blockForm.controls.blockElementListArray.value[event.value];
+  	this.blockElementListSelected = this.blockForm.controls.blockElementListArray.value[event.value-1];
   }
   
   addBlockElement(block) {
