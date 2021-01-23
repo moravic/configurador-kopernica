@@ -72,7 +72,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
     this.updateStimuli();
   }
   
-   updateStimuli() {
+  updateStimuli() {
     if (!this.stimuli)
       return;
         
@@ -81,7 +81,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
         
     this.form= this.formBuilder.group({
        stimuli: this.formBuilder.array([])
-    });
+  });
     
     this.setStimuliForm();
     
@@ -131,7 +131,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
     // do API operation
   }
   
-   saveStimulus(stimulus){
+  saveStimulus(stimulus){
    console.log("saveStimulus ");
 	var index =  this.stimulusFormArray.value.findIndex(part => part.id === stimulus.id);
     if ((this.form.controls.stimuli as FormArray).controls[index].valid) {
@@ -150,7 +150,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
     }
   }
   
-   deleteStimulus(stimulus){
+ deleteStimulus(stimulus){
   	console.log('deleteStimulus: ' + stimulus.controls.id.value);
   	var index =  this.stimulusFormArray.controls.findIndex(fg => fg.value.id === stimulus.controls.id.value);
     this.stimulusService.deleteStimulus(stimulus.controls.id.value).subscribe(data => {
@@ -173,19 +173,24 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
   
    addNew():void{
   	console.log('addNew');
-  	const stimulus:Stimulus = {
-      id:0,
-      name:''
-   	 };
-   	 
-     //this.elistMatTableDataSource.data.push(participant);
-   	 
-   	 this.setFormGroup(stimulus, this.form.controls.stimuli.value.length);
-   	 this.stimulusFormArray.controls[this.form.controls.stimuli.value.length-1].valueChanges.subscribe(
+
+    //this.elistMatTableDataSource.data.push(participant);
+   	
+    this.stimulusService.getNewId()
+      .subscribe(data => {
+        const stimulus:Stimulus = {
+	      id:data,
+	      name:''
+	   	 };
+	   	 
+	  this.setFormGroup(stimulus, this.form.controls.stimuli.value.length);
+	  
+	  this.stimulusFormArray.controls[this.form.controls.stimuli.value.length-1].valueChanges.subscribe(
         stimulus => {
 		this.saveStimulus(stimulus);
-	 });
+	   });
 	  this.elistMatTableDataSource.filter = "";
+     });
   }
   
    onRowChanged(row, index) {

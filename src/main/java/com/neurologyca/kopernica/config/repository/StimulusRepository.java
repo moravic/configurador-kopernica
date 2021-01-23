@@ -60,7 +60,11 @@ public class StimulusRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
-            return selectMaxId(conn)+1;
+            Integer i = selectMaxId(conn)+1;
+            
+            conn.close();
+            
+            return i;
 		} catch (SQLException e) {
        	 throw new Exception(e.getMessage());
         }
@@ -97,7 +101,8 @@ public class StimulusRepository {
             
 			createTableStimulus(conn);
 			insertStimulus(conn, stimulus);
-
+            
+			conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
