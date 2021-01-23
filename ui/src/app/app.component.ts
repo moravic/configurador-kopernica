@@ -12,6 +12,7 @@ import { StimulusService } from './stimulus.service';
 import { Stimulus } from './stimulus';
 import { ProtocolService } from './protocol.service';
 import { Protocol } from './protocol';
+import { ProtocolparticipantService } from './protocolparticipant.service';
 
 @Component({
   selector: 'app-root',
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit{
     private questionService:QuestionService,
     private stimulusService:StimulusService,
     private protocolService:ProtocolService,
+    private protocolparticipantService:ProtocolparticipantService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ){
@@ -89,6 +91,15 @@ export class AppComponent implements OnInit{
 	        //console.log(data)
 	        this.listProjects = data;
 	      }, error =>  this.error_str=error.error.message);
+   }
+   
+   public generateProtocolParticipant(){
+   		console.log("Generating Protocol Participants...");
+   		this.protocolparticipantService.generateProtocolparticipant()
+     	.subscribe(resp => {
+     	    console.log(resp);
+	      }, error =>  this.error_str=error.error.message);
+	      this.error_str=""; 
    }
   
   ngOnInit() {
