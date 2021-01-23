@@ -379,8 +379,56 @@ public class ProtocolParticipantRepository {
 		return 1;
 	}
 	
+	public void deleteParticipantProtocol() throws Exception{
+	    String deleteAllSql = "DELETE FROM participant_protocol";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
+	public void deleteParticipantProtocolOrder() throws Exception{
+	    String deleteAllSql = "DELETE FROM participant_protocol_order";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
 	public Integer applyConfiguration() throws Exception {
 		try {
+			deleteParticipantProtocolOrder();
+			deleteParticipantProtocol();
 			applyConditions();
 			applyBlocks();
 		} catch (SQLException e) {

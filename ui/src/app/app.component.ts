@@ -93,9 +93,9 @@ export class AppComponent implements OnInit{
 	      }, error =>  this.error_str=error.error.message);
    }
    
-   public generateProtocolParticipant(){
+   public applyConfiguration(){
    		console.log("Generating Protocol Participants...");
-   		this.protocolparticipantService.generateProtocolparticipant()
+   		this.protocolparticipantService.applyConfiguration()
      	.subscribe(resp => {
      	    console.log(resp);
 	      }, error =>  this.error_str=error.error.message);

@@ -11,7 +11,7 @@ export class ProtocolparticipantService {
 
   constructor(private http: HttpClient) { }
   
-  generateProtocolparticipant(): Observable<any> {
+  applyConfiguration(): Observable<any> {
      return this.http.post(`${this.baseUrl}/applyConfiguration`, null);
   }
   
