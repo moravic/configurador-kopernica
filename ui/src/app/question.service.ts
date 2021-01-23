@@ -22,6 +22,10 @@ export class QuestionService {
     return this.http.get(`${this.baseUrl}/getQuestions/${project}/${study}`);
   }
 
+  getNewId(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getNewId/`);
+  }
+  
   deleteQuestion(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/deleteQuestion/${id}`, { responseType: 'text' });
   }

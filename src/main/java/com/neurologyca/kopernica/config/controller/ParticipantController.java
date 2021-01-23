@@ -26,6 +26,11 @@ public class ParticipantController {
 		return participantRepository.getParticipantList();
 	}
     
+    @GetMapping("/getNewId")
+	public Integer getNewId() throws Exception {
+		return participantRepository.getNewId();
+	}
+    
     @GetMapping("/getProfiles")
 	public List<Profile> getProfiles() throws Exception {
 		return participantRepository.getProfiles();

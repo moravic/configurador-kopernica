@@ -47,6 +47,24 @@ public class StimulusRepository {
         }
         return rs.getInt("id");
    }
+    
+	public Integer getNewId() throws Exception{
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            return selectMaxId(conn)+1;
+		} catch (SQLException e) {
+       	 throw new Exception(e.getMessage());
+        }
+	}
 	
     private void insertStimulus(Connection conn, Stimulus stimulus) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO stimulus(id, name, study_id) "

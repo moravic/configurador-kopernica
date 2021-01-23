@@ -18,6 +18,10 @@ export class ParticipantService {
     return this.http.post(`${this.baseUrl}`,body,{'headers':headers});
   }
   
+  getNewId(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getNewId/`);
+  }
+  
   getParticipants(project: string, study: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/getParticipants/${project}/${study}`);
   }

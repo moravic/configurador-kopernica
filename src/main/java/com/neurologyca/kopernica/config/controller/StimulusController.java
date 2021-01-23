@@ -26,7 +26,12 @@ public class StimulusController {
 	public List<Stimulus> getStimuliList(@PathVariable String project, @PathVariable String study) throws Exception {
 		return stimulusRepository.getStimulusList();
 	}
-	   
+	  
+    @GetMapping("/getNewId")
+	public Integer getNewId() throws Exception {
+		return stimulusRepository.getNewId();
+	}
+    
     @PostMapping()
     public Integer saveStimulus(@RequestBody Stimulus stimulus) throws Exception {
         return stimulusRepository.save(stimulus);

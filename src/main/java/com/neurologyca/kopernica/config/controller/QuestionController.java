@@ -24,6 +24,11 @@ public class QuestionController {
 	public List<Question> getQuestionList(@PathVariable String project, @PathVariable String study) throws Exception {
 		return questionRepository.getQuestionList();
 	}
+	
+    @GetMapping("/getNewId")
+	public Integer getNewId() throws Exception {
+		return questionRepository.getNewId();
+	}
 	   
     @PostMapping()
     public Integer saveQuestion(@RequestBody Question question) throws Exception {
