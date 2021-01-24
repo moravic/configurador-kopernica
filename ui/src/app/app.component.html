@@ -26,10 +26,14 @@
       <div class="col">
       	 <projectType-radio (shareItemToParent) = shareChangeType($event) [selectedItem]="typeSelected" disabled="{{typeDisabled}}"></projectType-radio>
       </div>
-      <div class="col">
+       <div class="col">
             <button type="submit" [disabled]="addStudyDisabled" (click)="addStudy()" style="border:none;background:none;"><img src="../../config-kopernica/assets/add-new.svg" width="25" height="25"/></button>
-            <button type="submit" [disabled]="listComponentsDisabled" (click)="applyConfiguration()">Aplicar Configuración  </button>
-      </div> 
+      </div>
+      <div class="row"> 
+       <div class="col">
+            <button mat-raised-button class="apply-configuration" [disabled]="listComponentsDisabled" (click)="applyConfiguration()">Aplicar Configuración</button>
+       </div> 
+      </div>
     </div>
     <div class="row">
       <div class="col-12">
