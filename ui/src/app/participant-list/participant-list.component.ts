@@ -222,23 +222,26 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   addNew():void{
   	console.log('addNew');
-  	const participant:Participant = {
-      id:0,
-      name:'',
-      email:'',
-      age:'',
-      gender:'',
-      profile:''
-   	 };
-   	 
-     //this.elistMatTableDataSource.data.push(participant);
-   	 
+  	
+    this.participantService.getNewId()
+      .subscribe(data => {
+        const participant:Participant = {
+	      id:data,
+	      name:'',
+          email:'',
+          age:'',
+          gender:'',
+          profile:''
+	   	};
+  	 
    	 this.setFormGroup(participant, this.form.controls.participants.value.length);
    	 this.participantFormArray.controls[this.form.controls.participants.value.length-1].valueChanges.subscribe(
         participant => {
 		this.saveParticipant(participant);
 	 });
 	 this.elistMatTableDataSource.filter = "";
+	 
+	 }); 
   }
   
   deleteParticipant(participant){

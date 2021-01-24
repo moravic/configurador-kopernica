@@ -173,19 +173,21 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
   
    addNew():void{
   	console.log('addNew');
-  	const question:Question = {
-      id:0,
-      question:''
-   	 };
-   	 
-     //this.elistMatTableDataSource.data.push(participant);
-   	 
+  	
+  	this.questionService.getNewId()
+      .subscribe(data => {
+        const question:Question = {
+	      id:data,
+	      question:''
+	   	 };
+
    	 this.setFormGroup(question, this.form.controls.questions.value.length);
    	 this.questionFormArray.controls[this.form.controls.questions.value.length-1].valueChanges.subscribe(
         question => {
 		this.saveQuestion(question);
 	 });
 	  this.elistMatTableDataSource.filter = "";
+	});  
   }
   
    onRowChanged(row, index) {
