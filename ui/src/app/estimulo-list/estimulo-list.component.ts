@@ -13,7 +13,7 @@ import { ImportService } from '../import.service';
 import { ExportService } from '../export.service';
 import { MatDialogOkComponent } from '../mat-dialog-ok/mat-dialog-ok.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'estimulo-list',
@@ -42,6 +42,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
 
   constructor(
   	private stimulusService: StimulusService,
+  	private storeService: StoreService,
     private importService:ImportService,
     private exportService:ExportService,
     private matIconRegistry: MatIconRegistry,
@@ -75,9 +76,10 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
   updateStimuli() {
     if (!this.stimuli)
       return;
-        
+      
     console.log("updateStimuli " + this.stimuli);
-    
+    //this.storeService.setStimuli(this.stimuli);
+    this.storeService.broadcastElementChange("S");
         
     this.form= this.formBuilder.group({
        stimuli: this.formBuilder.array([])
@@ -146,6 +148,9 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
 		        name:stimulus.name
 		    });
 	    }
+	    
+	    //this.storeService.setStimuli(this.stimuli);
+	    this.storeService.broadcastElementChange("S");
       }, error =>  this.error_str=error.error.message);
     }
   }
@@ -155,6 +160,9 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
   	var index =  this.stimulusFormArray.controls.findIndex(fg => fg.value.id === stimulus.controls.id.value);
     this.stimulusService.deleteStimulus(stimulus.controls.id.value).subscribe(data => {
 	    console.log("Delete " + data);
+	    this.stimuli.splice(index, 1);
+        //this.storeService.setStimuli(this.stimuli);
+	    this.storeService.broadcastElementChange("S");
      }, error =>  this.error_str=error.error.message);
     // find item and remove ist
     console.log('deleteStimulus splice');
@@ -167,8 +175,13 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
   	this.elistMatTableDataSource.data = [];
   	this.stimulusService.deleteAllStimulus().subscribe(data => {
 	    console.log("Delete " + data);
+	    this.stimuli = [];
+        //this.storeService.setStimuli(this.stimuli);
+	    this.storeService.broadcastElementChange("S");
 	    this.openDialog("Info", "Las preguntas han sido borradas.");
      }, error =>  this.error_str=error.error.message);
+   
+
   }
   
    addNew():void{
@@ -188,6 +201,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
 	  this.stimulusFormArray.controls[this.form.controls.stimuli.value.length-1].valueChanges.subscribe(
         stimulus => {
 		this.saveStimulus(stimulus);
+		this.stimuli.push(stimulus);
 	   });
 	  this.elistMatTableDataSource.filter = "";
      });

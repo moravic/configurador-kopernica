@@ -56,7 +56,7 @@ public class ProtocolController {
 	@PutMapping("/saveBlockList/{protocolId}/{protocolName}")
 	public BlockList saveBlockList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody BlockList blockList) throws Exception {
 		//System.out.println("saveBlockList");
-		return protocolRepository.saveblockList(protocolId, protocolName, blockList);
+		return protocolRepository.saveBlockList(protocolId, protocolName, blockList);
 	}
 
 	@DeleteMapping("/deleteBlockList/{protocolId}/{protocolName}/{blockListId}/{blockId}")
@@ -69,5 +69,17 @@ public class ProtocolController {
 	public void deleteBlockElementList(@PathVariable Integer protocolId, @PathVariable String protocolName, @RequestBody @PathVariable Integer blockElementListId, @RequestBody @PathVariable Integer blockElementId) throws Exception
 	{
 		protocolRepository.deleteBlockElementList(protocolId, protocolName, blockElementListId, blockElementId);
+	}
+	
+	@DeleteMapping("/deleteProtocol/{protocolId}")
+	public void deleteProtocol(@PathVariable Integer protocolId) throws Exception
+	{
+		protocolRepository.deleteProtocol(protocolId);
+	}
+	
+	@PutMapping("/saveProtocol")
+	public void saveProtocol(@RequestBody Protocol protocol) throws Exception
+	{
+		protocolRepository.saveProtocol(protocol.getId(), protocol.getName());
 	}
 }

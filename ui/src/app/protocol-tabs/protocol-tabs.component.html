@@ -1,6 +1,9 @@
-<mat-tab-group [selectedIndex]="selected.value"
-               (selectedIndexChange)="this.selected.setValue($event)">
-  <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
+<mat-tab-group (selectedTabChange)="onTabChanged($event)" 
+               [selectedIndex]="selectedIndex">
+  <mat-tab *ngFor="let tab of tabs; let index = index">
+     <ng-template mat-tab-label>
+       <input matInput placeholder="Ejemplo Protocolo 1" value={{protocols[index].name}} (input)="changeNameProtocol($event, index)">
+    </ng-template>
     <div class="container">
     	<div class="row">
         	<div class="col">
@@ -18,7 +21,7 @@
 			            class="example-delete-tab-button"
 			            [disabled]="tabs.length === 1"
 			            (click)="removeTab(index)">
-			      Delete Tab
+			      Borrar Protocolo
 			    </button>
 			</div>
 	     </div>

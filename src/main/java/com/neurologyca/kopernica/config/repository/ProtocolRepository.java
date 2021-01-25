@@ -238,6 +238,8 @@ order by pr.id, p.id, b.id, no_order
 				protocol.setBlockListArray(blockListArray);
 				protocols.add(protocol);
 			}
+			
+			conn.close();
 
 			return protocols;
 
@@ -509,206 +511,114 @@ order by pr.id, p.id, b.id, no_order
 		}
    }
     
-    public void deleteSegments(Integer protocolId, Integer segmentId) throws Exception{
+    public void deleteSegments(Connection conn, Integer protocolId, Integer segmentId) throws Exception{
 		String deleteAllSegmentsSql = "DELETE FROM SEGMENTS WHERE ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
 
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllSegmentsSql);
-            pstmt.setInt(1, segmentId);
-            
-            pstmt.executeUpdate();
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        } 
+        PreparedStatement pstmt = conn.prepareStatement(deleteAllSegmentsSql);
+        pstmt.setInt(1, segmentId);
+        
+        pstmt.executeUpdate();
+
 	}
 	
-	public void deleteSegmentList(Integer protocolId, Integer segmentListId) throws Exception{
+	public void deleteSegmentList(Connection conn, Integer protocolId, Integer segmentListId) throws Exception{
 		String deleteAllSegmentListSql = "DELETE FROM SEGMENT_LIST WHERE protocol_id = ? and ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllSegmentListSql);
-            pstmt.setInt(1, protocolId);
-            pstmt.setInt(2, segmentListId);
-			
-            pstmt.executeUpdate();
 
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+        PreparedStatement pstmt = conn.prepareStatement(deleteAllSegmentListSql);
+        pstmt.setInt(1, protocolId);
+        pstmt.setInt(2, segmentListId);
+		
+        pstmt.executeUpdate();
 		
 	}
 	
-	public void deleteBlockElement(Integer blockId) throws Exception{
+	public void deleteBlockElement(Connection conn, Integer blockId) throws Exception{
 		String deleteAllBlockElementSql = "DELETE FROM BLOCKELEMENT WHERE ID IN (SELECT BLOCKELEMENT_ID FROM BLOCKELEMENT_LIST WHERE block_id = ?)";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementSql);
-            pstmt.setInt(1, blockId);
-			
-            pstmt.executeUpdate();
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+
+        PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementSql);
+        pstmt.setInt(1, blockId);
 		
+        pstmt.executeUpdate();
 	}
 	
-	public void deleteBlockElementId(Integer blockElementId) throws Exception{
+	public void deleteBlockElementId(Connection conn, Integer blockElementId) throws Exception{
 		String deleteAllBlockElementSql = "DELETE FROM BLOCKELEMENT WHERE ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementSql);
-            pstmt.setInt(1, blockElementId);
-			
-            pstmt.executeUpdate();
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+     
+        PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementSql);
+        pstmt.setInt(1, blockElementId);
+		
+        pstmt.executeUpdate();
 		
 	}
 	
-	public void deleteBlockElementList(Integer blockId) throws Exception{
+	public void deleteBlockElementList(Connection conn, Integer blockId) throws Exception{
 		String deleteAllBlockElementListSql = "DELETE FROM BLOCKELEMENT_LIST WHERE block_id = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementListSql);
-            pstmt.setInt(1, blockId);
-			
-            pstmt.executeUpdate();
-
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+		
+        PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementListSql);
+        pstmt.setInt(1, blockId);
+		
+        pstmt.executeUpdate();
 		
 	}
 	
-	public void deleteBlockElementListId(Integer blockElementListId) throws Exception{
+	public void deleteBlockElementListId(Connection conn, Integer blockElementListId) throws Exception{
 		String deleteAllBlockElementListSql = "DELETE FROM BLOCKELEMENT_LIST WHERE ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementListSql);
-            pstmt.setInt(1, blockElementListId);
-			
-            pstmt.executeUpdate();
 
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+        PreparedStatement pstmt = conn.prepareStatement(deleteAllBlockElementListSql);
+        pstmt.setInt(1, blockElementListId);
 		
+        pstmt.executeUpdate();
+	
 	}
-	public void deleteBlock(Integer blockId) throws Exception{
+	public void deleteBlock(Connection conn, Integer blockId) throws Exception{
 		String deleteBlockSql = "DELETE FROM BLOCKS WHERE ID = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteBlockSql);
-            pstmt.setInt(1, blockId);
-			
-            pstmt.executeUpdate();
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+
+        PreparedStatement pstmt = conn.prepareStatement(deleteBlockSql);
+        pstmt.setInt(1, blockId);
 		
+        pstmt.executeUpdate();
+
 	}
 	
-	public void deleteBlockList(Integer blockId) throws Exception{
+	public void deleteBlockList(Connection conn, Integer blockId) throws Exception{
 		String deleteBlockListSql = "DELETE FROM BLOCK_LIST WHERE block_id = ?";
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteBlockListSql);
-            pstmt.setInt(1, blockId);
-			
-            pstmt.executeUpdate();
-            conn.close();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
+
+        PreparedStatement pstmt = conn.prepareStatement(deleteBlockListSql);
+        pstmt.setInt(1, blockId);
+		
+        pstmt.executeUpdate();
 		
 	}
 	
@@ -800,8 +710,24 @@ order by pr.id, p.id, b.id, no_order
 		
 		createProtocolTables();
 		
-		deleteSegmentList(protocolId, segmentListId);
-		deleteSegments(protocolId, segmentId);				
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            deleteSegmentList(conn, protocolId, segmentListId);
+            deleteSegments(conn, protocolId, segmentId);
+            
+			conn.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
 	}
 	
 	public void deleteBlockList(Integer protocolId, String protocolName, Integer blockListId, Integer blockId) throws Exception {
@@ -811,11 +737,23 @@ order by pr.id, p.id, b.id, no_order
 		
 		createProtocolTables();
 		
-		deleteBlockElement(blockId);
-		deleteBlockElementList(blockId);
-		deleteBlockList(blockListId);	
-		deleteBlock(blockId);
-
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+			
+			deleteBlockElement(conn, blockId);
+			deleteBlockElementList(conn, blockId);
+			deleteBlockList(conn, blockListId);	
+			deleteBlock(conn, blockId);
+			
+			conn.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} 
 	}
 	
 	public void deleteBlockElementList(Integer protocolId, String protocolName, Integer blockElementListId, Integer blockElementId) throws Exception {
@@ -825,11 +763,22 @@ order by pr.id, p.id, b.id, no_order
 		
 		createProtocolTables();
 		
-		deleteBlockElementListId(blockElementListId);
-		deleteBlockElementId(blockElementId);
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+			deleteBlockElementListId(conn, blockElementListId);
+			deleteBlockElementId(conn, blockElementId);
+			conn.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} 
 	}
 	
-	public BlockList saveblockList(Integer protocolId, String protocolName, BlockList blockList) throws Exception {
+	public BlockList saveBlockList(Integer protocolId, String protocolName, BlockList blockList) throws Exception {
 
 		String insertProtocolSql = "INSERT OR REPLACE INTO PROTOCOLS (id, name) "
 				+ "VALUES(?,?)";
@@ -958,7 +907,121 @@ order by pr.id, p.id, b.id, no_order
 				throw new Exception(e.getMessage());
 			} 
 			
+			conn.close();
 			return blockList;
+		}
+	}
+	
+	public void deleteProtocol(Integer protocolId) throws Exception{
+		String selectSegmentListSql = "SELECT ID, SEGMENT_ID FROM SEGMENT_LIST WHERE PROTOCOL_ID = ?";
+		String selectBlockElementListSql = "SELECT ID, BLOCKELEMENT_ID FROM BLOCKELEMENT_LIST WHERE BLOCK_ID = ?";
+		String selectBlockListSql = "SELECT BL.ID, BL.BLOCK_ID, COALESCE((SELECT 0 FROM BLOCK_LIST BL2 WHERE BL2.BLOCK_ID = BL.BLOCK_ID AND BL2.PROTOCOL_ID!=?),1) BORRAR_BLOCK FROM BLOCK_LIST BL WHERE PROTOCOL_ID = ?";
+
+		String deleteProtocolSql = "DELETE FROM PROTOCOLS WHERE ID = ?";
+
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+
+			PreparedStatement pstmt = conn.prepareStatement(selectSegmentListSql);
+			pstmt.setInt(1, protocolId);
+
+			ResultSet rst = pstmt.executeQuery();
+
+			while (rst.next()) {
+				deleteSegmentList(conn, protocolId, rst.getInt("ID"));
+				deleteSegments(conn, protocolId, rst.getInt("SEGMENT_ID"));
+			}
+
+			conn.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+
+			PreparedStatement pstmt = conn.prepareStatement(selectBlockListSql);
+			pstmt.setInt(1, protocolId);
+			pstmt.setInt(2, protocolId);
+
+			ResultSet rst = pstmt.executeQuery();
+
+			while (rst.next()) {
+
+				Integer blockId = rst.getInt("BLOCK_ID");
+				if (rst.getInt("BORRAR_BLOCK")==1) {
+					deleteBlockList(conn, blockId);
+				} else {
+					PreparedStatement pstmt2 = conn.prepareStatement(selectBlockElementListSql);
+					pstmt2.setInt(1, blockId);
+
+					ResultSet rst2 = pstmt2.executeQuery();
+
+					while (rst2.next()) {
+						deleteBlockElementList(conn, blockId);
+						deleteBlockElement(conn, blockId);
+					}
+
+					deleteBlock(conn, blockId);
+				}
+			}
+
+			PreparedStatement pstmt3 = conn.prepareStatement(deleteProtocolSql);
+			pstmt3.setInt(1, protocolId);
+
+			pstmt3.executeUpdate();
+
+			conn.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+	}
+	
+	public void saveProtocol(Integer protocolId, String protocolName) throws Exception {
+
+		String insertProtocolSql = "INSERT OR REPLACE INTO PROTOCOLS (id, name) "
+				+ "VALUES(?,?)";
+			
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+
+		createProtocolTables();
+		
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+
+			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
+				
+				pstmt.setInt(1, protocolId);
+				pstmt.setString(2, protocolName);
+
+				pstmt.executeUpdate();
+		
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			} 
+			
+			conn.close();
 		}
 	}
 }

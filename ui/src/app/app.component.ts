@@ -14,6 +14,7 @@ import { ProtocolService } from './protocol.service';
 import { Protocol } from './protocol';
 import { ProtocolparticipantService } from './protocolparticipant.service';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -174,6 +175,7 @@ export class AppComponent implements OnInit{
 	      		.subscribe(data => {
 	        		console.log(data);
 	        		this.stimuli = data;
+	        		
 	      		}, error =>  {this.error_str=error.error.message; 
 	      				      this.stimuli.length=0;});		
 	     		

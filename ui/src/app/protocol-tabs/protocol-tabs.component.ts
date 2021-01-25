@@ -1,7 +1,8 @@
-import {Component, OnInit, OnChanges, Input} from '@angular/core';
+import {Component, OnInit, OnChanges, Input, ChangeDetectorRef } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { Protocol } from '../protocol';
 import { Observable} from 'rxjs';
+import { ProtocolService } from '../protocol.service';
 
 @Component({
   selector: 'protocol-tabs',
@@ -9,47 +10,84 @@ import { Observable} from 'rxjs';
   styleUrls: ['protocol-tabs.component.css'],
 })
 
-export class ProtocolTabsComponent {
+export class ProtocolTabsComponent implements OnInit, OnChanges{
   tabs = ['Protocolo 1'];
-  selected = new FormControl(0);
+  
+  public selectedIndex: number = 0;
+  
+  error_str:string;
   
   @Input()
   protocols:Protocol[];
-    
-  constructor(){};
+  
+  protocolIdMax=0;
+  
+  constructor(
+    private protocolService:ProtocolService,
+    private change: ChangeDetectorRef
+  ){};
   
   ngOnInit() {
+
   } 
   
-  ngOnChanges() {
+  ngOnChanges(changes:any) {
      console.log("ngOnChanges Protocol");
      this.tabs = [];
 	 this.protocols.forEach( (protocol) => {
+	    if (this.protocolIdMax<protocol.id)
+	       this.protocolIdMax=protocol.id;
+	       
 	 	this.tabs.push(protocol.name);
 	 });
 	 
-	 this.selected.setValue(0);
   }
-  
+     
   addTab() {
-  
+    
+   console.log("addTab");
+    	
+    this.protocolIdMax++;
     var protocol:Protocol = {
-	    id: this.protocols.length + 1,
-	    name: 'Protocolo ' + (this.protocols.length + 1),
+	    id: this.protocolIdMax,
+	    name: 'Protocolo ' + (this.protocolIdMax),
 	    segmentListArray: [],
 		blockListArray: []
     }
     
-    this.tabs.push('Protocolo ' + (this.tabs.length + 1));
-        
     this.protocols.push(protocol);
     
-	console.log("addTab");
-    this.selected.setValue(this.tabs.length - 1);
+    this.tabs.push(protocol.name);
+    
+    window.setTimeout(()=>{
+       this.selectedIndex = this.tabs.length-1;
+       this.change.markForCheck();
+    });
+ 
   }
 
   removeTab(index: number) {
-    this.tabs.splice(index, 1);
+  
+	  this.protocolService.deleteProtocol( this.protocols[index].id)
+	  		.subscribe(data => {
+	    		//console.log(data);
+			    this.tabs.splice(index, 1);
+			    this.protocols.splice(index, 1);
+	  		}, error =>  {this.error_str=error.error.message;
+	  });
   }
   
+  onTabChanged ($event){
+    console.log("onTabChanged");
+  }
+  
+  changeNameProtocol($event, index){
+    this.protocols[index].name=$event.target.value;
+    
+    this.protocolService.saveProtocol(this.protocols[index])
+	  		.subscribe(data => {
+	    		//console.log(data);
+	  	}, error =>  {this.error_str=error.error.message;
+	 });
+  }
 }

@@ -45,4 +45,11 @@ export class ProtocolService {
     return this.http.delete(`${this.baseUrl}/deleteBlockElementList/${protocolId}/${protocolName}/${blockElementListId}/${blockElementId}`);
   }
   
+  deleteProtocol(protocolId): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/deleteProtocol/${protocolId}`);
+  }
+  
+  saveProtocol(protocol): Observable<any> {
+    return this.http.put(`${this.baseUrl}/saveProtocol`, protocol);
+  }
 }

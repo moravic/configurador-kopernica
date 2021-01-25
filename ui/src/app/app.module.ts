@@ -23,6 +23,7 @@ import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
 import { ProtocolTabsComponent } from './protocol-tabs/protocol-tabs.component';
 import { SegmentComponent } from './segment/segment.component';
 import { BlockProtocolComponent } from './block-protocol/block-protocol.component';
+import { StoreService } from './store.service';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { BlockProtocolComponent } from './block-protocol/block-protocol.componen
   providers: [
     ParticipantDataStoreService,
     PreguntaDataStoreService,
-    EstimuloDataStoreService
+    EstimuloDataStoreService,
+    StoreService
   ],
   bootstrap: [AppComponent]
 })

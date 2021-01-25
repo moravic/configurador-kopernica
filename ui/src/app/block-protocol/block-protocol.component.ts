@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Protocol } from '../protocol';
 import { ProtocolService } from '../protocol.service';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'block-protocol',
@@ -17,8 +18,13 @@ import { ProtocolService } from '../protocol.service';
 
 export class BlockProtocolComponent {
 
-  constructor(private protocolService:ProtocolService) {	
-        
+  constructor(private protocolService:ProtocolService,
+              private storeService:StoreService) {	
+      storeService.getElementChange().subscribe(data => {
+         console.log("ChangeElement");
+         
+	  	 this.update(true);
+	  });
   }
   
   myBlockControl = new FormControl();
@@ -52,7 +58,7 @@ export class BlockProtocolComponent {
      this.update(true);
   }
   
-  update(withForms) {
+  update(withForms) {  		   
      this.protocolService.getBlockElementsList()
   		.subscribe(data => {
           //console.log("getBlockElementsList " + data);
@@ -62,13 +68,13 @@ export class BlockProtocolComponent {
 	  		.subscribe(data => {
 	          //console.log("getBlocks " + data);
 	          this.blocks = data;
+	          
+	          if (withForms){
+		 	    this.blockForm = this.createBlockFormGroup();
+		 	    this.protocolBlockForm = this.createProtocolBlockFormGroup();
+		      }
 	  		}, error =>  {
 	  		this.error_str=error.error.message;});
-           
-           if (withForms){
-         	  this.blockForm = this.createBlockFormGroup();
-         	  this.protocolBlockForm = this.createProtocolBlockFormGroup();
-  		   }
   	}, error =>  {this.error_str=error.error.message;});
   }
   
@@ -296,8 +302,8 @@ export class BlockProtocolComponent {
   }
   
   private protocolToForm() {
-    this.protocolBlockForm.controls.id.setValue(this.protocolId);
-    this.protocolBlockForm.controls.name.setValue(this.protocolName);    
+    this.protocolBlockForm?.controls.id.setValue(this.protocolId);
+    this.protocolBlockForm?.controls.name.setValue(this.protocolName);    
   }
     
 }

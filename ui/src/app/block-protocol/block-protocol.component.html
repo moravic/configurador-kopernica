@@ -21,7 +21,7 @@
 	      <mat-form-field  appearance="fill" class="elementSelect">
 			  <mat-label>Elige...</mat-label>
 			  <mat-select formArrayName="blockElementListArray" (selectionChange)="blockElementListSelection($event)">
-			    <mat-option *ngFor="let blockElementList of blockForm.controls.blockElementListArray.value" [value]="blockElementList.id">
+			    <mat-option *ngFor="let blockElementList of blockForm?.controls.blockElementListArray.value" [value]="blockElementList.id">
 			        {{blockElementList.blockElement.question?.question}}{{blockElementList.blockElement.stimulus?.name}}
 			    </mat-option>
 			  </mat-select>
@@ -32,7 +32,7 @@
 		</form>
 		<label id="blockLabel">{{notFound}}</label>
 		    <form [formGroup]="protocolBlockForm">
-		       <div formArrayName="blockListArray" *ngFor="let blockList of protocolBlockForm.controls.blockListArray?.value; let iBlock = index" >
+		       <div formArrayName="blockListArray" *ngFor="let blockList of protocolBlockForm?.controls.blockListArray?.value; let iBlock = index" >
           		    <hr style="height: 3px;">
           			<!--ng-container [formGroupName]="i"-->
           			  <div class="divheader">{{blockList.block.name}}

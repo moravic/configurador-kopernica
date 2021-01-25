@@ -12,6 +12,7 @@ import { ImportService } from '../import.service';
 import { ExportService } from '../export.service';
 import { MatDialogOkComponent } from '../mat-dialog-ok/mat-dialog-ok.component';
 import { MatDialog } from '@angular/material/dialog';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'pregunta-list',
@@ -40,6 +41,7 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private questionService:QuestionService,
+  	private storeService: StoreService,
     private importService:ImportService,
     private exportService:ExportService,
     private matIconRegistry: MatIconRegistry,
@@ -77,7 +79,8 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
         
     console.log("updateQuestions " + this.questions);
     
-        
+    this.storeService.broadcastElementChange("S");
+     
     this.form= this.formBuilder.group({
        questions: this.formBuilder.array([])
     });
@@ -145,6 +148,8 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
 		        question:question.question
 		    });
 	    }
+	    
+	    this.storeService.broadcastElementChange("S");
       }, error =>  this.error_str=error.error.message);
     }
   }
@@ -154,6 +159,7 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
   	var index =  this.questionFormArray.controls.findIndex(fg => fg.value.id === question.controls.id.value);
     this.questionService.deleteQuestion(question.controls.id.value).subscribe(data => {
 	    console.log("Delete " + data);
+	    this.storeService.broadcastElementChange("S");
      }, error =>  this.error_str=error.error.message);
     // find item and remove ist
     console.log('deleteQuestion splice');
@@ -167,6 +173,7 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
   	this.elistMatTableDataSource.data = [];
   	this.questionService.deleteAllQuestion().subscribe(data => {
 	    console.log("Delete " + data);
+	    this.storeService.broadcastElementChange("S");
 	    this.openDialog("Info", "Las preguntas han sido borradas.");
      }, error =>  this.error_str=error.error.message);
   }
