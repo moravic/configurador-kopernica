@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public class QuestionRepository {
 	
-    private void createTableQuestions(Connection conn) throws Exception{
+    public void createTableQuestions(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS questions ("
 				+ "id integer PRIMARY KEY, question TEXT NOT NULL, "
 				+ "study_id integer NOT NULL, "
@@ -60,6 +60,7 @@ public class QuestionRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
+            createTableQuestions(conn);
             return selectMaxId(conn)+1;
 		} catch (SQLException e) {
        	 throw new Exception(e.getMessage());

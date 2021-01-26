@@ -3,6 +3,8 @@ import {FormControl} from '@angular/forms';
 import { Protocol } from '../protocol';
 import { Observable} from 'rxjs';
 import { ProtocolService } from '../protocol.service';
+import { SegmentList } from '../segmentList';
+import { BlockList } from '../blockList';
 
 @Component({
   selector: 'protocol-tabs',
@@ -46,13 +48,16 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
   addTab() {
     
    console.log("addTab");
-    	
+   
+   var segmentList:SegmentList[]=[];
+   var blockList:BlockList[]=[];
+   
     this.protocolIdMax++;
     var protocol:Protocol = {
 	    id: this.protocolIdMax,
 	    name: 'Protocolo ' + (this.protocolIdMax),
-	    segmentListArray: [],
-		blockListArray: []
+	    segmentListArray: segmentList,
+		blockListArray: blockList
     }
     
     this.protocols.push(protocol);

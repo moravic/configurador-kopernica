@@ -61,6 +61,9 @@ public class ParticipantRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
+            
+            createTableParticipants(conn);
+            
             return selectMaxId(conn)+1;
 		} catch (SQLException e) {
        	 throw new Exception(e.getMessage());

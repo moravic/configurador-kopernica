@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +29,13 @@ public class StudyRepository {
 	
 	@Value("${base.path}")
 	private String basePath;
+	
+	@Autowired
+	private ProtocolRepository protocolRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private StimulusRepository stimulusRepository;
 	
 	private void createFolders(String project, String study) throws Exception {
 		 
@@ -134,6 +142,9 @@ public class StudyRepository {
             }
             
 			createTableStudies(conn);
+			questionRepository.createTableQuestions(conn);
+			stimulusRepository.createTableStimulus(conn);
+			protocolRepository.createProtocolTables();
 			insertStudies(conn, study);
 
         } catch (SQLException e) {

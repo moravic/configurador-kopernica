@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public class StimulusRepository {
 	
-    private void createTableStimulus(Connection conn) throws Exception{
+    public void createTableStimulus(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS stimulus ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, "
 				+ "study_id integer NOT NULL, "
@@ -60,6 +60,8 @@ public class StimulusRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
+            
+            createTableStimulus(conn);
             Integer i = selectMaxId(conn)+1;
             
             conn.close();
