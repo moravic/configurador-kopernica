@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Group;
@@ -19,10 +21,18 @@ public class GroupRepository {
     public void createTableGroups(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS groups ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL )";
+		String insertSql = "INSERT OR REPLACE INTO groups(id, name) "
+	    	 		+ "VALUES(1,'Todos')";
 		
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute(createTableQuery);	
+			
+			try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
+				pstmt.executeUpdate();
+			 } catch (SQLException e) {
+	        	 throw new Exception(e.getMessage());	
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new Exception(e.getMessage());
@@ -82,9 +92,9 @@ public class GroupRepository {
 		return group.getId();
 	}
 	
-	public Integer getGroupId(String groupName) throws Exception{
-		String selectIdSql = "SELECT id FROM groups WHERE name = ?";
-		Integer groupId = 0;
+	public Integer getGroupId(Integer groupId, String groupName) throws Exception{
+		String selectIdSql = "SELECT name FROM groups WHERE id = ?";
+		String oldGroupName;
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -97,13 +107,32 @@ public class GroupRepository {
                 //System.out.println("A new database has been created.");
             }
     
-            // Si existe el nombre del grupo devuelve el Id y si no existe se crea el grupo y devuelve el id
             try (PreparedStatement stmt = conn.prepareStatement(selectIdSql)) {
             	
-            	stmt.setString(1, groupName);
+            	stmt.setInt(1, groupId);
             	ResultSet rs = stmt.executeQuery();
     	    
-            	groupId = rs.getInt("id");
+            	oldGroupName = rs.getString("name");
+            	System.out.println("Nombre grupo actual/bbdd "+ groupName + " "+ oldGroupName);
+            	
+            	if (!oldGroupName.equals(groupName)) {
+            		// Revisar si algun participante tiene ese Id
+            		if (numGroupParticipants(groupId) == 0) {
+            		// Si no hay ninguno cambiar el nombre del grupo
+            			Group group = new Group(groupId, groupName);
+                		insertGroup(conn, group);
+                		groupId = group.getId();
+                		System.out.println("Cambiar nombre grupo "+ groupId);
+            		} else {			
+            		// Si hay alguno, es un grupo nuevo
+            			Group group = new Group(0, groupName);
+                		insertGroup(conn, group);
+                		groupId = group.getId();
+                		System.out.println("Nuevo grupo "+ groupId);
+            		}
+            	}
+            	
+            	
             	System.out.println("Group Id "+ groupId);
             } catch (SQLException e) {
             	if (!groupName.equals("")) {
@@ -121,6 +150,39 @@ public class GroupRepository {
         }
 
 		return groupId;
+	}
+	
+	public Integer numGroupParticipants(Integer groupId) throws Exception{
+		String selectSql = "SELECT count(1) contador FROM participants WHERE group_id = ?";
+		Integer numParticipants = 0;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            // Si existe el nombre del grupo devuelve el Id y si no existe se crea el grupo y devuelve el id
+            try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
+            	stmt.setInt(1, groupId);
+            	ResultSet rs = stmt.executeQuery();
+    	    
+            	numParticipants = rs.getInt("contador");
+            } catch (SQLException e) {
+            	throw new Exception(e.getMessage());
+            }
+            
+			conn.close();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+
+		return numParticipants;
 	}
 	
 	public String getGroupName(Integer groupId) throws Exception{

@@ -62,7 +62,7 @@ public class ParticipantRepository {
    
 	public Integer getNewId() throws Exception{
 			try {
-	            Participant participant = new Participant(0, "", "", 0, "", "", "");
+	            Participant participant = new Participant(0, "", "", 0, "", "", 0, "");
 	            save(participant);
 	            return participant.getId();
 			} catch (SQLException e) {
@@ -73,19 +73,18 @@ public class ParticipantRepository {
     private void insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, group_id, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,?,1)";
-    	 Integer groupId;
     	 	 
     	 // Revisamos si el estudio es grupal
     	 // No es grupal....group_id=0
     	 // Es grupal ... buscar el group_id en grupos (se crea e inserta si no existe)
     	 System.out.println("Tipo Estudio: " + studyRepository.getTypeStudy());
-    	 if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
-    		 System.out.println("Buscando groupId para grupo: " + participant.getGroup());
-    		 groupId = groupRepository.getGroupId(participant.getGroup());
-    		 System.out.println("Grupo: " + groupId);
+    	 if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {	 	
+    		 System.out.println("Id/grupo: " + participant.getGroupId() + " " + participant.getGroup());
+    		 participant.setGroupId(groupRepository.getGroupId(participant.getGroupId(), participant.getGroup()));
+    		 System.out.println("Grupo Final: " + participant.getGroupId());
     	 }
     	 else {
-    		 groupId = 0;
+    		 participant.setGroupId(0);
     	 }
     	 
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
@@ -98,7 +97,7 @@ public class ParticipantRepository {
              pstmt.setInt(4, participant.getAge());
              pstmt.setString(5, participant.getProfile());
              pstmt.setString(6, participant.getEmail());
-             pstmt.setInt(7, groupId);
+             pstmt.setInt(7, participant.getGroupId());
              pstmt.executeUpdate();
          } catch (SQLException e) {
         	 throw new Exception(e.getMessage());
@@ -205,6 +204,7 @@ public class ParticipantRepository {
 				participant.setGender(rs.getString("gender"));
 				participant.setEmail(rs.getString("email"));
 				participant.setProfile(rs.getString("profile"));
+				participant.setGroupId(rs.getInt("group_id"));
 				
 				if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
 		    		 participant.setGroup(groupRepository.getGroupName(rs.getInt("group_id")));
@@ -263,4 +263,5 @@ public class ParticipantRepository {
 	    return profileList;
 		
 	}
+	
 }

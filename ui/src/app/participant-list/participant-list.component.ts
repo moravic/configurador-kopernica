@@ -169,7 +169,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   private setParticipantsForm(){
     let index = 0;
     this.participants.forEach((participant)=>{
-      console.log("participant.name: " + participant.name);
+      console.log("setParticipantsForm participant.name: " + participant.name);
+      console.log("setParticipantsForm participant.groupId: " + participant.groupId);
       this.setFormGroup(participant, index);
       this.participantFormArray.controls[index].valueChanges.subscribe(
         participant => {
@@ -209,6 +210,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         age:participant.age, 
         gender:participant.gender,
         profile:participant.profile,
+        groupId:participant.groupId,
         group:participant.group
     });
   }
@@ -263,6 +265,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
           age:'',
           gender:'',
           profile:'',
+          groupId:0,
           group:''
 	   	};
   	 
@@ -327,6 +330,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 		        age:participant.age, 
 		        gender:participant.gender,
 		        profile:participant.profile,
+		        groupId:participant.groupId,
 		        group:participant.group
 		    });
 	    }
@@ -348,6 +352,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	        this.elistMatTableDataSource.data[index].age = this.participantChanged.age;
 	        this.elistMatTableDataSource.data[index].gender = this.participantChanged.gender;
 	        this.elistMatTableDataSource.data[index].profile = this.participantChanged.profile;
+	        this.elistMatTableDataSource.data[index].groupId = this.participantChanged.groupId;
 	        this.elistMatTableDataSource.data[index].group = this.participantChanged.group;
 	        this.participantFormArray.value[index].id = data;
 	        //this.participantFormArray.controls[index] = this.setParticipantsFormArray(this.elistMatTableDataSource.data[index]);
@@ -358,6 +363,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 		        age:this.participantChanged.age, 
 		        gender:this.participantChanged.gender,
 		        profile:this.participantChanged.profile,
+		        groupId:this.participantChanged.groupId,
 		        group:this.participantChanged.group
 		    });
 		    

@@ -7,13 +7,14 @@ public class Participant {
 	private Integer age;
 	private String gender;
 	private String profile;
+	private Integer groupId;
 	private String group;
 
 	
 	public Participant() {
 	}
 	
-	public Participant(Integer id, String name, String email, Integer age, String gender, String profile, String group) {
+	public Participant(Integer id, String name, String email, Integer age, String gender, String profile, Integer groupId, String group) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -21,6 +22,7 @@ public class Participant {
 		this.age = age;
 		this.profile = profile;
 		this.email = email;
+		this.groupId = groupId;
 		this.group = group;
 	}
 
@@ -70,6 +72,14 @@ public class Participant {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
 	}
 	
 	public String getGroup() {

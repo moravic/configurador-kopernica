@@ -13,6 +13,7 @@ export class ParticipantDataStoreService {
               "gender": "Mujer",
               "email": "aimeeweeks@codax.com",
               "profile": "Vegana",
+              "groupId": 1,
               "group": "grupo1"
             },
             {
@@ -21,6 +22,7 @@ export class ParticipantDataStoreService {
               "gender": "Mujer",
               "email": "vickyavery@codax.com",
               "profile": "Vegana",
+              "groupId": 1,
               "group": "grupo1"
             },
             {
@@ -29,6 +31,7 @@ export class ParticipantDataStoreService {
               "gender": "Hombre",
               "email": "clevelandvance@codax.com",
               "profile": "Vegano",
+              "groupId": 1,
               "group": "grupo1"
             },
             {
@@ -37,6 +40,7 @@ export class ParticipantDataStoreService {
               "gender": "Hombre",
               "email": "craftfrost@codax.com",
               "profile": "No Vegano",
+              "groupId": 1,
               "group": "grupo1"
             },
             {
@@ -45,6 +49,7 @@ export class ParticipantDataStoreService {
               "gender": "Mujer",
               "email": "debbieblevins@codax.com",
               "profile": "No Vegana",
+              "groupId": 1,
               "group": "grupo1"
             },
             {
@@ -53,6 +58,7 @@ export class ParticipantDataStoreService {
               "gender": "Hombre",
               "email": "woodardlott@codax.com",
               "profile": "No Vegano",
+              "groupId": 1,
               "group": "grupo1"
             }
           ]`;
