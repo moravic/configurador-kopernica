@@ -16,15 +16,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.repository.QuestionRepository;
 import com.neurologyca.kopernica.config.repository.StimulusRepository;
+import com.neurologyca.kopernica.config.repository.StudyRepository;
+import com.neurologyca.kopernica.config.repository.GroupRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
@@ -42,6 +42,15 @@ public class ImportExcelController {
     
     @Autowired
     private StimulusRepository stimulusRepository;
+    
+    @Autowired
+    private StudyRepository studyRepository;
+    
+    @Autowired
+    private GroupRepository groupRepository;
+    
+	static final String GROUP_INTEVIEW = "0";
+	static final String INDIVIDUAL_INTERVIEW = "1";
     
 	@PostMapping("/participants/{project}/{study}")
     public ResponseEntity<List<Participant>> importParticipantExcelFile(@PathVariable("project") String project, @PathVariable("study") String study) throws Exception {
@@ -66,6 +75,11 @@ public class ImportExcelController {
                 participant.setAge((int) row.getCell(3).getNumericCellValue());
                 participant.setProfile((String) row.getCell(4).getStringCellValue());
                 participant.setEmail((String) row.getCell(5).getStringCellValue());
+                
+                if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+                	participant.setGroup((String) row.getCell(6).getStringCellValue());
+                	participant.setGroupId(groupRepository.getGroupId((String) row.getCell(6).getStringCellValue()));
+                }
 
                 //participant.toString();
                 

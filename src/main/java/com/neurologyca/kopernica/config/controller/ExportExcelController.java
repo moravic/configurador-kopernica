@@ -20,6 +20,7 @@ import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.repository.QuestionRepository;
 import com.neurologyca.kopernica.config.repository.StimulusRepository;
+import com.neurologyca.kopernica.config.repository.StudyRepository;
 import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
@@ -28,6 +29,9 @@ public class ExportExcelController {
 	
 	@Value("${base.path}")
 	private String basePath;
+	
+	@Autowired
+    private StudyRepository studyRepository;
 	
     @Autowired
     private ParticipantRepository participantRepository;
@@ -38,9 +42,12 @@ public class ExportExcelController {
     @Autowired
     private StimulusRepository stimulusRepository;
     
+	static final String GROUP_INTEVIEW = "0";
+	static final String INDIVIDUAL_INTERVIEW = "1";
+    
 	@PostMapping("/participants/{project}/{study}")
     public void exportParticipantExcelFile(@PathVariable String project, @PathVariable String study) throws Exception {
-	    String[] columns = {"Id", "Nombre", "Género", "Edad", "Perfil", "Email"};
+	    String[] columns = {"Id", "Nombre", "Género", "Edad", "Perfil", "Email", "Grupo"};
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet worksheet = workbook.createSheet("Participantes");
 
@@ -62,6 +69,10 @@ public class ExportExcelController {
                 row.createCell(3).setCellValue(participant.getAge());
                 row.createCell(4).setCellValue(participant.getProfile());
                 row.createCell(5).setCellValue(participant.getEmail());
+                
+                if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+                	row.createCell(6).setCellValue(participant.getGroup());
+                }
         }
 		// Resize de todas las columnas
         for(int i = 0; i < columns.length; i++) {
