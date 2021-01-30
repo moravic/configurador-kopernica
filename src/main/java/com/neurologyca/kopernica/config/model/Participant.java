@@ -7,12 +7,13 @@ public class Participant {
 	private Integer age;
 	private String gender;
 	private String profile;
+	private String group;
 
 	
 	public Participant() {
 	}
 	
-	public Participant(Integer id, String name, String email, Integer age, String gender, String profile) {
+	public Participant(Integer id, String name, String email, Integer age, String gender, String profile, String group) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -20,6 +21,7 @@ public class Participant {
 		this.age = age;
 		this.profile = profile;
 		this.email = email;
+		this.group = group;
 	}
 
 	public Integer getId() {
@@ -69,10 +71,17 @@ public class Participant {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public String getGroup() {
+		return group;
+	}
 
+	public void setGroup(String group) {
+		this.group = group;
+	}
 	@Override
 	public String toString() {
-		return "Participant [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + ", email=" + email + ", profile=" + profile + "]";
+		return "Participant [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + ", email=" + email + ", profile=" + profile + ", groupName=" + group + "]";
 	}
 
 }

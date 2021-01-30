@@ -107,6 +107,29 @@
           </mat-cell>
         </ng-container>
         
+        <ng-container matColumnDef="group">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Grupo
+          </mat-header-cell>
+          <mat-cell *matCellDef="let participant; let rowIdx = index;" [formGroup]="participant">
+            <mat-form-field>
+              <mat-label></mat-label>
+              <input matInput placeholder="Grupo"
+                required style="text-overflow: ellipsis;"
+                formControlName="group"
+                [matAutocomplete]="auto">
+			    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+			      <mat-option *ngFor="let item of groupOptions[rowIdx] | async" [value]="item">
+			        {{item}}
+			      </mat-option>
+			    </mat-autocomplete>
+              <mat-error *ngIf="group?.invalid">
+                <div *ngIf="group.errors.required">El grupo es obligatorio</div>
+              </mat-error>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+        
         <!-- Delete Column -->
         <ng-container matColumnDef="deleteParticipant">
 			<mat-header-cell *matHeaderCellDef> Borrado </mat-header-cell>

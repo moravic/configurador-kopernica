@@ -36,6 +36,8 @@ public class StudyRepository {
     private QuestionRepository questionRepository;
     @Autowired
     private StimulusRepository stimulusRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 	
 	private void createFolders(String project, String study) throws Exception {
 		 
