@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Profile;
+import com.neurologyca.kopernica.config.model.Question;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -50,25 +51,14 @@ public class ParticipantRepository {
       }
    
 	public Integer getNewId() throws Exception{
-		
-		if (AppController.fullDatabaseUrl==null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+			try {
+	            Participant participant = new Participant(0, "", "", 0, "", "");
+	            save(participant);
+	            return participant.getId();
+			} catch (SQLException e) {
+	       	 throw new Exception(e.getMessage());
+	        }
 		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            createTableParticipants(conn);
-            
-            return selectMaxId(conn)+1;
-		} catch (SQLException e) {
-       	 throw new Exception(e.getMessage());
-        }
-	}
             
     private void insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, study_id) "
