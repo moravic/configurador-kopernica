@@ -37,7 +37,7 @@ public class ProtocolRepository {
 
 	public void createProtocolTables() throws Exception {
 		String create_GROUPS = "CREATE TABLE IF NOT EXISTS groups (id INTEGER PRIMARY KEY, name TEXT NOT NULL)";
-		String create_GROUP_LIST="CREATE TABLE IF NOT EXISTS group_list (id INTEGER PRIMARY KEY, participant_id INTEGER NULL, protocol_id INTEGER NULL, group_id INTEGER NULL, FOREIGN KEY(participant_id) REFERENCES participants(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id), FOREIGN KEY(group_id) REFERENCES groups(id))";
+		String create_GROUP_LIST="CREATE TABLE IF NOT EXISTS group_list (id INTEGER PRIMARY KEY, group_id INTEGER NULL, protocol_id INTEGER NULL, FOREIGN KEY(protocol_id) REFERENCES protocols(id), FOREIGN KEY(group_id) REFERENCES groups(id))";
 		String create_SEGMENTS = "CREATE TABLE IF NOT EXISTS segments (id INTEGER PRIMARY KEY, type TEXT NOT NULL, value_age_min INTEGER NULL, value_age_max INTEGER NULL, value_gender TEXT NULL, value_profile TEXT NULL)";
 		String create_SEGMENT_LIST = "CREATE TABLE IF NOT EXISTS segment_list (id INTEGER, segment_id INTEGER NOT NULL, protocol_id INTEGER NOT NULL, FOREIGN KEY(segment_id) REFERENCES segments(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id), PRIMARY KEY(id))";
 		String create_BLOCKELEMENT = "CREATE TABLE IF NOT EXISTS blockelement (id INTEGER PRIMARY KEY, question_id INTEGER NULL, stimulus_id INTEGER NULL, FOREIGN KEY(stimulus_id) REFERENCES stimulus(id), FOREIGN KEY(question_id) REFERENCES questions(id))";

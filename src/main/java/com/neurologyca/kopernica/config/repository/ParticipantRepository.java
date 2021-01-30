@@ -37,7 +37,6 @@ public class ParticipantRepository {
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, gender TEXT NOT NULL, age integer NOT NULL, "
 				+ "profile TEXT NOT NULL, email TEXT, group_id integer, study_id integer NOT NULL, locked INT NULL, "
 				+ "FOREIGN KEY(study_id) REFERENCES studies(id), FOREIGN KEY(group_id) REFERENCES groups(id))";
-		
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute(createTableQuery);	
