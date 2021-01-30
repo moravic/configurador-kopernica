@@ -30,7 +30,9 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   project:string;
   @Input()
   study:string;
-   @Input()
+  @Input()
+  typeStudy:string;
+  @Input()
   disabled: boolean;
   
   elistMatTableDataSource = new MatTableDataSource<any>();
@@ -58,15 +60,27 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog
   ){
 
-    this.displayedColumns = [
-      'name',
-      'email',
-      'age',
-      'gender',
-      'profile',
-      'group',
-      'deleteParticipant'
-    ];
+    if (this.typeStudy == "0") {
+    	this.displayedColumns = [
+      		'name',
+      		'email',
+      		'age',
+      		'gender',
+      		'profile',
+      		'group',
+      		'deleteParticipant'
+    		];
+    } else {
+       	this.displayedColumns = [
+      		'name',
+      		'email',
+      		'age',
+      		'gender',
+      		'profile',
+      		'deleteParticipant'
+    		];
+    }
+    		
     this.todaysDate = new Date();
   }
 
@@ -127,6 +141,26 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   ngOnChanges() {
     console.log("ngOnChanges " + this.participants);
+        if (this.typeStudy == "0") {
+    	this.displayedColumns = [
+      		'name',
+      		'email',
+      		'age',
+      		'gender',
+      		'profile',
+      		'group',
+      		'deleteParticipant'
+    		];
+    } else {
+       	this.displayedColumns = [
+      		'name',
+      		'email',
+      		'age',
+      		'gender',
+      		'profile',
+      		'deleteParticipant'
+    		];
+    }
     this.updateParticipants();
   }
   

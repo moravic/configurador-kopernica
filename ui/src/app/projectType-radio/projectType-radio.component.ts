@@ -17,7 +17,7 @@ export class ProjectTypeRadioComponent {
 
   ngOnInit() {
       // Valor por defecto
-      this.selectedItem = '1';
+      //this.selectedItem = '1';
   }
   
   public changeItem(selectedItem) {

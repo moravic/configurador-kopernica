@@ -72,15 +72,14 @@ export class AppComponent implements OnInit{
   }
 
   public addStudy(){
-     console.log("Adding study");
-     console.log(this.typeSelected);
+     //console.log("Adding study");
      this.study = new Study();
      this.study.project=this.projectSelected;
      this.study.study=this.studySelected;
      this.study.type=this.typeSelected;
      this.studyService.addStudy(this.study)
      	.subscribe(resp => {
-     	    console.log(resp);
+     	    //console.log(resp);
      	    this.listComponentsDisabled=false;
      	    this.addStudyDisabled=true;
 	      }, error =>  this.error_str=error.error.message);
@@ -95,7 +94,7 @@ export class AppComponent implements OnInit{
    }
    
    public applyConfiguration(){
-   		console.log("Generating Protocol Participants...");
+   		//console.log("Generating Protocol Participants...");
    		this.protocolparticipantService.applyConfiguration()
      	.subscribe(resp => {
      	    console.log(resp);
@@ -114,10 +113,9 @@ export class AppComponent implements OnInit{
   } 
   
   shareItemToParent(itemSelected:string){
-     console.log("shareProjectToParent " + itemSelected);	
+     //console.log("shareProjectToParent " + itemSelected);	
      
        if (itemSelected) {
-        console.log("ITEM SELECTED");
         this.projectSelected = itemSelected; 
         this.studySelected = "";
         this.listEstudios.length = 0;
@@ -125,7 +123,7 @@ export class AppComponent implements OnInit{
         this.addStudyDisabled=true;
        	this.appService.getListEstudios(itemSelected)
 	      .subscribe(data => {
-	        console.log(data)
+	        //console.log(data)
 	        this.listEstudios = data;
 	        this.shareEstudioToParent(data[0]);
 	      }, error => this.error_str=error.error.message);
@@ -136,7 +134,7 @@ export class AppComponent implements OnInit{
   
    shareEstudioToParent(itemSelected:string){
      if (itemSelected) {
-     	console.log("shareEstudioToParent " + itemSelected);	
+     	//console.log("shareEstudioToParent " + itemSelected);	
      	this.studySelected = itemSelected;
      
      	this.addStudyDisabled=true;
@@ -145,7 +143,7 @@ export class AppComponent implements OnInit{
 	     	//console.log(data);
 	     	this.error_str="";
 	     	this.studyService.getTypeStudy(this.projectSelected, this.studySelected).subscribe(data => {
-	     	if (data){
+	     	if (data == "0" || data == "1"){
 		    	this.typeSelected=""+data; 
 		    	this.typeDisabled=true;
 		    	this.addStudyDisabled=true;
@@ -156,24 +154,24 @@ export class AppComponent implements OnInit{
 		    	this.addStudyDisabled=false;
 		    	this.listComponentsDisabled=false;
 		 	}
-		 	console.log("getParticipants");
+		 	//console.log("getParticipants");
          	this.participantService.getParticipants(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {
 	        		//console.log(data);
 	        		this.participants = data;
 	      		}, error =>  {this.error_str=error.error.message; 
 	      					  this.participants.length=0;});
-	      	console.log("getQuestions");
+	      	//console.log("getQuestions");
          	this.questionService.getQuestions(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {
 	        		//console.log(data);
 	        		this.questions = data;
 	      		}, error =>  {this.error_str=error.error.message; 
 	      					  this.questions.length=0;});
-	        console.log("getStimuli");
+	        //console.log("getStimuli");
          	this.stimulusService.getStimuliList(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {
-	        		console.log(data);
+	        		//console.log(data);
 	        		this.stimuli = data;
 	        		
 	      		}, error =>  {this.error_str=error.error.message; 
@@ -196,7 +194,7 @@ export class AppComponent implements OnInit{
 		  	this.participants.length=0;
 		  	this.questions.length=0;
 		  	this.questions.length=0;});
-		console.log("getProtocols");
+		//console.log("getProtocols");
      	this.protocolService.getProtocols()
       		.subscribe(data => {
         		//console.log(data);
@@ -207,7 +205,7 @@ export class AppComponent implements OnInit{
    }
    
    shareChangeType(itemSelected:string){
-        console.log("changeType " + itemSelected);	 
+        //console.log("changeType " + itemSelected);	 
         this.typeSelected = itemSelected;   
    }
    
