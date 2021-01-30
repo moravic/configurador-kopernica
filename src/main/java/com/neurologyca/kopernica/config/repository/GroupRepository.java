@@ -6,26 +6,19 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.springframework.stereotype.Repository;
-
 import com.neurologyca.kopernica.config.controller.AppController;
-import com.neurologyca.kopernica.config.model.Participant;
-import com.neurologyca.kopernica.config.model.Stimulus;
-
+import com.neurologyca.kopernica.config.model.Group;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 @Repository
-public class StimulusRepository {
+public class GroupRepository {
 	
-    public void createTableStimulus(Connection conn) throws Exception{
-		String createTableQuery = "CREATE TABLE IF NOT EXISTS stimulus ("
-				+ "id integer PRIMARY KEY, name TEXT NOT NULL, "
-				+ "study_id integer NOT NULL, "
-				+ "FOREIGN KEY(study_id) REFERENCES studies(id))";
+    public void createTableGroups(Connection conn) throws Exception{
+		String createTableQuery = "CREATE TABLE IF NOT EXISTS groups ("
+				+ "id integer PRIMARY KEY, name TEXT NOT NULL )";
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -37,7 +30,7 @@ public class StimulusRepository {
 	 }
 
     private Integer selectMaxId(Connection conn) throws Exception {
-   	 String selectMaxIdSql = "SELECT MAX(id) id FROM stimulus";
+   	 String selectMaxIdSql = "SELECT MAX(id) id FROM groups";
    	 ResultSet rs;
    	 
         try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
@@ -48,36 +41,25 @@ public class StimulusRepository {
         }
         return rs.getInt("id");
    }
-    
-	public Integer getNewId() throws Exception{
-		try {
-            Stimulus stimulus = new Stimulus(0, "");
-            save(stimulus);
-            return stimulus.getId();
-		} catch (SQLException e) {
-       	 throw new Exception(e.getMessage());
-        }
-	}
-       
 	
-    private void insertStimulus(Connection conn, Stimulus stimulus) throws Exception {
-    	 String insertSql = "INSERT OR REPLACE INTO stimulus(id, name, study_id) "
-    	 		+ "VALUES(?,?,1)";
+    private void insertGroup(Connection conn, Group group) throws Exception {
+    	 String insertSql = "INSERT OR REPLACE INTO groups(id, name) "
+    	 		+ "VALUES(?,?)";
     	 
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	 
-        	 if (stimulus.getId()==0) {
-        		 stimulus.setId(selectMaxId(conn)+1);
+        	 if (group.getId()==0) {
+        		 group.setId(selectMaxId(conn)+1);
         	 }
        	 
-             pstmt.setInt(1, stimulus.getId());
-             pstmt.setString(2, stimulus.getName());
+             pstmt.setInt(1, group.getId());
+             pstmt.setString(2, group.getName());
              pstmt.executeUpdate();
          } catch (SQLException e) {
         	 throw new Exception(e.getMessage());
          }
     }
 	
-	public Integer save(Stimulus stimulus) throws Exception{
+	public Integer save(Group group) throws Exception{
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
@@ -89,17 +71,93 @@ public class StimulusRepository {
                 //System.out.println("A new database has been created.");
             }
             
-			createTableStimulus(conn);
-			insertStimulus(conn, stimulus);
+			createTableGroups(conn);
+			insertGroup(conn, group);
             
 			conn.close();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
 
-		return stimulus.getId();
+		return group.getId();
 	}
 	
+	public Integer getGroupId(String groupName) throws Exception{
+		String selectIdSql = "SELECT id FROM groups WHERE name = ?";
+		Integer groupId = 0;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+    
+            // Si existe el nombre del grupo devuelve el Id y si no existe se crea el grupo y devuelve el id
+            try (PreparedStatement stmt = conn.prepareStatement(selectIdSql)) {
+            	
+            	stmt.setString(1, groupName);
+            	ResultSet rs = stmt.executeQuery();
+    	    
+            	groupId = rs.getInt("id");
+            	System.out.println("Group Id "+ groupId);
+            } catch (SQLException e) {
+            	if (!groupName.equals("")) {
+            		Group group = new Group(0, groupName);
+            		createTableGroups(conn);
+            		insertGroup(conn, group);
+            		groupId = group.getId();
+            		System.out.println("Nuevo grupo "+ groupId);
+            	}
+            }
+           
+			conn.close();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+
+		return groupId;
+	}
+	
+	public String getGroupName(Integer groupId) throws Exception{
+		String selectSql = "SELECT name FROM groups WHERE id = ?";
+		String groupName;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            // Si existe el nombre del grupo devuelve el Id y si no existe se crea el grupo y devuelve el id
+            try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
+            	stmt.setInt(1, groupId);
+            	ResultSet rs = stmt.executeQuery();
+    	    
+            	groupName = rs.getString("name");
+            	System.out.println("Group Name "+ groupName);
+            } catch (SQLException e) {
+            	throw new Exception(e.getMessage());
+            }
+            
+			conn.close();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+
+		return groupName;
+	}
+
+	/*
 	public List<Stimulus> getStimulusList() throws Exception{
 	    String getStimulusSql = "SELECT id, name FROM stimulus";
 	    Stimulus stimulus;
@@ -182,4 +240,5 @@ public class StimulusRepository {
         }
 		
 	}
+	*/
 }

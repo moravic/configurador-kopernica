@@ -5,4 +5,5 @@ export class Participant {
     age: string;
     gender: string;
     profile: string;
+    group: string;
 }

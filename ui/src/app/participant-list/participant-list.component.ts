@@ -38,9 +38,12 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   todaysDate: Date;
   profileOptions: Observable<string[]>[] = [];
   profileListItems:string[];
+  groupOptions: Observable<string[]>[] = [];
+  groupListItems:string[];
 
   form: FormGroup;
   myProfileControl=[];
+  myGroupControl=[];
   error_str:string;
   formData = new FormData();
     
@@ -61,6 +64,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
       'age',
       'gender',
       'profile',
+      'group',
       'deleteParticipant'
     ];
     this.todaysDate = new Date();
@@ -75,6 +79,14 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     for (var i=0, l=arr.length; i<l; i++)
         if (a.indexOf(arr[i].profile) === -1 && arr[i].profile !== '')
             a.push(arr[i].profile);
+    return a;
+  }
+  
+    private uniquesGroup(arr) {
+    var a = [];
+    for (var i=0, l=arr.length; i<l; i++)
+        if (a.indexOf(arr[i].group) === -1 && arr[i].group !== '')
+            a.push(arr[i].group);
     return a;
   }
 
@@ -98,6 +110,17 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     return results;
   }
   
+    private _filterGroup(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    
+    console.log('filterValue ' + filterValue);
+    const results = this.groupListItems.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
+    
+    console.log('results ' + results);
+    
+    return results;
+  }
+  
   ngOnInit() {
 
   }
@@ -114,6 +137,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     console.log("updateParticipants " + this.participants);
     
     this.profileListItems = this.uniques(this.participants);
+    this.groupListItems = this.uniquesGroup(this.participants);
         
     this.form= this.formBuilder.group({
        participants: this.formBuilder.array([])
@@ -169,6 +193,12 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	      map(value => typeof value === 'string' ? value : value.profile),
 	      map(profile => profile ? this._filter(profile) : this.profileListItems.slice())
       );
+      
+      this.groupOptions[index] = formGroup.get('group').valueChanges.pipe(
+      	startWith<string | Participant>(''),
+	      map(value => typeof value === 'string' ? value : value.group),
+	      map(group => group ? this._filterGroup(group) : this.groupListItems.slice())
+      );
   }
   
   private setParticipantsFormArray(participant){
@@ -178,7 +208,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         email:participant.email,
         age:participant.age, 
         gender:participant.gender,
-        profile:participant.profile
+        profile:participant.profile,
+        group:participant.group
     });
   }
   
@@ -231,7 +262,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
           email:'',
           age:'',
           gender:'',
-          profile:''
+          profile:'',
+          group:''
 	   	};
   	 
    	 this.setFormGroup(participant, this.form.controls.participants.value.length);
@@ -254,6 +286,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     this.elistMatTableDataSource.data.splice(index, 1);
     //this.participantFormArray.controls.splice(index, 1);
     this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
+    this.groupListItems = this.uniquesGroup(this.elistMatTableDataSource.data);
     this.elistMatTableDataSource.filter = "";
   }
 
@@ -261,6 +294,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     console.log('deleteAll');
   	this.elistMatTableDataSource.data = [];
   	this.profileListItems = [];
+  	this.groupListItems = [];
   	this.participantService.deleteAllParticipant().subscribe(data => {
 	    console.log("Delete " + data);
 	    this.openDialog("Info", "Los participantes han sido borrados.");
@@ -278,9 +312,11 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         this.elistMatTableDataSource.data[index].email = participant.email;
         this.elistMatTableDataSource.data[index].age = participant.age;
         this.elistMatTableDataSource.data[index].gender = participant.gender;
-        this.elistMatTableDataSource.data[index].profile = participant.profile;*/
+        this.elistMatTableDataSource.data[index].profile = participant.profile;
+        this.elistMatTableDataSource.data[index].group = participant.group;*/
         
         this.profileListItems = this.uniques(this.participantFormArray.value);
+        this.groupListItems = this.uniquesGroup(this.participantFormArray.value);
             
         if (this.participantFormArray.value[index].id != data) {
             this.participantFormArray.value[index].id = data;
@@ -290,7 +326,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 		        email:participant.email,
 		        age:participant.age, 
 		        gender:participant.gender,
-		        profile:participant.profile
+		        profile:participant.profile,
+		        group:participant.group
 		    });
 	    }
         this.elistMatTableDataSource.paginator = this.paginator;
@@ -311,6 +348,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	        this.elistMatTableDataSource.data[index].age = this.participantChanged.age;
 	        this.elistMatTableDataSource.data[index].gender = this.participantChanged.gender;
 	        this.elistMatTableDataSource.data[index].profile = this.participantChanged.profile;
+	        this.elistMatTableDataSource.data[index].group = this.participantChanged.group;
 	        this.participantFormArray.value[index].id = data;
 	        //this.participantFormArray.controls[index] = this.setParticipantsFormArray(this.elistMatTableDataSource.data[index]);
 	        this.participantFormArray.controls[index].setValue({
@@ -319,7 +357,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 		        email:this.participantChanged.email,
 		        age:this.participantChanged.age, 
 		        gender:this.participantChanged.gender,
-		        profile:this.participantChanged.profile
+		        profile:this.participantChanged.profile,
+		        group:this.participantChanged.group
 		    });
 		    
 	        //this.elistMatTableDataSource.filter = "";
