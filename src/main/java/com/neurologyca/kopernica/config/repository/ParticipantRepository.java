@@ -68,7 +68,7 @@ public class ParticipantRepository {
 	        }
 		}
             
-    private void insertParticipant(Connection conn, Participant participant) throws Exception {
+    private Participant insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, group_id, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,?,1)";
     	 	 
@@ -78,7 +78,7 @@ public class ParticipantRepository {
     	 System.out.println("Tipo Estudio: " + studyRepository.getTypeStudy());
     	 if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {	 	
     		 System.out.println("Id/grupo: " + participant.getGroupId() + " " + participant.getGroup());
-    		 participant.setGroupId(groupRepository.getGroupId(participant.getGroupId(), participant.getGroup()));
+    		 participant.setGroupId(groupRepository.getGroupId(participant.getGroupId(), participant.getGroup(), participant.getId()));
     		 System.out.println("Grupo Final: " + participant.getGroupId());
     	 }
     	 else {
@@ -100,9 +100,11 @@ public class ParticipantRepository {
          } catch (SQLException e) {
         	 throw new Exception(e.getMessage());
          }
+         
+         return participant;
     }
 	
-	public Integer save(Participant participant) throws Exception{
+	public Participant save(Participant participant) throws Exception{
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -116,7 +118,7 @@ public class ParticipantRepository {
             }
             
 			createTableParticipants(conn);
-			insertParticipant(conn, participant);
+			participant = insertParticipant(conn, participant);
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
@@ -124,7 +126,7 @@ public class ParticipantRepository {
 		
 		
 
-		return participant.getId();
+		return participant;
 	}
 	
 	public void deleteAll() throws Exception{

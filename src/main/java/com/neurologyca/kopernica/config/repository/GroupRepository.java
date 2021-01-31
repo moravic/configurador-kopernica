@@ -98,7 +98,7 @@ public class GroupRepository {
 		return group.getId();
 	}
 	
-	public Integer getGroupId(Integer groupId, String groupName) throws Exception{
+	public Integer getGroupId(Integer groupId, String groupName, Integer participantId) throws Exception{
 		String selectIdSql = "SELECT name FROM groups WHERE id = ?";
 		String oldGroupName;
 		
@@ -123,7 +123,7 @@ public class GroupRepository {
             	
             	if (!oldGroupName.equals(groupName)) {
             		// Revisar si algun participante tiene ese Id
-            		if (numGroupParticipants(groupId) == 0) {
+            		if (numGroupParticipants(groupId, participantId) == 0) {
             		// Si no hay ninguno cambiar el nombre del grupo
             			Group group = new Group(groupId, groupName);
                 		insertGroup(conn, group);
@@ -187,8 +187,8 @@ public class GroupRepository {
 		return groupId;
 	}
 	
-	public Integer numGroupParticipants(Integer groupId) throws Exception{
-		String selectSql = "SELECT count(1) contador FROM participants WHERE group_id = ?";
+	public Integer numGroupParticipants(Integer groupId, Integer participantId) throws Exception{
+		String selectSql = "SELECT count(1) contador FROM participants WHERE group_id = ? and id != ?";
 		Integer numParticipants = 0;
 		
 		if (AppController.fullDatabaseUrl==null) {
@@ -205,6 +205,7 @@ public class GroupRepository {
             // Si existe el nombre del grupo devuelve el Id y si no existe se crea el grupo y devuelve el id
             try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
             	stmt.setInt(1, groupId);
+            	stmt.setInt(2, participantId);
             	ResultSet rs = stmt.executeQuery();
     	    
             	numParticipants = rs.getInt("contador");

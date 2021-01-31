@@ -37,7 +37,7 @@ public class ParticipantController {
 	}
     
     @PostMapping()
-    public Integer saveParticipant(@RequestBody Participant participant) throws Exception {
+    public Participant saveParticipant(@RequestBody Participant participant) throws Exception {
     	//System.out.println("createParticipant");
         return participantRepository.save(participant);
     }

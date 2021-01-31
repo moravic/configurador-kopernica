@@ -344,27 +344,28 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
       this.participantService.saveParticipant(participant)
       .subscribe(data => {
         console.log("Save " + data);
-        /*this.elistMatTableDataSource.data[index].id = data;
+        /*this.elistMatTableDataSource.data[index].id = data.id;
         this.elistMatTableDataSource.data[index].name = participant.name;
         this.elistMatTableDataSource.data[index].email = participant.email;
         this.elistMatTableDataSource.data[index].age = participant.age;
         this.elistMatTableDataSource.data[index].gender = participant.gender;
         this.elistMatTableDataSource.data[index].profile = participant.profile;
-        this.elistMatTableDataSource.data[index].group = participant.group;*/
+        this.elistMatTableDataSource.data[index].group = data.groupId;*/
         
         this.profileListItems = this.uniques(this.participantFormArray.value);
         this.groupListItems = this.uniquesGroup(this.participantFormArray.value);
             
-        if (this.participantFormArray.value[index].id != data) {
-            this.participantFormArray.value[index].id = data;
+        if (this.participantFormArray.value[index].id != data.id || this.participantFormArray.value[index].groupId != data.groupId ) {
+            this.participantFormArray.value[index].id = data.id;
+            this.participantFormArray.value[index].groupId = data.groupId;
 	        this.participantFormArray.controls[index].setValue({
-		        id:data,
+		        id:data.id,
 		        name:participant.name,
 		        email:participant.email,
 		        age:participant.age, 
 		        gender:participant.gender,
 		        profile:participant.profile,
-		        groupId:participant.groupId,
+		        groupId:data.groupId,
 		        group:participant.group
 		    });
 	    }
@@ -380,24 +381,24 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
       this.participantService.saveParticipant(this.participantChanged)
 	      .subscribe(data => {
 	        console.log("Save " + data);
-	        this.elistMatTableDataSource.data[index].id = data;
+	        this.elistMatTableDataSource.data[index].id = data.id;
 	        this.elistMatTableDataSource.data[index].name = this.participantChanged.name;
 	        this.elistMatTableDataSource.data[index].email = this.participantChanged.email;
 	        this.elistMatTableDataSource.data[index].age = this.participantChanged.age;
 	        this.elistMatTableDataSource.data[index].gender = this.participantChanged.gender;
 	        this.elistMatTableDataSource.data[index].profile = this.participantChanged.profile;
-	        this.elistMatTableDataSource.data[index].groupId = this.participantChanged.groupId;
+	        this.elistMatTableDataSource.data[index].groupId = data.groupId;
 	        this.elistMatTableDataSource.data[index].group = this.participantChanged.group;
 	        this.participantFormArray.value[index].id = data;
 	        //this.participantFormArray.controls[index] = this.setParticipantsFormArray(this.elistMatTableDataSource.data[index]);
 	        this.participantFormArray.controls[index].setValue({
-		        id:data,
+		        id:data.id,
 		        name:this.participantChanged.name,
 		        email:this.participantChanged.email,
 		        age:this.participantChanged.age, 
 		        gender:this.participantChanged.gender,
 		        profile:this.participantChanged.profile,
-		        groupId:this.participantChanged.groupId,
+		        groupId:data.groupId,
 		        group:this.participantChanged.group
 		    });
 		    

@@ -91,7 +91,7 @@ public class Participant {
 	}
 	@Override
 	public String toString() {
-		return "Participant [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + ", email=" + email + ", profile=" + profile + ", groupName=" + group + "]";
+		return "Participant [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + ", email=" + email + ", profile=" + profile + ", groupName=" + group + ", groupId=" + groupId +"]";
 	}
 
 }

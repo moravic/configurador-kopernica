@@ -13,10 +13,15 @@ import { GroupService } from '../group.service';
 export class GroupComponent {
 
   constructor(private groupService:GroupService) {
+    this.groupService.getGroups()
+      .subscribe(data => {
+        console.log("getGroups " + data);
+        this.groupArray = data;
+     }); 
+     
     this.groupForm = this.createFormGroup();
   }
   
-  @Input()
   groupArray:Group[] = [];
   @Input()
   groupListArray:GroupList[] = [];
