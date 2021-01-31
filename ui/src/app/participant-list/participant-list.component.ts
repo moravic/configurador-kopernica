@@ -14,6 +14,7 @@ import { ImportService } from '../import.service';
 import { ExportService } from '../export.service';
 import { MatDialogOkComponent } from '../mat-dialog-ok/mat-dialog-ok.component';
 import { MatDialog } from '@angular/material/dialog';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'participant-list',
@@ -51,6 +52,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     
   constructor(
     private participantService:ParticipantService,
+    private storeService: StoreService,
     private importService:ImportService,
     private exportService:ExportService,
     private matIconRegistry: MatIconRegistry,
@@ -272,6 +274,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	  this.participants = data;
 	  this.updateParticipants();
 	  this.openDialog("Info", "Los participantes han sido importados.");
+      this.storeService.broadcastGroupChange("S");
     }, error =>  this.error_str=error.error.message);
   }
   
@@ -318,6 +321,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   	var index =  this.participantFormArray.controls.findIndex(fg => fg.value.id === participant.controls.id.value);
     this.participantService.deleteParticipant(participant.controls.id.value).subscribe(data => {
 	    console.log("Delete " + data);
+	    this.storeService.broadcastGroupChange("S");
      }, error =>  this.error_str=error.error.message);
     // find item and remove ist
     this.elistMatTableDataSource.data.splice(index, 1);
@@ -335,6 +339,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   	this.participantService.deleteAllParticipant().subscribe(data => {
 	    console.log("Delete " + data);
 	    this.openDialog("Info", "Los participantes han sido borrados.");
+        this.storeService.broadcastGroupChange("S");
      }, error =>  this.error_str=error.error.message);
   }
   
@@ -371,6 +376,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
 	    }
         this.elistMatTableDataSource.paginator = this.paginator;
         this.elistMatTableDataSource.sort = this.sort;
+        this.storeService.broadcastGroupChange("S");
       }, error =>  this.error_str=error.error.message);
     }
   }

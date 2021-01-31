@@ -4,6 +4,7 @@ import { GroupList } from '../groupList';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable} from 'rxjs';
 import { GroupService } from '../group.service';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'group',
@@ -12,7 +13,8 @@ import { GroupService } from '../group.service';
 })
 export class GroupComponent {
 
-  constructor(private groupService:GroupService) {
+  constructor(private groupService:GroupService,
+              private storeService:StoreService) {
     this.groupService.getGroups()
       .subscribe(data => {
         console.log("getGroups " + data);
@@ -20,6 +22,15 @@ export class GroupComponent {
      }); 
      
     this.groupForm = this.createFormGroup();
+    
+    storeService.getGroupChange().subscribe(data => {
+       console.log("GroupChange");
+       this.groupService.getGroups()
+	      .subscribe(data => {
+	        console.log("getGroups " + data);
+	        this.groupArray = data;
+	     }); 
+	});
   }
   
   groupArray:Group[] = [];
@@ -49,14 +60,13 @@ export class GroupComponent {
     var groupList:GroupList = {
         id: null,
 	    group: {
-	       id: null,
-	       name: this.groupForm.value.name
+	       id: this.groupForm.value.id,
+	       name: this.groupArray[this.groupForm.value.id-1].name
 	    }
 	};
 	    
     this.groupService.saveGroupProtocol(this.protocolId, groupList)
       .subscribe(data => {
-        groupList = data;
         this.groupListArray.push(groupList);
         console.log("Save " + data); 
     }); 

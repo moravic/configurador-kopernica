@@ -293,7 +293,7 @@ public class GroupRepository {
 	}
 	
 	public void deleteGroupProtocol(Integer protocolId, Integer groupId) throws Exception{
-	    String deleteSql = "DELETE FROM group_list where group_id = ? and protocol_id=" + protocolId;
+	    String deleteSql = "DELETE FROM group_list where group_id = ? and protocol_id= ?";
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -338,7 +338,7 @@ public class GroupRepository {
 	}
 	
 	private Integer selectMaxGroupListId(Connection conn) throws Exception {
-		String selectMaxIdSql = "SELECT MAX(id) id FROM groups";
+		String selectMaxIdSql = "SELECT MAX(id) id FROM group_list";
 		ResultSet rs;
 
 		try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
@@ -355,7 +355,7 @@ public class GroupRepository {
    	 		+ "VALUES(?,?,?)";
    	 
         try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	 
-       	 if (groupList.getId()==0) {
+       	 if (groupList.getId()==null || groupList.getId()==0) {
        		 groupList.setId(selectMaxGroupListId(conn)+1);
        	 }
       	 

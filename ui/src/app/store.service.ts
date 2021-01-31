@@ -9,6 +9,7 @@ export class StoreService {
   //stimuli = this._stimuli.asObservable();
   
   private _elementChange = new BehaviorSubject<string>(null);
+  private _groupChange = new BehaviorSubject<string>(null);
   
   constructor() { }
 
@@ -26,5 +27,13 @@ export class StoreService {
 
   public broadcastElementChange(elementChange:string): void {
     this._elementChange.next(elementChange);
+  }
+  
+  public getGroupChange(): Observable<string> {
+    return this._groupChange.asObservable();
+  }
+
+  public broadcastGroupChange(groupChange:string): void {
+    this._groupChange.next(groupChange);
   }
 }

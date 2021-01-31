@@ -206,7 +206,7 @@ order by pr.id, p.id, b.id, no_order
 					GroupList groupList = new GroupList();
 					Group group = new Group();
 					
-					groupList.setId(rsGroup.getInt("segmentlist_id"));
+					groupList.setId(rsGroup.getInt("grouplist_id"));
 					group.setId(rsGroup.getInt("id"));
 					group.setName(rsGroup.getString("name"));
 					groupList.setGroup(group);

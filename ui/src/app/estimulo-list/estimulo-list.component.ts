@@ -225,7 +225,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
 	  console.log('Excel Imported ' + data);
 	  this.stimuli = data;
 	  this.updateStimuli();
-	  this.openDialog("Info", "Las preguntas han sido importadas.");
+	  this.openDialog("Info", "Los estímulos han sido importados.");
     }, error =>  this.error_str=error.error.message);
   }
   
@@ -235,7 +235,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
     console.log('exportExcel');
     this.exportService.exportStimulusExcelFile(this.project, this.study)
 	      .subscribe(data => {
-	  this.openDialog("Info", "Las preguntas han sido exportadas.");
+	  this.openDialog("Info", "Los estímulos han sido exportados.");
 	  console.log('Excel Exported');
     }, error =>  this.error_str=error.error.message);
     

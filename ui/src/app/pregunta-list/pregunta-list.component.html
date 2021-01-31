@@ -19,11 +19,11 @@
     <mat-card-content>
       <mat-table [dataSource]="elistMatTableDataSource" formControlName="questions">
         <ng-container matColumnDef="question">
-          <mat-header-cell *matHeaderCellDef style="width: 250px">
+          <mat-header-cell *matHeaderCellDef style="width: 400px">
             Introduzca las preguntas que se guardarán en orden
           </mat-header-cell>
           <mat-cell *matCellDef="let question; let rowIdx = index;" [formGroup]="question">
-            <mat-form-field>
+            <mat-form-field style="width: 400px">
               <mat-label></mat-label>
               <input matInput formControlName="question" placeholder="Pregunta" required>
               <mat-error *ngIf="question?.invalid">

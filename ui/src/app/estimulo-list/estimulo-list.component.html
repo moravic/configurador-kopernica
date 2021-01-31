@@ -19,11 +19,11 @@
     <mat-card-content>
       <mat-table [dataSource]="elistMatTableDataSource" formControlName="stimuli">
         <ng-container matColumnDef="stimulus">
-          <mat-header-cell *matHeaderCellDef style="width: 250px">
+          <mat-header-cell *matHeaderCellDef style="width: 400px">
             Introduzca el nombre de los estímulos que se guardarán en orden
           </mat-header-cell>
           <mat-cell *matCellDef="let stimulus; let rowIdx = index;" [formGroup]="stimulus">
-            <mat-form-field>
+            <mat-form-field style="width: 400px">
               <mat-label></mat-label>
                <input matInput formControlName="name" placeholder="Estimulo" required>
                <mat-error *ngIf="name?.invalid">
