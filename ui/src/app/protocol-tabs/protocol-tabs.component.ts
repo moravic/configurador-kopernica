@@ -40,7 +40,7 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
   ngOnChanges(changes:any) {
      console.log("ngOnChanges Protocol");
      this.tabs = [];
-     protocolIdMax=0;
+     this.protocolIdMax=0;
 	 this.protocols.forEach( (protocol) => {
 	    if (this.protocolIdMax<protocol.id)
 	       this.protocolIdMax=protocol.id;
