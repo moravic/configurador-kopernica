@@ -22,6 +22,7 @@ import { EstimuloDataStoreService } from './estimulo-list/estimulo-list.service'
 import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
 import { ProtocolTabsComponent } from './protocol-tabs/protocol-tabs.component';
 import { SegmentComponent } from './segment/segment.component';
+import { GroupComponent } from './group/group.component';
 import { BlockProtocolComponent } from './block-protocol/block-protocol.component';
 import { StoreService } from './store.service';
 
@@ -41,7 +42,8 @@ import { StoreService } from './store.service';
     MatDialogOkComponent,
     ProtocolTabsComponent,
     SegmentComponent,
-    BlockProtocolComponent
+    BlockProtocolComponent,
+    GroupComponent
   ],
   imports: [
     BrowserModule,

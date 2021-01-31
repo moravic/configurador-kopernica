@@ -16,6 +16,8 @@ import com.neurologyca.kopernica.config.model.Block;
 import com.neurologyca.kopernica.config.model.BlockElement;
 import com.neurologyca.kopernica.config.model.BlockElementList;
 import com.neurologyca.kopernica.config.model.BlockList;
+import com.neurologyca.kopernica.config.model.Group;
+import com.neurologyca.kopernica.config.model.GroupList;
 import com.neurologyca.kopernica.config.model.Protocol;
 import com.neurologyca.kopernica.config.model.Question;
 import com.neurologyca.kopernica.config.model.Segment;
@@ -126,6 +128,10 @@ order by pr.id, p.id, b.id, no_order
 				+ "FROM segment_list sl JOIN segments s on (sl.segment_id=s.id) "
 				+ "WHERE protocol_id=? "
 				+ "order by s.id";
+		String getGroup = "select gl.id grouplist_id, g.id, g.name "
+				+ "FROM group_list gl JOIN groups g on (gl.group_id=g.id) "
+				+ "WHERE protocol_id=? "
+				+ "order by g.id";
 		String getBlock = "select bl.id blocklist_id, bl.block_id, b.block_name "
 				+ "FROM block_list bl JOIN blocks b on (b.id=bl.block_id) "
 				+ "WHERE protocol_id=? "
@@ -189,6 +195,26 @@ order by pr.id, p.id, b.id, no_order
 				
 				protocol.setSegmentListArray(segmentListArray);
 				
+				PreparedStatement pstmtGroup = conn.prepareStatement(getGroup);
+				pstmtGroup.setInt(1, protocol.getId());
+				
+				ResultSet rsGroup = pstmtGroup.executeQuery();
+				
+				List<GroupList> groupListArray = new ArrayList<GroupList>();
+				
+				while (rsGroup.next()) {
+					GroupList groupList = new GroupList();
+					Group group = new Group();
+					
+					groupList.setId(rsGroup.getInt("segmentlist_id"));
+					group.setId(rsGroup.getInt("id"));
+					group.setName(rsGroup.getString("name"));
+					groupList.setGroup(group);
+					groupListArray.add(groupList);
+				}
+				
+				protocol.setGroupListArray(groupListArray);
+			
 				PreparedStatement pstmtBlock = conn.prepareStatement(getBlock);
 				pstmtBlock.setInt(1, protocol.getId());
 				
@@ -708,6 +734,70 @@ order by pr.id, p.id, b.id, no_order
 		}
 	}
 	
+	public GroupList saveGroupList(Integer protocolId, String protocolName, GroupList groupList) throws Exception {
+
+		String insertProtocolSql = "INSERT OR REPLACE INTO PROTOCOLS (id, name) "
+				+ "VALUES(?,?)";
+		
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		
+		createProtocolTables();
+
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+
+			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
+
+				pstmt.setInt(1, protocolId);
+				pstmt.setString(2, protocolName);
+
+				pstmt.executeUpdate();
+
+				return insertGroupList(conn, groupList, protocolId);
+			}
+		}
+	}
+	
+	private GroupList insertGroupList(Connection conn, GroupList groupList, Integer protocolId) throws Exception {
+	   	 String insertSql = "INSERT OR REPLACE INTO group_list(id, group_id, protocol_id) "
+	   	 		+ "VALUES(?,?,?)";
+	   	 
+	        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	 
+	       	 if (groupList.getId()==0) {
+	       		 groupList.setId(selectMaxGroupListId(conn)+1);
+	       	 }
+	      	 
+	            pstmt.setInt(1, groupList.getId());
+	            pstmt.setInt(2, groupList.getGroup().getId());
+	            pstmt.setInt(3, protocolId);
+	            pstmt.executeUpdate();
+	        } catch (SQLException e) {
+	       	 throw new Exception(e.getMessage());
+	        }
+	        
+	        return groupList;
+	 }
+	
+	private Integer selectMaxGroupListId(Connection conn) throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM groups";
+		ResultSet rs;
+
+		try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
+			Statement stmt = conn.createStatement();
+			rs = stmt.executeQuery(selectMaxIdSql);
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+		return rs.getInt("id");
+	}
+	
 	public void deleteSegmentList(Integer protocolId, String protocolName, Integer segmentListId, Integer segmentId) throws Exception {
 		
 		if (AppController.fullDatabaseUrl == null) {
@@ -1029,5 +1119,42 @@ order by pr.id, p.id, b.id, no_order
 			
 			conn.close();
 		}
+	}
+	
+	public List<Group> getGroups() throws Exception{
+	    String getGroupSql = "SELECT id, name FROM groups";
+	    Group group;
+	    List<Group> groupList = new ArrayList<Group>();
+	    
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getGroupSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				group = new Group();
+				group.setId(rs.getInt("id"));
+				group.setName(rs.getString("name"));
+
+				groupList.add(group);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+		return groupList;
+		
 	}
 }

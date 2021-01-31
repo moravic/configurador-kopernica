@@ -11,46 +11,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Group;
+import com.neurologyca.kopernica.config.model.GroupList;
+import com.neurologyca.kopernica.config.model.Question;
+import com.neurologyca.kopernica.config.model.Stimulus;
+
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
 @Repository
 public class GroupRepository {
 	
-    public void createTableGroups(Connection conn) throws Exception{
+	public void createTableGroups(Connection conn) throws Exception {
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS groups ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL )";
-		String insertSql = "INSERT OR REPLACE INTO groups(id, name) "
-	    	 		+ "VALUES(1,'Todos')";
-		
+		String insertSql = "INSERT OR REPLACE INTO groups(id, name) " + "VALUES(1,'Todos')";
+
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.execute(createTableQuery);	
-			
+			stmt.execute(createTableQuery);
+
 			try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
 				pstmt.executeUpdate();
-			 } catch (SQLException e) {
-	        	 throw new Exception(e.getMessage());	
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new Exception(e.getMessage());
-		 }
-	 }
+		}
+	}
 
-    private Integer selectMaxId(Connection conn) throws Exception {
-   	 String selectMaxIdSql = "SELECT MAX(id) id FROM groups";
-   	 ResultSet rs;
-   	 
-        try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
-        	Statement stmt = conn.createStatement();
-        	rs = stmt.executeQuery(selectMaxIdSql);
-        } catch (SQLException e) {
-       	 throw new Exception(e.getMessage());
-        }
-        return rs.getInt("id");
-   }
+	private Integer selectMaxId(Connection conn) throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM groups";
+		ResultSet rs;
+
+		try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
+			Statement stmt = conn.createStatement();
+			rs = stmt.executeQuery(selectMaxIdSql);
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+		return rs.getInt("id");
+	}
 	
     private void insertGroup(Connection conn, Group group) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO groups(id, name) "
@@ -219,11 +224,10 @@ public class GroupRepository {
 		return groupName;
 	}
 
-	/*
-	public List<Stimulus> getStimulusList() throws Exception{
-	    String getStimulusSql = "SELECT id, name FROM stimulus";
-	    Stimulus stimulus;
-	    List<Stimulus> stimulusList = new ArrayList<Stimulus>();
+	public List<Group> getGroups() throws Exception{
+	    String getGroupSql = "SELECT id, name FROM groups";
+	    Group group;
+	    List<Group> groupList = new ArrayList<Group>();
 	    
 	    
 		if (AppController.fullDatabaseUrl==null) {
@@ -237,51 +241,28 @@ public class GroupRepository {
                 //System.out.println("A new database has been created.");
             }
             
-            PreparedStatement pstmt = conn.prepareStatement(getStimulusSql);
+            PreparedStatement pstmt = conn.prepareStatement(getGroupSql);
 
             ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				stimulus = new Stimulus();
-				stimulus.setId(rs.getInt("id"));
-				stimulus.setName(rs.getString("name"));
+				group = new Group();
+				group.setId(rs.getInt("id"));
+				group.setName(rs.getString("name"));
 
-				stimulusList.add(stimulus);
+				groupList.add(group);
 			}
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
         }
 		
-		return stimulusList;
+		return groupList;
 		
 	}
 	
-	public void deleteAll() throws Exception{
-	    String deleteAllSql = "DELETE FROM stimulus";
-	    
-		if (AppController.fullDatabaseUrl==null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
-		
-	}
-	
-	public void deleteStimulus(Integer id) throws Exception{
-	    String deleteSql = "DELETE FROM stimulus where id=" + id;
+	public void deleteGroupProtocol(Integer protocolId, Integer groupId) throws Exception{
+	    String deleteSql = "DELETE FROM group_list where group_id = ? and protocol_id=" + protocolId;
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -295,6 +276,8 @@ public class GroupRepository {
             }
             
             PreparedStatement pstmt = conn.prepareStatement(deleteSql);
+            pstmt.setInt(1, groupId);
+            pstmt.setInt(2, protocolId);
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -302,5 +285,55 @@ public class GroupRepository {
         }
 		
 	}
-	*/
+	
+	
+	public void saveGroupProtocol (GroupList groupList, Integer protocolId) throws Exception{
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+			insertGroupList(conn, groupList, protocolId);
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+	}
+	
+	private Integer selectMaxGroupListId(Connection conn) throws Exception {
+		String selectMaxIdSql = "SELECT MAX(id) id FROM groups";
+		ResultSet rs;
+
+		try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
+			Statement stmt = conn.createStatement();
+			rs = stmt.executeQuery(selectMaxIdSql);
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+		return rs.getInt("id");
+	}
+	
+	private void insertGroupList(Connection conn, GroupList groupList, Integer protocolId) throws Exception {
+   	 String insertSql = "INSERT OR REPLACE INTO group_list(id, group_id, protocol_id) "
+   	 		+ "VALUES(?,?,?)";
+   	 
+        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	 
+       	 if (groupList.getId()==0) {
+       		 groupList.setId(selectMaxGroupListId(conn)+1);
+       	 }
+      	 
+            pstmt.setInt(1, groupList.getId());
+            pstmt.setInt(2, groupList.getGroup().getId());
+            pstmt.setInt(3, protocolId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+       	 throw new Exception(e.getMessage());
+        }
+   }
 }

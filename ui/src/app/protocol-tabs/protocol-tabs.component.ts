@@ -4,6 +4,7 @@ import { Protocol } from '../protocol';
 import { Observable} from 'rxjs';
 import { ProtocolService } from '../protocol.service';
 import { SegmentList } from '../segmentList';
+import { GroupList } from '../groupList';
 import { BlockList } from '../blockList';
 
 @Component({
@@ -22,6 +23,9 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
   @Input()
   protocols:Protocol[];
   
+  @Input()
+  typeSelected;
+  
   protocolIdMax=0;
   
   constructor(
@@ -36,6 +40,7 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
   ngOnChanges(changes:any) {
      console.log("ngOnChanges Protocol");
      this.tabs = [];
+     protocolIdMax=0;
 	 this.protocols.forEach( (protocol) => {
 	    if (this.protocolIdMax<protocol.id)
 	       this.protocolIdMax=protocol.id;
@@ -50,6 +55,7 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
    console.log("addTab");
    
    var segmentList:SegmentList[]=[];
+   var groupList:GroupList[]=[];
    var blockList:BlockList[]=[];
    
     this.protocolIdMax++;
@@ -57,6 +63,7 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
 	    id: this.protocolIdMax,
 	    name: 'Protocolo ' + (this.protocolIdMax),
 	    segmentListArray: segmentList,
+	    groupListArray: groupList,
 		blockListArray: blockList
     }
     

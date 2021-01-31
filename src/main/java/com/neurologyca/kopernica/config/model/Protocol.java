@@ -6,13 +6,15 @@ public class Protocol {
 	private Integer id;
 	private String name;
 	private List<SegmentList> segmentListArray;
+	private List<GroupList> groupListArray;
 	private List<BlockList> blockListArray;
 
-	public Protocol(Integer id, String name, List<SegmentList> segmentListArray, List<BlockList> blockListArray) {
+	public Protocol(Integer id, String name, List<SegmentList> segmentListArray, List<GroupList> groupListArray, List<BlockList> blockListArray) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.segmentListArray = segmentListArray;
+		this.groupListArray = groupListArray;
 		this.blockListArray = blockListArray;
 	}
 
@@ -44,6 +46,14 @@ public class Protocol {
 		this.segmentListArray = segmentListArray;
 	}
 
+	public List<GroupList> getGroupListArray() {
+		return groupListArray;
+	}
+
+	public void setGroupListArray(List<GroupList> groupListArray) {
+		this.groupListArray = groupListArray;
+	}
+	
 	public List<BlockList> getBlockListArray() {
 		return blockListArray;
 	}
@@ -54,7 +64,7 @@ public class Protocol {
 
 	@Override
 	public String toString() {
-		return "Protocol [id=" + id + ", name=" + name + ", segmentListArray=" + segmentListArray + ", blockListArray=" + blockListArray
+		return "Protocol [id=" + id + ", name=" + name + ", segmentListArray=" + segmentListArray + ", groupListArray=" + groupListArray + ", blockListArray=" + blockListArray
 				+ "]";
 	}
 

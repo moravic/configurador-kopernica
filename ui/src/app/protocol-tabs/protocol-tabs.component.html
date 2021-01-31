@@ -7,7 +7,8 @@
     <div class="container">
     	<div class="row">
         	<div class="col">
-			    <segment [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [segmentListArray]="protocols[index].segmentListArray"></segment>
+			    <segment *ngIf="(typeSelected==='1')" [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [segmentListArray]="protocols[index].segmentListArray"></segment>
+			    <group *ngIf="(typeSelected==='0')" [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [groupListArray]="protocols[index].groupListArray"></group>
 			</div>
 	     </div>
 		 <div class="row">
