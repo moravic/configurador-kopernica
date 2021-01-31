@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Group;
 import com.neurologyca.kopernica.config.model.GroupList;
+import com.neurologyca.kopernica.config.model.ProtocolGroupList;
 import com.neurologyca.kopernica.config.model.Question;
 import com.neurologyca.kopernica.config.model.Stimulus;
 
@@ -365,4 +366,43 @@ public class GroupRepository {
        	 throw new Exception(e.getMessage());
         }
    }
+	
+	public List<ProtocolGroupList> getProtocolGroupList() throws Exception{
+	    String getGroupListSql = "SELECT id, group_id, protocol_id FROM group_list";
+	    ProtocolGroupList group;
+	    List<ProtocolGroupList> groupList = new ArrayList<ProtocolGroupList>();
+	    
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getGroupListSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				group = new ProtocolGroupList();
+				group.setId(rs.getInt("id"));
+				group.setGroupId(rs.getInt("group_id"));
+				group.setProtocolId(rs.getInt("protocol_id"));
+				System.out.println(group.getGroupId());
+
+				groupList.add(group);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+		return groupList;
+		
+	}
 }

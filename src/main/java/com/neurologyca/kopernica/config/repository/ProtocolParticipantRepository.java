@@ -15,6 +15,7 @@ import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.BlockElementTableList;
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Protocol;
+import com.neurologyca.kopernica.config.model.ProtocolGroupList;
 import com.neurologyca.kopernica.config.model.Segment;
 
 import java.sql.Statement;
@@ -140,6 +141,30 @@ public class ProtocolParticipantRepository {
         }
    }
 	
+    private void insertAllParticipantProtocol(Connection conn, Integer protocolId) throws Exception {
+      	 String insertSql = "INSERT OR REPLACE INTO participant_protocol(id, participant_id, protocol_id) "
+      	 		+ "SELECT (SELECT MAX(id)+1 FROM participant_protocol), id, '" + protocolId + "' FROM participants";
+      	 
+           try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	    	 
+               pstmt.executeUpdate();
+           } catch (SQLException e) {
+          	 throw new Exception(e.getMessage());
+           }
+      }
+  /*  
+    private void insertParticipantProtocol(Connection conn, Integer protocolId, Integer groupId) throws Exception {
+     	 String insertSql = "INSERT OR REPLACE INTO participant_protocol(id, participant_id, protocol_id) "
+     	 		+ "SELECT ?, id, '" + protocolId + "' FROM participants WHERE group_id=?";
+     	 
+          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	    	 
+              pstmt.setInt(1, selectMaxId(conn)+1);
+              pstmt.setInt(2, protocol_id);
+              pstmt.executeUpdate();
+          } catch (SQLException e) {
+         	 throw new Exception(e.getMessage());
+          }
+     }
+   	*/
 	
     private Integer applyConditions() throws Exception {
 		List<Participant> participantList = new ArrayList<Participant>();
@@ -425,12 +450,53 @@ public class ProtocolParticipantRepository {
 		
 	}
 	
+	private Integer applyGroupConditions() throws Exception {
+		List<ProtocolGroupList> groupList = new ArrayList<ProtocolGroupList>();
+		GroupRepository groupRepository = new GroupRepository();
+
+
+		System.out.println("Entrando en apply Conditions");
+		
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+			
+			// Obtenemos el listado de grupos de cada protocolo
+			groupList = groupRepository.getProtocolGroupList();
+			
+			//Para cada protocolo si tiene grupo 1 se aplica a todos los participantes
+			for (ProtocolGroupList protocolGroupList: groupList) {
+				System.out.println(protocolGroupList.getProtocolId());
+				if (protocolGroupList.getGroupId()==1) {
+					insertAllParticipantProtocol(conn, protocolGroupList.getProtocolId());
+				}
+//				else {
+				//					insertGroupParticipants(protocolGroupList);
+				//				}
+			}
+			
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+		
+		return 1;
+	}
+	
 	public Integer applyConfiguration() throws Exception {
 		try {
-			deleteParticipantProtocolOrder();
-			deleteParticipantProtocol();
-			applyConditions();
-			applyBlocks();
+			//deleteParticipantProtocolOrder();
+			//deleteParticipantProtocol();
+			//applyConditions();
+			applyGroupConditions();
+			//applyBlocks();
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		}
