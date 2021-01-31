@@ -157,6 +157,35 @@ public class GroupRepository {
 		return groupId;
 	}
 	
+	public Integer getGroupId(String groupName) throws Exception{
+		String selectIdSql = "SELECT id FROM groups WHERE name = ?";
+		int groupId = 0;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+    
+            try (PreparedStatement stmt = conn.prepareStatement(selectIdSql)) {
+            	
+            	stmt.setString(1, groupName);
+            	ResultSet rs = stmt.executeQuery();
+            	groupId = rs.getInt("id");
+            	conn.close();
+            } catch (SQLException e) {
+        	groupId = 0;
+          }
+		}
+
+		return groupId;
+	}
+	
 	public Integer numGroupParticipants(Integer groupId) throws Exception{
 		String selectSql = "SELECT count(1) contador FROM participants WHERE group_id = ?";
 		Integer numParticipants = 0;

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Profile;
-import com.neurologyca.kopernica.config.model.Question;
 
 import java.sql.Statement;
 import java.util.ArrayList;
