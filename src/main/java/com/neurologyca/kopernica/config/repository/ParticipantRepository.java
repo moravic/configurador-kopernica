@@ -177,7 +177,9 @@ public class ParticipantRepository {
 	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email, group_id FROM participants";
 	    Participant participant;
 	    List<Participant> participantList = new ArrayList<Participant>();
-	           
+	    StudyRepository studyRepository = new StudyRepository();
+	    GroupRepository groupRepository = new GroupRepository();
+	          
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
