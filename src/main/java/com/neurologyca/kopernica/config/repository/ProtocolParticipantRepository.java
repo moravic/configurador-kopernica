@@ -30,6 +30,8 @@ public class ProtocolParticipantRepository {
 	@Value("${base.path}")
 	private String basePath;
 
+	static final String GROUP_INTEVIEW = "0";
+	static final String INDIVIDUAL_INTERVIEW = "1";
 
 	private List<Protocol> getProtocols() throws Exception {
 		List<Protocol> protocols = new ArrayList<Protocol>();
@@ -491,11 +493,16 @@ public class ProtocolParticipantRepository {
 	}
 	
 	public Integer applyConfiguration() throws Exception {
+		StudyRepository studyRepository = new StudyRepository();
 		try {
 			deleteParticipantProtocolOrder();
 			deleteParticipantProtocol();
-			applyConditions();
-			applyGroupConditions();
+			 if (studyRepository.getTypeStudy().equals(INDIVIDUAL_INTERVIEW)) {	
+				 applyConditions();
+			 }
+			 else {
+				 applyGroupConditions();
+			 }
 			applyBlocks();
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
