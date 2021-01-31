@@ -77,6 +77,7 @@ export class AppComponent implements OnInit{
      this.study.project=this.projectSelected;
      this.study.study=this.studySelected;
      this.study.type=this.typeSelected;
+     this.typeDisabled=true;
      this.studyService.addStudy(this.study)
      	.subscribe(resp => {
      	    //console.log(resp);

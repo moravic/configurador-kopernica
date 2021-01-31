@@ -1,6 +1,5 @@
 package com.neurologyca.kopernica.config.repository;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -31,6 +30,8 @@ public class ProtocolParticipantRepository {
 	@Value("${base.path}")
 	private String basePath;
 
+	static final String GROUP_INTEVIEW = "0";
+	static final String INDIVIDUAL_INTERVIEW = "1";
 
 	private List<Protocol> getProtocols() throws Exception {
 		List<Protocol> protocols = new ArrayList<Protocol>();
@@ -143,7 +144,7 @@ public class ProtocolParticipantRepository {
 	
     private void insertAllParticipantProtocol(Connection conn, Integer protocolId) throws Exception {
       	 String insertSql = "INSERT OR REPLACE INTO participant_protocol(id, participant_id, protocol_id) "
-      	 		+ "SELECT (SELECT MAX(id)+1 FROM participant_protocol), id, '" + protocolId + "' FROM participants";
+      	 		+ "SELECT ROW_NUMBER() OVER (ORDER BY id ASC, group_id ASC) + (SELECT MAX(id) FROM participant_protocol), id, '" + protocolId + "' FROM participants";
       	 
            try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	    	 
                pstmt.executeUpdate();
@@ -151,20 +152,19 @@ public class ProtocolParticipantRepository {
           	 throw new Exception(e.getMessage());
            }
       }
-  /*  
-    private void insertParticipantProtocol(Connection conn, Integer protocolId, Integer groupId) throws Exception {
+    
+    private void insertGroupParticipantProtocol(Connection conn, Integer protocolId, Integer groupId) throws Exception {
      	 String insertSql = "INSERT OR REPLACE INTO participant_protocol(id, participant_id, protocol_id) "
-     	 		+ "SELECT ?, id, '" + protocolId + "' FROM participants WHERE group_id=?";
-     	 
-          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	    	 
-              pstmt.setInt(1, selectMaxId(conn)+1);
-              pstmt.setInt(2, protocol_id);
+     	 		+ "SELECT ROW_NUMBER() OVER (ORDER BY id ASC, group_id ASC) + (SELECT MAX(id) FROM participant_protocol), id, '" + protocolId + "' FROM participants WHERE group_id=?";
+
+          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {     
+              pstmt.setInt(1, groupId);
               pstmt.executeUpdate();
           } catch (SQLException e) {
          	 throw new Exception(e.getMessage());
           }
      }
-   	*/
+   	
 	
     private Integer applyConditions() throws Exception {
 		List<Participant> participantList = new ArrayList<Participant>();
@@ -198,49 +198,51 @@ public class ProtocolParticipantRepository {
 				// Obtenemos el listado de condiciones de cada protocolo
 				segmentList = getSegmentList(protocol.getId());		
 				//System.out.println("Num segmentos: " + segmentList.size());
-				// Revisamos si se cumplen las condiciones
-				for (Participant participant: participantList) {
-					//System.out.println(participant.getName());
-					meetConditions = true;
-					for (Segment condition: segmentList) {
-						//System.out.println(condition.getType());
-						switch(condition.getType()) {
-						case "Edad": 
-							if (!(participant.getAge() >= condition.getValueAgeMin() &&
-								participant.getAge() <= condition.getValueAgeMax())) {
-								meetConditions = false;
+				if (segmentList.size()>0) {
+					// Revisamos si se cumplen las condiciones
+					for (Participant participant: participantList) {
+						//System.out.println(participant.getName());
+						meetConditions = true;
+						for (Segment condition: segmentList) {
+							//System.out.println(condition.getType());
+							switch(condition.getType()) {
+							case "Edad": 
+								if (!(participant.getAge() >= condition.getValueAgeMin() &&
+									participant.getAge() <= condition.getValueAgeMax())) {
+									meetConditions = false;
+								}
+								//System.out.println("Edad " + meetConditions);
+								break;
+							case "Género":
+								if (!participant.getGender().equals(condition.getValueGender())) {
+									meetConditions = false;
+								}
+								//System.out.println("Género " + meetConditions);
+								break;
+							case "Perfil":
+								if (!participant.getProfile().equals(condition.getValueProfile())) {
+									meetConditions = false;
+								}
+								//System.out.println("Perfil " + meetConditions);
+								break;
+							case "Todos":
+								//System.out.println("Todos " + meetConditions);
+								break;
+							default:
+								//System.out.println("Otros");
+								break;
+							}	
+							if (!meetConditions) {
+								//System.out.println("Salir de este participante: " + participant.getName());
+								break;
 							}
-							//System.out.println("Edad " + meetConditions);
-						    break;
-						case "Género":
-							if (!participant.getGender().equals(condition.getValueGender())) {
-								meetConditions = false;
-							}
-							//System.out.println("Género " + meetConditions);
-						    break;
-						case "Perfil":
-							if (!participant.getProfile().equals(condition.getValueProfile())) {
-								meetConditions = false;
-							}
-							//System.out.println("Perfil " + meetConditions);
-						    break;
-						case "Todos":
-							 //System.out.println("Todos " + meetConditions);
-							  break;
-						default:
-							//System.out.println("Otros");
-							break;
-					   }
-						if (!meetConditions) {
-							//System.out.println("Salir de este participante: " + participant.getName());
-							break;
-						}
 				
-				    }
-					if (meetConditions) {
-						//System.out.println("Cumple " + participant.toString());
-						// Insertamos en la tabla participant_protocol
-						insertParticipantProtocol(conn, participant.getId(), protocol.getId());
+						}
+						if (meetConditions) {
+							//System.out.println("Cumple " + participant.toString());
+							// Insertamos en la tabla participant_protocol
+							insertParticipantProtocol(conn, participant.getId(), protocol.getId());
+						}
 					}
 					
 				}
@@ -455,7 +457,7 @@ public class ProtocolParticipantRepository {
 		GroupRepository groupRepository = new GroupRepository();
 
 
-		System.out.println("Entrando en apply Conditions");
+		//System.out.println("Entrando en apply Conditions");
 		
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -478,9 +480,9 @@ public class ProtocolParticipantRepository {
 				if (protocolGroupList.getGroupId()==1) {
 					insertAllParticipantProtocol(conn, protocolGroupList.getProtocolId());
 				}
-//				else {
-				//					insertGroupParticipants(protocolGroupList);
-				//				}
+				else {
+					insertGroupParticipantProtocol(conn, protocolGroupList.getProtocolId(), protocolGroupList.getGroupId());
+				}
 			}
 			
 		} catch (SQLException e) {
@@ -491,12 +493,17 @@ public class ProtocolParticipantRepository {
 	}
 	
 	public Integer applyConfiguration() throws Exception {
+		StudyRepository studyRepository = new StudyRepository();
 		try {
-			//deleteParticipantProtocolOrder();
-			//deleteParticipantProtocol();
-			//applyConditions();
-			applyGroupConditions();
-			//applyBlocks();
+			deleteParticipantProtocolOrder();
+			deleteParticipantProtocol();
+			 if (studyRepository.getTypeStudy().equals(INDIVIDUAL_INTERVIEW)) {	
+				 applyConditions();
+			 }
+			 else {
+				 applyGroupConditions();
+			 }
+			applyBlocks();
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		}
