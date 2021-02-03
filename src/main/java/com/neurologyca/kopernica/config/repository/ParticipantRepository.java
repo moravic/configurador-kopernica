@@ -71,7 +71,8 @@ public class ParticipantRepository {
     private Participant insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, group_id, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,?,1)";
-    	 	 
+    	 
+    	 Integer beforeGroupId = participant.getGroupId();
     	 // Revisamos si el estudio es grupal
     	 // No es grupal....group_id=0
     	 // Es grupal ... buscar el group_id en grupos (se crea e inserta si no existe)
@@ -97,13 +98,39 @@ public class ParticipantRepository {
              pstmt.setString(6, participant.getEmail());
              pstmt.setInt(7, participant.getGroupId());
              pstmt.executeUpdate();
+             
+             if (beforeGroupId!=0 && beforeGroupId!=participant.getGroupId()) {
+         		if (groupRepository.numCountParticipants(beforeGroupId, participant.getId()) == 0) {
+        			deleteGroup(conn, beforeGroupId);
+        			System.out.println("Borrar grupo "+ beforeGroupId);
+        		}
+             }
+             
          } catch (SQLException e) {
         	 throw new Exception(e.getMessage());
          }
          
+
+			
          return participant;
     }
 	
+    public void deleteGroup(Connection conn, Integer groupId) throws Exception{
+	    String deleteGroup = "DELETE FROM groups where id = ?";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+        
+		try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
+	        pstmt.setInt(1, groupId);
+	        pstmt.executeUpdate();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+    
 	public Participant save(Participant participant) throws Exception{
 		
 		if (AppController.fullDatabaseUrl==null) {

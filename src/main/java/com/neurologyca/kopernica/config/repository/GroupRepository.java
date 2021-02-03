@@ -99,8 +99,9 @@ public class GroupRepository {
 	}
 	
 	public Integer getGroupId(Integer groupId, String groupName, Integer participantId) throws Exception{
-		String selectIdSql = "SELECT name FROM groups WHERE id = ?";
+		String selectIdSql = "SELECT coalesce(max(name), '') name FROM groups WHERE id = ?";
 		String oldGroupName;
+		Integer groupIdExists = 0;
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -122,32 +123,32 @@ public class GroupRepository {
             	System.out.println("Nombre grupo actual/bbdd "+ groupName + " "+ oldGroupName);
             	
             	if (!oldGroupName.equals(groupName)) {
-            		// Revisar si algun participante tiene ese Id
-            		if (numGroupParticipants(groupId, participantId) == 0) {
-            		// Si no hay ninguno cambiar el nombre del grupo
-            			Group group = new Group(groupId, groupName);
-                		insertGroup(conn, group);
-                		groupId = group.getId();
-                		System.out.println("Cambiar nombre grupo "+ groupId);
+            		// Revisar si existe el nombre de ese grupo en otro participante
+            		if ((groupIdExists = existsGroupName(groupName)) == 0) {
+            		    // Si no existe el nombre del grupo, comprobamos si hay algún participante
+            			if (numCountParticipants(groupId, participantId) == 0) {
+            				// Si no hay otro participante, actualizamos
+            				Group group = new Group(groupId, groupName);
+                    		insertGroup(conn, group);
+                    		groupId = group.getId();
+                			System.out.println("Actualizado grupo "+ groupId);
+                		} else { // Si lo hay, creamos grupo
+	            			Group group = new Group(0, groupName);
+	                		insertGroup(conn, group);
+	                		groupId = group.getId();
+	                		System.out.println("Creado grupo "+ groupId);
+                		}
             		} else {			
-            		// Si hay alguno, es un grupo nuevo
-            			Group group = new Group(0, groupName);
-                		insertGroup(conn, group);
-                		groupId = group.getId();
-                		System.out.println("Nuevo grupo "+ groupId);
+            		    // Si existe actualizar participante
+            			groupId = groupIdExists;
+            			
+                		System.out.println("Cambia de grupo "+ groupId);
             		}
             	}
             	
             	
             	System.out.println("Group Id "+ groupId);
             } catch (SQLException e) {
-            	if (!groupName.equals("")) {
-            		Group group = new Group(0, groupName);
-            		createTableGroups(conn);
-            		insertGroup(conn, group);
-            		groupId = group.getId();
-            		System.out.println("Nuevo grupo "+ groupId);
-            	}
             }
            
 			conn.close();
@@ -187,9 +188,9 @@ public class GroupRepository {
 		return groupId;
 	}
 	
-	public Integer numGroupParticipants(Integer groupId, Integer participantId) throws Exception{
-		String selectSql = "SELECT count(1) contador FROM participants WHERE group_id = ? and id != ?";
-		Integer numParticipants = 0;
+	public Integer existsGroupName(String groupName) throws Exception{
+		String selectSql = "SELECT coalesce(max(id),0) id FROM groups WHERE name = ?";
+		Integer groupId = 0;
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -202,13 +203,12 @@ public class GroupRepository {
                 //System.out.println("A new database has been created.");
             }
             
-            // Si existe el nombre del grupo devuelve el Id y si no existe se crea el grupo y devuelve el id
+            // Si existe el nombre del grupo devuelve el Id
             try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
-            	stmt.setInt(1, groupId);
-            	stmt.setInt(2, participantId);
+            	stmt.setString(1, groupName);
             	ResultSet rs = stmt.executeQuery();
     	    
-            	numParticipants = rs.getInt("contador");
+            	groupId = rs.getInt("id");
             } catch (SQLException e) {
             	throw new Exception(e.getMessage());
             }
@@ -218,7 +218,40 @@ public class GroupRepository {
         	throw new Exception(e.getMessage());
         }
 
-		return numParticipants;
+		return groupId;
+	}
+	
+	public Integer numCountParticipants(Integer groupId, Integer participantId) throws Exception{
+		String selectSql = "SELECT count(1) contador FROM participants WHERE group_id = ? and id != ?";
+		Integer count = 0;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
+            	stmt.setInt(1, groupId);
+            	stmt.setInt(2, participantId);
+            	ResultSet rs = stmt.executeQuery();
+    	    
+            	count = rs.getInt("contador");
+            } catch (SQLException e) {
+            	throw new Exception(e.getMessage());
+            }
+            
+			conn.close();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+
+		return count;
 	}
 	
 	public String getGroupName(Integer groupId) throws Exception{

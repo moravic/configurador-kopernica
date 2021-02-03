@@ -91,6 +91,7 @@ public class ImportExcelController {
         }
         
         workbook.close();
+        targetStream.close();
         return new ResponseEntity<>(participantList, status);
     }
 	
