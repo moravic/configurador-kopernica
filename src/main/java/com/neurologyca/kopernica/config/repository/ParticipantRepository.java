@@ -31,7 +31,7 @@ public class ParticipantRepository {
 	static final String GROUP_INTEVIEW = "0";
 	static final String INDIVIDUAL_INTERVIEW = "1";
 	
-    private void createTableParticipants(Connection conn) throws Exception{
+    public void createTableParticipants(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS participants ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, gender TEXT NOT NULL, age integer NOT NULL, "
 				+ "profile TEXT NOT NULL, email TEXT, group_id integer, study_id integer NOT NULL, locked INT NULL, "

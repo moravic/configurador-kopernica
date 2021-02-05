@@ -36,9 +36,7 @@ public class StudyRepository {
     private QuestionRepository questionRepository;
     @Autowired
     private StimulusRepository stimulusRepository;
-    @Autowired
-    private GroupRepository groupRepository;
-	
+    	
 	private void createFolders(String project, String study) throws Exception {
 		 
 		String subFolder = basePath + "\\" + project + "\\" + study + "\\csvs";
@@ -143,7 +141,9 @@ public class StudyRepository {
                 //System.out.println("A new database has been created.");
             }
             
-			createTableStudies(conn);
+            ParticipantRepository participantRepository = new ParticipantRepository();
+            
+            participantRepository.createTableParticipants(conn);
 			questionRepository.createTableQuestions(conn);
 			stimulusRepository.createTableStimulus(conn);
 			protocolRepository.createProtocolTables();
