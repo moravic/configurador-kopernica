@@ -59,6 +59,9 @@ export class GroupComponent {
 
   addGroupList() {
     console.log("addGroupList");
+    if (this.groupForm.value.id==null)
+      return;
+      
     var groupList:GroupList = {
         id: null,
 	    group: {

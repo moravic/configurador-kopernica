@@ -278,6 +278,13 @@ order by pr.id, p.id, b.id, no_order
 			if (protocols.size()==0) { // Protocolo por defecto
 				Protocol p = new Protocol();
 				p.setId(1);
+				p.setName("Protocolo 1");
+				List<SegmentList> segmentListArray = new ArrayList<SegmentList>();
+				p.setSegmentListArray(segmentListArray);
+				List<BlockList> blockListArray = new ArrayList<BlockList>();
+				p.setBlockListArray(blockListArray);
+				List<GroupList> groupListArray = new ArrayList<GroupList>();
+				p.setGroupListArray(groupListArray);
 				protocols.add(p);
 			}
 				

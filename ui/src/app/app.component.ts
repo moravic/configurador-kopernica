@@ -13,7 +13,7 @@ import { Stimulus } from './stimulus';
 import { ProtocolService } from './protocol.service';
 import { Protocol } from './protocol';
 import { ProtocolparticipantService } from './protocolparticipant.service';
-
+import { StoreService } from './store.service';
 
 @Component({
   selector: 'app-root',
@@ -47,7 +47,8 @@ export class AppComponent implements OnInit{
     private protocolService:ProtocolService,
     private protocolparticipantService:ProtocolparticipantService,
     private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private storeService: StoreService
   ){
     this.matIconRegistry.addSvgIcon(
       "export-xlsx",
@@ -87,15 +88,24 @@ export class AppComponent implements OnInit{
      	    //console.log(resp);
      	    this.listComponentsDisabled=false;
      	    this.addStudyDisabled=true;
+     	    
+     	    this.protocolService.getProtocols()
+      		.subscribe(data => {
+	        		//console.log(data);
+	        		this.protocols = data;
+	      		}, error =>  {this.error_str=error.error.message; 
+	      					  this.protocols.length=0;});
 	      }, error =>  this.error_str=error.error.message);
 	      this.error_str=""; 
-	      
-	//Se actualiza el listado de proyectos
-     this.appService.getListProjects()
+	    
+	    //Se actualiza el listado de proyectos
+        this.appService.getListProjects()
 	      .subscribe(data => {
 	        //console.log(data)
 	        this.listProjects = data;
-	      }, error =>  this.error_str=error.error.message);
+	    }, error =>  this.error_str=error.error.message);
+	    
+	    this.storeService.broadcastAddStudy("S");
    }
    
    public applyConfiguration(){
@@ -133,8 +143,7 @@ export class AppComponent implements OnInit{
 	        this.shareEstudioToParent(data[0]);
 	      }, error => this.error_str=error.error.message);
 	      this.error_str="";
-	      }
-     
+	    };
    }
   
    shareEstudioToParent(itemSelected:string){
@@ -206,7 +215,8 @@ export class AppComponent implements OnInit{
         		this.protocols = data;
       		}, error =>  {this.error_str=error.error.message; 
       					  this.protocols.length=0;});
-   	  }
+   	   }
+   	   this.storeService.broadcastGroupChange("S");
    }
    
    shareChangeType(itemSelected:string){

@@ -2,7 +2,7 @@
                [selectedIndex]="selectedIndex">
   <mat-tab *ngFor="let tab of tabs; let index = index">
      <ng-template mat-tab-label>
-       <input matInput [disabled]="protocols[index].locked==1" placeholder="Ejemplo Protocolo 1" value={{protocols[index].name}} (input)="changeNameProtocol($event, index)">
+       <input matInput [disabled]="protocols[index].locked==1" placeholder="Ejemplo: Protocolo 1" value={{protocols[index].name}} (input)="changeNameProtocol($event, index)">
        <mat-icon [hidden]="protocols[index].locked==0" svgIcon="locked"></mat-icon>
     </ng-template>
     <div class="container">

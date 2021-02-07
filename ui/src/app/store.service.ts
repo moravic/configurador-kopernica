@@ -10,6 +10,7 @@ export class StoreService {
   
   private _elementChange = new BehaviorSubject<string>(null);
   private _groupChange = new BehaviorSubject<string>(null);
+  private _addStudy = new BehaviorSubject<string>(null);
   
   constructor() { }
 
@@ -35,5 +36,13 @@ export class StoreService {
 
   public broadcastGroupChange(groupChange:string): void {
     this._groupChange.next(groupChange);
+  }
+  
+  public getAddStudy(): Observable<string> {
+    return this._addStudy.asObservable();
+  }
+
+  public broadcastAddStudy(addStudy:string): void {
+    this._addStudy.next(addStudy);
   }
 }

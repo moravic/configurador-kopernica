@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'project-combo',
@@ -12,8 +12,13 @@ import {map, startWith} from 'rxjs/operators';
 
 export class ProjectComboComponent implements OnInit {
   
-  constructor() { }
-
+  constructor( private storeService:StoreService) { 
+	  storeService.getAddStudy().subscribe(data => {
+	         console.log("AddStudy");
+	         this.notFound = '';
+	  });
+  }
+  
   myProjectControl = new FormControl();
   
   @Input()
