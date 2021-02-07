@@ -134,7 +134,7 @@ public class StudyRepository {
 		}
 		
 		createFolders(study.getProject(), study.getStudy());
-System.out.println("study.save 1");		
+		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
             if (conn != null) {
             	// Si no existe se crea la bbdd
@@ -142,19 +142,14 @@ System.out.println("study.save 1");
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
-System.out.println("study.save 2");	            
-            ParticipantRepository participantRepository = new ParticipantRepository();
-System.out.println("study.save 3");	            
-            participantRepository.createTableParticipants(conn);
-System.out.println("study.save 4");	            
-			questionRepository.createTableQuestions(conn);
-System.out.println("study.save 5");				
-			stimulusRepository.createTableStimulus(conn);
-System.out.println("study.save 6");			
-			protocolRepository.createProtocolTables(conn);
-System.out.println("study.save 7");			
+            
+            ParticipantRepository participantRepository = new ParticipantRepository();         
+            participantRepository.createTableParticipants(conn);           
+			questionRepository.createTableQuestions(conn);			
+			stimulusRepository.createTableStimulus(conn);		
+			protocolRepository.createProtocolTables(conn);		
 			insertStudies(conn, study);
-System.out.println("study.save 8");				
+		
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
