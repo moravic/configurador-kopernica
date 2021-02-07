@@ -4,16 +4,16 @@
     <mat-card-header>
       <mat-card-title>Participantes</mat-card-title>
       <!--input #importInput type="file" style="display: none" (change)="importExcel($event.target.files)" accept=".xlsx, .xls"/-->
-      <button mat-icon-button (click)="importExcel()" color="primary" disabled="{{disabled}}">
-         <mat-icon svgIcon="import-csv"></mat-icon>
+      <button mat-icon-button (click)="importExcel()" color="black" disabled="{{disabled}}">
+         <mat-icon svgIcon="import-xlsx"></mat-icon>
       </button>
-      <button mat-icon-button (click)="exportExcel()" color="primary" disabled="{{disabled}}">
-         <mat-icon svgIcon="export-csv"></mat-icon>
+      <button mat-icon-button (click)="exportExcel()" color="black" disabled="{{disabled}}">
+         <mat-icon svgIcon="export-xlsx"></mat-icon>
       </button>
-      <button mat-icon-button (click)="addNew()" color="primary" disabled="{{disabled}}">
+      <button mat-icon-button (click)="addNew()" color="black" disabled="{{disabled}}">
          <mat-icon svgIcon="add-new"></mat-icon>
       </button>
-      <button mat-icon-button (click)="deleteAll()" color="primary" disabled="{{disabled}}">
+      <button mat-icon-button (click)="deleteAll()" color="black" disabled="{{disabled}}">
          <mat-icon svgIcon="delete-bin"></mat-icon>
       </button>
     </mat-card-header>
