@@ -67,7 +67,75 @@ public class ParticipantRepository {
 	       	 throw new Exception(e.getMessage());
 	        }
 		}
+     
+	public Integer numBlockedParticipants() throws Exception{
+		String selectSql = "SELECT count(1) contador FROM participants WHERE ifnull(locked,0) = 1";
+		Integer count = 0;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+                
+            PreparedStatement stmt = conn.prepareStatement(selectSql);
+            ResultSet rs = stmt.executeQuery();
+    	    
+            count = rs.getInt("contador");
+           } catch (SQLException e) {
+            throw new Exception(e.getMessage());
+          }
             
+		return count;
+	}
+	
+	public Integer numParticipants(Connection conn) throws Exception{
+		String selectSql = "SELECT count(1) contador FROM participants";
+		Integer count = 0;
+		
+        try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
+            ResultSet rs = stmt.executeQuery();
+    	    
+            count = rs.getInt("contador");
+           } catch (SQLException e) {
+            throw new Exception(e.getMessage());
+          }
+            
+		return count;
+	}
+	
+	public Integer isBlockedParticipant(Integer participantId) throws Exception{
+		String selectSql = "SELECT ifnull(locked, 0) bloqueado FROM participants WHERE id = ?";
+		Integer bloqueado = 0;
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+                
+            PreparedStatement stmt = conn.prepareStatement(selectSql);
+            stmt.setInt(1, participantId);
+            ResultSet rs = stmt.executeQuery();
+    	    
+            bloqueado = rs.getInt("bloqueado");
+           } catch (SQLException e) {
+            throw new Exception(e.getMessage());
+          }
+            
+		return bloqueado;
+	}
+	
     private Participant insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, group_id, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,?,1)";
@@ -76,11 +144,9 @@ public class ParticipantRepository {
     	 // Revisamos si el estudio es grupal
     	 // No es grupal....group_id=0
     	 // Es grupal ... buscar el group_id en grupos (se crea e inserta si no existe)
-    	 System.out.println("Tipo Estudio: " + studyRepository.getTypeStudy());
+    	 //System.out.println("Tipo Estudio: " + studyRepository.getTypeStudy());
     	 if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {	 	
-    		 System.out.println("Id/grupo: " + participant.getGroupId() + " " + participant.getGroup());
     		 participant.setGroupId(groupRepository.getGroupId(participant.getGroupId(), participant.getGroup(), participant.getId()));
-    		 System.out.println("Grupo Final: " + participant.getGroupId());
     	 }
     	 else {
     		 participant.setGroupId(0);
@@ -102,7 +168,6 @@ public class ParticipantRepository {
              if (beforeGroupId!=0 && beforeGroupId!=participant.getGroupId()) {
          		if (groupRepository.numCountParticipants(beforeGroupId, participant.getId()) == 0) {
         			deleteGroup(conn, beforeGroupId);
-        			System.out.println("Borrar grupo "+ beforeGroupId);
         		}
              }
              
@@ -156,12 +221,13 @@ public class ParticipantRepository {
 		return participant;
 	}
 	
-	public void deleteAll() throws Exception{
-	    String deleteAllSql = "DELETE FROM participants";
-	    
+	public Integer deleteAll() throws Exception{
+	    String deleteAllSql = "DELETE FROM participants WHERE ifnull(locked,0) <> 1";
+  
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
+ 		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
             if (conn != null) {
             	// Si no existe se crea la bbdd
@@ -169,9 +235,14 @@ public class ParticipantRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
-            
+        
+            ProtocolParticipantRepository protocolParticipantRepository = new ProtocolParticipantRepository();
+            protocolParticipantRepository.deleteParticipantConfiguration(conn);
+
             PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
             pstmt.executeUpdate();
+           
+            return numParticipants(conn);
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
@@ -180,7 +251,7 @@ public class ParticipantRepository {
 	}
 	
 	public void deleteParticipant(Integer id) throws Exception{
-	    String deleteSql = "DELETE FROM participants where id=" + id;
+	    String deleteSql = "DELETE FROM participants WHERE ifnull(locked,0) = 0 AND id = " + id;
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -192,6 +263,9 @@ public class ParticipantRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
+
+            ProtocolParticipantRepository protocolParticipantRepository = new ProtocolParticipantRepository();
+            protocolParticipantRepository.deleteParticipantConfiguration(conn, id);
             
             PreparedStatement pstmt = conn.prepareStatement(deleteSql);
             pstmt.executeUpdate();
@@ -204,6 +278,58 @@ public class ParticipantRepository {
 	
 	public List<Participant> getParticipantList() throws Exception{
 	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email, group_id FROM participants";
+	    Participant participant;
+	    List<Participant> participantList = new ArrayList<Participant>();
+	    StudyRepository studyRepository = new StudyRepository();
+	    GroupRepository groupRepository = new GroupRepository();
+	          
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                createTableParticipants(conn);
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            PreparedStatement pstmt = conn.prepareStatement(getParticipantsSql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				participant = new Participant();
+				participant.setId(rs.getInt("id"));
+				participant.setName(rs.getString("name"));
+				participant.setAge(rs.getInt("age"));
+				participant.setGender(rs.getString("gender"));
+				participant.setEmail(rs.getString("email"));
+				participant.setProfile(rs.getString("profile"));
+				participant.setGroupId(rs.getInt("group_id"));
+				
+				if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+		    		 participant.setGroup(groupRepository.getGroupName(rs.getInt("group_id")));
+		    		 System.out.println("Nombre Grupo: " + participant.getGroup());
+		    	 }
+		    	 else {
+		    		 participant.setGroup("");
+		    	 }
+
+				participantList.add(participant);
+			}
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	    return participantList;
+		
+	}
+	
+	public List<Participant> getParticipantNonBlockedList() throws Exception{
+	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email, group_id FROM participants WHERE ifnull(locked,0) <> 1";
 	    Participant participant;
 	    List<Participant> participantList = new ArrayList<Participant>();
 	    StudyRepository studyRepository = new StudyRepository();

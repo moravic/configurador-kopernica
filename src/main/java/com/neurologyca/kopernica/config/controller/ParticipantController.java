@@ -49,9 +49,19 @@ public class ParticipantController {
     }
     
     @DeleteMapping("/deleteAllParticipant/")
-    public void deleteAllParticipants() throws Exception {
+    public Integer deleteAllParticipants() throws Exception {
     	//System.out.println("createParticipant");
-        participantRepository.deleteAll();
+        return participantRepository.deleteAll();
     }
-
+    
+    @GetMapping("/getNumBlockedParticipants")
+	public Integer getNumBlockedParticipants() throws Exception {
+		return participantRepository.numBlockedParticipants();
+	}
+    
+    @GetMapping("/isBlockedParticipant/{id}")
+	public Integer isBlockedParticipant(@PathVariable Integer id) throws Exception {
+    	System.out.println("IsBLocked???");
+		return participantRepository.isBlockedParticipant(id);
+	}
 }

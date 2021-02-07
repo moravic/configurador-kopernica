@@ -37,4 +37,13 @@ export class ParticipantService {
   deleteAllParticipant(): Observable<any> {
     return this.http.delete(`${this.baseUrl}/deleteAllParticipant/`, { responseType: 'text' });
   }
+  
+  getNumBlockedParticipants(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getNumBlockedParticipants/`);
+  }
+
+  isBlockedParticipant(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/isBlockedParticipant/${id}`);
+  } 
+  
 }

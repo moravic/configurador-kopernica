@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Input, AfterViewInit, ViewChild, OnChanges, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
+import { Component, ElementRef, OnInit, Input, AfterViewInit, ViewChild, OnChanges, ChangeDetectorRef, AfterContentChecked, Output, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Participant } from '../participant';
@@ -35,6 +35,9 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   typeStudy:string;
   @Input()
   disabled: boolean;
+  
+  @Output() refresh = new EventEmitter();
+
   
   elistMatTableDataSource = new MatTableDataSource<any>();
   displayedColumns: string[];
@@ -318,17 +321,26 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   deleteParticipant(participant){
   	console.log('deleteParticipant: ' + participant.controls.id.value);
-  	var index =  this.participantFormArray.controls.findIndex(fg => fg.value.id === participant.controls.id.value);
-    this.participantService.deleteParticipant(participant.controls.id.value).subscribe(data => {
-	    console.log("Delete " + data);
-	    this.storeService.broadcastGroupChange("S");
-     }, error =>  this.error_str=error.error.message);
-    // find item and remove ist
-    this.elistMatTableDataSource.data.splice(index, 1);
-    //this.participantFormArray.controls.splice(index, 1);
-    this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
-    this.groupListItems = this.uniquesGroup(this.elistMatTableDataSource.data);
-    this.elistMatTableDataSource.filter = "";
+  	
+  	this.participantService.isBlockedParticipant(participant.controls.id.value).subscribe(data => {
+	    console.log("Participante bloqueado? " + data);
+	    if (data >  0) {
+	    	this.openDialog("Info", "El participante está bloqueado y no será borrado.");
+	    }
+	    else {  
+  			var index =  this.participantFormArray.controls.findIndex(fg => fg.value.id === participant.controls.id.value);
+    		this.participantService.deleteParticipant(participant.controls.id.value).subscribe(data => {
+	    		console.log("Delete " + data);
+	    		this.storeService.broadcastGroupChange("S");
+     		}, error =>  this.error_str=error.error.message);
+    		// find item and remove ist
+    		this.elistMatTableDataSource.data.splice(index, 1);
+    		//this.participantFormArray.controls.splice(index, 1);
+    		this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
+    		this.groupListItems = this.uniquesGroup(this.elistMatTableDataSource.data);
+    		this.elistMatTableDataSource.filter = "";
+        }
+    }, error =>  this.error_str=error.error.message);
   }
 
   deleteAll():void{
@@ -336,11 +348,17 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   	this.elistMatTableDataSource.data = [];
   	this.profileListItems = [];
   	this.groupListItems = [];
+     
   	this.participantService.deleteAllParticipant().subscribe(data => {
-	    console.log("Delete " + data);
-	    this.openDialog("Info", "Los participantes han sido borrados.");
+	    console.log("Delete All" + data);
+	    if (data = 0) 
+	         this.openDialog("Info", "Los participantes han sido borrados.");
+	    else
+	    	 this.openDialog("Info", "Los participantes no bloqueados han sido borrados.");     
         this.storeService.broadcastGroupChange("S");
      }, error =>  this.error_str=error.error.message);
+     
+     this.refresh.emit();
   }
   
   saveParticipant(participant){

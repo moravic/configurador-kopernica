@@ -57,13 +57,15 @@ public class ImportExcelController {
 	//public ResponseEntity<List<Participant>> importParticipantExcelFile(@RequestParam("file") MultipartFile files) throws Exception {	
 		HttpStatus status = HttpStatus.OK;
         List<Participant> participantList = new ArrayList<>();
+        Integer numParticipantes;
         
         final File file = new File(basePath + "\\" + project + "\\" + study + "\\Participantes.xlsx");
         final InputStream targetStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(targetStream);
         XSSFSheet worksheet = workbook.getSheetAt(0);
-        
-        participantRepository.deleteAll();
+
+        numParticipantes = participantRepository.deleteAll();
+
         
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
@@ -75,14 +77,14 @@ public class ImportExcelController {
                 participant.setAge((int) row.getCell(3).getNumericCellValue());
                 participant.setProfile((String) row.getCell(4).getStringCellValue());
                 participant.setEmail((String) row.getCell(5).getStringCellValue());
-                
+            
                 if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
                 	participant.setGroup((String) row.getCell(6).getStringCellValue());
                 	participant.setGroupId(groupRepository.getGroupId((String) row.getCell(6).getStringCellValue()));
                 }
 
                 //participant.toString();
-                
+                System.out.println("Importando participante " + participant.getName());
                 participantRepository.save(participant);
                 
                 participantList.add(participant);
