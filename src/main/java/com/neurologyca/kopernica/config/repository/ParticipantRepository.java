@@ -191,6 +191,7 @@ public class ParticipantRepository {
              
              if (beforeGroupId!=0 && beforeGroupId!=participant.getGroupId()) {
          		if (groupRepository.numCountParticipants(beforeGroupId, participant.getId()) == 0) {
+         			System.out.println("ParticipantRepository.insertParticipant");
         			deleteGroup(conn, beforeGroupId);
         		}
              }
@@ -213,6 +214,52 @@ public class ParticipantRepository {
         
 		try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
 	        pstmt.setInt(1, groupId);
+	        pstmt.executeUpdate();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+    
+    public void deleteGroupList(Connection conn, Integer groupId) throws Exception{
+	    String deleteGroup = "DELETE FROM group_list where id = ?";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+        
+		try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
+	        pstmt.setInt(1, groupId);
+	        pstmt.executeUpdate();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+    
+    public void deleteAllGroup(Connection conn) throws Exception{
+	    String deleteGroup = "DELETE FROM groups WHERE id NOT IN (SELECT DISTINCT(group_id) FROM participants )";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+        
+		try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
+	        pstmt.executeUpdate();
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+    
+    public void deleteAllGroupList(Connection conn) throws Exception{
+	    String deleteGroup = "DELETE FROM group_list WHERE group_id NOT IN (SELECT DISTINCT(group_id) FROM participants )";
+	    
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+        
+		try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
 	        pstmt.executeUpdate();
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
@@ -293,6 +340,9 @@ public class ParticipantRepository {
 
             PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
             pstmt.executeUpdate();
+            
+       	    deleteAllGroupList(conn);
+       	    deleteAllGroup(conn);
            
             return numParticipants(conn);
 
@@ -304,6 +354,10 @@ public class ParticipantRepository {
 	
 	public void deleteParticipant(Integer id) throws Exception{
 	    String deleteSql = "DELETE FROM participants WHERE ifnull(locked,0) = 0 AND id = " + id;
+	    String selectSql = "SELECT count(1) contador, group_id FROM participants WHERE group_id = "
+	    		+ "( SELECT group_id FROM participants WHERE id = ? )";
+	    Integer contador = 0;
+	    Integer group_id = 0;
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -319,8 +373,24 @@ public class ParticipantRepository {
             ProtocolParticipantRepository protocolParticipantRepository = new ProtocolParticipantRepository();
             protocolParticipantRepository.deleteParticipantConfiguration(conn, id);
             
+            // Revisar si el grupo al que pertenece se ha quedado huerfano
+            if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+            	PreparedStatement pstmt = conn.prepareStatement(selectSql);
+            	pstmt.setInt(1, id);
+            	ResultSet rs = pstmt.executeQuery();
+            	contador = rs.getInt("contador");
+            	group_id = rs.getInt("group_id");
+            }
+                   
             PreparedStatement pstmt = conn.prepareStatement(deleteSql);
             pstmt.executeUpdate();
+            
+            // Revisar si el grupo al que pertenece se ha quedado huerfano
+            if ((studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) && (contador == 1)) {
+            	 deleteGroupList(conn, group_id);
+            	 deleteGroup(conn, group_id);
+	    		 //System.out.println("Nombre Grupo: " + participant.getGroup());
+	    	 }
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());

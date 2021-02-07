@@ -37,7 +37,7 @@ public class ProtocolRepository {
 	@Value("${base.path}")
 	private String basePath;
 
-	public void createProtocolTables() throws Exception {
+	public void createProtocolTables(Connection conn) throws Exception {
 		String create_GROUPS = "CREATE TABLE IF NOT EXISTS groups (id INTEGER PRIMARY KEY, name TEXT NOT NULL)";
 		String create_GROUP_LIST="CREATE TABLE IF NOT EXISTS group_list (id INTEGER PRIMARY KEY, group_id INTEGER NULL, protocol_id INTEGER NULL, FOREIGN KEY(protocol_id) REFERENCES protocols(id), FOREIGN KEY(group_id) REFERENCES groups(id))";
 		String create_SEGMENTS = "CREATE TABLE IF NOT EXISTS segments (id INTEGER PRIMARY KEY, type TEXT NOT NULL, value_age_min INTEGER NULL, value_age_max INTEGER NULL, value_gender TEXT NULL, value_profile TEXT NULL)";
@@ -72,8 +72,8 @@ left join stimulus s on (s.id=be.stimulus_id)
 order by pr.id, p.id, b.id, no_order
 
 		 */
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-			
+	//	try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+		try {	
 			Statement stmt = conn.createStatement();
 			stmt.execute(create_PARTICIPANT_PROTOCOL_ORDER);
 			stmt.execute(create_PARTICIPANT_PROTOCOL);
@@ -149,7 +149,6 @@ order by pr.id, p.id, b.id, no_order
 				+ "where bel.block_id = ?"
 				+ "order by bel.id";
 		
-		createProtocolTables();
 		
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -161,6 +160,8 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
+			
+			createProtocolTables(conn);
 			
 			PreparedStatement pstmtProtocol = conn.prepareStatement(getProtocols);
 
@@ -669,8 +670,6 @@ order by pr.id, p.id, b.id, no_order
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		
-		createProtocolTables();
 
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
@@ -679,7 +678,7 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
-
+			createProtocolTables(conn);
 			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
 
 				pstmt.setInt(1, protocolId);
@@ -743,8 +742,6 @@ order by pr.id, p.id, b.id, no_order
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-		
-		createProtocolTables();
 
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
@@ -754,6 +751,8 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("A new database has been created.");
 			}
 
+			createProtocolTables(conn);
+			
 			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
 
 				pstmt.setInt(1, protocolId);
@@ -805,8 +804,6 @@ order by pr.id, p.id, b.id, no_order
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
 		
-		createProtocolTables();
-		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
@@ -818,6 +815,7 @@ order by pr.id, p.id, b.id, no_order
                 //System.out.println("A new database has been created.");
             }
             
+            createProtocolTables(conn);
             deleteSegmentList(conn, protocolId, segmentListId);
             deleteSegments(conn, protocolId, segmentId);
             
@@ -832,7 +830,6 @@ order by pr.id, p.id, b.id, no_order
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
 		
-		createProtocolTables();
 		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
@@ -842,6 +839,7 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("A new database has been created.");
 			}
 			
+			createProtocolTables(conn);
 			deleteBlockElement(conn, blockId);
 			deleteBlockElementList(conn, blockId);
 			deleteBlockList(conn, blockListId);	
@@ -858,8 +856,6 @@ order by pr.id, p.id, b.id, no_order
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
 		
-		createProtocolTables();
-		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
@@ -867,6 +863,7 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
+			createProtocolTables(conn);
 			deleteBlockElementListId(conn, blockElementListId);
 			deleteBlockElementId(conn, blockElementId);
 			conn.close();
@@ -895,8 +892,6 @@ order by pr.id, p.id, b.id, no_order
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-
-		createProtocolTables();
 		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
@@ -905,6 +900,8 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
+			
+			createProtocolTables(conn);
 
 			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
 				
@@ -1096,8 +1093,6 @@ order by pr.id, p.id, b.id, no_order
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
 		}
-
-		createProtocolTables();
 		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
 			if (conn != null) {
@@ -1107,6 +1102,7 @@ order by pr.id, p.id, b.id, no_order
 				// System.out.println("A new database has been created.");
 			}
 
+			createProtocolTables(conn);
 			try (PreparedStatement pstmt = conn.prepareStatement(insertProtocolSql)) {
 				
 				pstmt.setInt(1, protocolId);

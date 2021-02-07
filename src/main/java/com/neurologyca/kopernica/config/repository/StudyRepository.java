@@ -87,6 +87,8 @@ public class StudyRepository {
     private void insertStudies(Connection conn, Study study) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO studies(id, project, study, type) VALUES(1,?,?,?)";
     	 
+    	 createTableStudies(conn);
+    	 
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
              pstmt.setString(1, study.getProject());
              pstmt.setString(2, study.getStudy());
@@ -110,13 +112,13 @@ public class StudyRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
-            System.out.println("a");            
+           
             PreparedStatement pstmt = conn.prepareStatement(getTypeStudy);
 
             ResultSet rs = pstmt.executeQuery();
 
 			rs.next();
-			System.out.println("b"); 		
+	
 			return rs.getString("type");
 
         } catch (SQLException e) {
@@ -132,7 +134,7 @@ public class StudyRepository {
 		}
 		
 		createFolders(study.getProject(), study.getStudy());
-		
+System.out.println("study.save 1");		
 		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
             if (conn != null) {
             	// Si no existe se crea la bbdd
@@ -140,14 +142,19 @@ public class StudyRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
-            
+System.out.println("study.save 2");	            
             ParticipantRepository participantRepository = new ParticipantRepository();
-            
+System.out.println("study.save 3");	            
             participantRepository.createTableParticipants(conn);
+System.out.println("study.save 4");	            
 			questionRepository.createTableQuestions(conn);
+System.out.println("study.save 5");				
 			stimulusRepository.createTableStimulus(conn);
-			protocolRepository.createProtocolTables();
+System.out.println("study.save 6");			
+			protocolRepository.createProtocolTables(conn);
+System.out.println("study.save 7");			
 			insertStudies(conn, study);
+System.out.println("study.save 8");				
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
