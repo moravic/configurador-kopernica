@@ -85,7 +85,7 @@ public class ImportExcelController {
 
                 //participant.toString();
                 System.out.println("Importando participante " + participant.getName());
-                participantRepository.save(participant);
+                participantRepository.importParticipant(participant);
                 
                 participantList.add(participant);
                 

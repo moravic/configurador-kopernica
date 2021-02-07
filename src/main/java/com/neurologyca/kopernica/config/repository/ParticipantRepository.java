@@ -136,6 +136,25 @@ public class ParticipantRepository {
 		return bloqueado;
 	}
 	
+	public Integer isBlockedParticipant(Connection conn, String participantName, Integer participantAge) throws Exception{
+		String selectSql = "SELECT ifnull(locked, 0) bloqueado FROM participants WHERE name = ? AND age = ?";
+		Integer bloqueado = 0;
+		
+
+      try {     
+            PreparedStatement stmt = conn.prepareStatement(selectSql);
+            stmt.setString(1, participantName);
+            stmt.setInt(2, participantAge);
+            ResultSet rs = stmt.executeQuery();
+    	    
+            bloqueado = rs.getInt("bloqueado");
+           } catch (SQLException e) {
+            bloqueado = 0;
+          }
+            
+		return bloqueado;
+	}
+	
     private Participant insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, group_id, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,?,1)";
@@ -216,6 +235,34 @@ public class ParticipantRepository {
             
 			createTableParticipants(conn);
 			participant = insertParticipant(conn, participant);
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+		
+
+		return participant;
+	}
+	
+	public Participant importParticipant(Participant participant) throws Exception{
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                //System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            
+            // Si el usuario existe y esta bloqueado no se modifica
+            if (isBlockedParticipant(conn, participant.getName(), participant.getAge())==0)
+            	participant = insertParticipant(conn, participant);
+            
+          conn.close();  
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());

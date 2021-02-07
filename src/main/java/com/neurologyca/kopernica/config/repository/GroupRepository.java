@@ -131,23 +131,23 @@ public class GroupRepository {
             				Group group = new Group(groupId, groupName);
                     		insertGroup(conn, group);
                     		groupId = group.getId();
-                			System.out.println("Actualizado grupo "+ groupId);
+                			//System.out.println("Actualizado grupo "+ groupId);
                 		} else { // Si lo hay, creamos grupo
 	            			Group group = new Group(0, groupName);
 	                		insertGroup(conn, group);
 	                		groupId = group.getId();
-	                		System.out.println("Creado grupo "+ groupId);
+	                		//System.out.println("Creado grupo "+ groupId);
                 		}
             		} else {			
             		    // Si existe actualizar participante
             			groupId = groupIdExists;
             			
-                		System.out.println("Cambia de grupo "+ groupId);
+                		//System.out.println("Cambia de grupo "+ groupId);
             		}
             	}
             	
             	
-            	System.out.println("Group Id "+ groupId);
+            	//System.out.println("Group Id "+ groupId);
             } catch (SQLException e) {
             }
            
@@ -275,7 +275,7 @@ public class GroupRepository {
             	ResultSet rs = stmt.executeQuery();
     	    
             	groupName = rs.getString("name");
-            	System.out.println("Group Name "+ groupName);
+            	//System.out.println("Group Name "+ groupName);
             } catch (SQLException e) {
             	throw new Exception(e.getMessage());
             }
@@ -427,7 +427,7 @@ public class GroupRepository {
 				group.setId(rs.getInt("id"));
 				group.setGroupId(rs.getInt("group_id"));
 				group.setProtocolId(rs.getInt("protocol_id"));
-				System.out.println(group.getGroupId());
+				//System.out.println(group.getGroupId());
 
 				groupList.add(group);
 			}

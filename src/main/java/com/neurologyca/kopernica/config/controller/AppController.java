@@ -28,7 +28,7 @@ public class AppController {
 		this.proyecto = project;
 		this.estudio = study;
 		fullDatabaseUrl = databaseUrl + project + "\\" + study + "\\csvs\\database";
-		System.out.println(fullDatabaseUrl);
+		//System.out.println(fullDatabaseUrl);
 	}
 		
 	@SuppressWarnings("finally")
@@ -42,7 +42,7 @@ public class AppController {
 			Files.walk(directory, 1).filter(entry -> !entry.equals(directory))
 		    	.filter(Files::isDirectory).forEach(subdirectory ->{
 		    		folders.add(subdirectory.getFileName().toString());
-		    		 System.out.println(subdirectory.getFileName());
+		    		 //System.out.println(subdirectory.getFileName());
 		    	});
 		} 
 		finally {
