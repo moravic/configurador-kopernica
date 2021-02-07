@@ -8,14 +8,16 @@ public class Protocol {
 	private List<SegmentList> segmentListArray;
 	private List<GroupList> groupListArray;
 	private List<BlockList> blockListArray;
+	private Integer locked;
 
-	public Protocol(Integer id, String name, List<SegmentList> segmentListArray, List<GroupList> groupListArray, List<BlockList> blockListArray) {
+	public Protocol(Integer id, String name, List<SegmentList> segmentListArray, List<GroupList> groupListArray, List<BlockList> blockListArray, Integer locked) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.segmentListArray = segmentListArray;
 		this.groupListArray = groupListArray;
 		this.blockListArray = blockListArray;
+		this.locked = locked;
 	}
 
 	public Protocol() {
@@ -62,10 +64,18 @@ public class Protocol {
 		this.blockListArray = blockListArray;
 	}
 
+	public Integer getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Integer locked) {
+		this.locked = locked;
+	}
+	
 	@Override
 	public String toString() {
 		return "Protocol [id=" + id + ", name=" + name + ", segmentListArray=" + segmentListArray + ", groupListArray=" + groupListArray + ", blockListArray=" + blockListArray
-				+ "]";
+				+ ", locked=" + locked + "]";
 	}
 
 }

@@ -8,4 +8,5 @@ export class Protocol {
     segmentListArray: SegmentList[];
     groupListArray: GroupList[];
 	blockListArray: BlockList[];
+	locked: number;
 }

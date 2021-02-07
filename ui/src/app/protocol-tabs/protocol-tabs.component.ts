@@ -64,7 +64,8 @@ export class ProtocolTabsComponent implements OnInit, OnChanges{
 	    name: 'Protocolo ' + (this.protocolIdMax),
 	    segmentListArray: segmentList,
 	    groupListArray: groupList,
-		blockListArray: blockList
+		blockListArray: blockList,
+		locked: 0
     }
     
     this.protocols.push(protocol);

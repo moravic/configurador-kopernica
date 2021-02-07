@@ -42,6 +42,9 @@ export class BlockProtocolComponent {
   @Input()
   protocolName;
   
+  @Input()
+  disabled;
+  
   blockForm: FormGroup;
   protocolBlockForm: FormGroup;
   

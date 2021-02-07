@@ -123,7 +123,7 @@ order by pr.id, p.id, b.id, no_order
 				+ "left join stimulus s on (s.id=be.stimulus_id)\r\n"
 				+ "order by pr.id, bl.block_id, bel.id";*/
         
-		String getProtocols = "select id, name FROM protocols order by id";
+		String getProtocols = "select id, name, locked FROM protocols order by id";
 		String getSegment = "select sl.id segmentlist_id, s.id, s.type, s.value_age_min, s.value_age_max, s.value_gender, s.value_profile "
 				+ "FROM segment_list sl JOIN segments s on (sl.segment_id=s.id) "
 				+ "WHERE protocol_id=? "
@@ -170,6 +170,7 @@ order by pr.id, p.id, b.id, no_order
 				Protocol protocol = new Protocol();
 				protocol.setId(rsProtocol.getInt("id"));
 				protocol.setName(rsProtocol.getString("name"));
+				protocol.setLocked(rsProtocol.getInt("locked"));
 				
 				PreparedStatement pstmtSegment = conn.prepareStatement(getSegment);
 				pstmtSegment.setInt(1, protocol.getId());

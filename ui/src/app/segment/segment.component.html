@@ -46,7 +46,7 @@
 				</mat-form-field>
 			</ng-container>
 			<ng-container *ngIf="(segmentForm.value.type===1) || (segmentForm.value.type===4 && segmentForm.value.valueProfile) || (segmentForm.value.type===3 && segmentForm.value.valueGender) || (segmentForm.value.type===2 && segmentForm.value.valueAgeMin && segmentForm.value.valueAgeMax)">
-			  <button mat-icon-button (click)="addSegmentList()" color="black">
+			  <button mat-icon-button (click)="addSegmentList()" color="black" [disabled] = "disabled">
 		         <mat-icon svgIcon="add-new"></mat-icon>
 		      </button>
 		    </ng-container>
@@ -59,7 +59,7 @@
 		     <div class="example-label" *ngIf="segmentList.segment.type==='Perfil'"><strong>Perfil:</strong> {{segmentList.segment.valueProfile}}</div>
 		     <mat-action-list>
 		       <div>
-			      <button mat-icon-button (click)="removeSegmentList($event, i)" color="black">
+			      <button mat-icon-button (click)="removeSegmentList($event, i)" color="black" [disabled] = "disabled">
 			         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 			      </button>
 			   </div>

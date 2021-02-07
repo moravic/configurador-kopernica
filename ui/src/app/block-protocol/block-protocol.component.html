@@ -26,7 +26,7 @@
 			    </mat-option>
 			  </mat-select>
 	      </mat-form-field>
-		  <button mat-icon-button (click)="addBlock()" color="black">
+		  <button [disabled] = "disabled" mat-icon-button (click)="addBlock()" color="black">
 	         <mat-icon svgIcon="add-new"></mat-icon>
 	      </button>
 		</form>
@@ -36,7 +36,7 @@
           		    <hr style="height: 3px;">
           			<!--ng-container [formGroupName]="i"-->
           			  <div class="divheader">{{blockList.block.name}}
-          			     <button mat-icon-button (click)="removeBlock(iBlock)" color="black">
+          			     <button mat-icon-button (click)="removeBlock(iBlock)" color="black" [disabled] = "disabled">
 					         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 					      </button>
           			  </div>
@@ -46,7 +46,7 @@
 							     <div class="example-label"><strong>{{iBlockElement}})</strong> {{blockElementList.blockElement.question?.question}}{{blockElementList.blockElement.stimulus?.name}}</div>
 							     <mat-action-list>
 							       <div>
-								      <button mat-icon-button (click)="removeBlockElement(iBlock, iBlockElement)" color="black">
+								      <button mat-icon-button (click)="removeBlockElement(iBlock, iBlockElement)" color="black" [disabled] = "disabled">
 								         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 								      </button>
 								   </div>

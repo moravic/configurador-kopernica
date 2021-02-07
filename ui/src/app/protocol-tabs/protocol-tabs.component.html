@@ -2,25 +2,25 @@
                [selectedIndex]="selectedIndex">
   <mat-tab *ngFor="let tab of tabs; let index = index">
      <ng-template mat-tab-label>
-       <input matInput placeholder="Ejemplo Protocolo 1" value={{protocols[index].name}} (input)="changeNameProtocol($event, index)">
+       <input matInput [disabled]="protocols[index].locked==1"placeholder="Ejemplo Protocolo 1" value={{protocols[index].name}} (input)="changeNameProtocol($event, index)">
     </ng-template>
     <div class="container">
     	<div class="row">
-        	<div class="col">
-			    <segment *ngIf="(typeSelected==='1')" [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [segmentListArray]="protocols[index].segmentListArray"></segment>
-			    <group *ngIf="(typeSelected==='0')" [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [groupListArray]="protocols[index].groupListArray"></group>
+        	<div class="col"> 
+			    <segment *ngIf="(typeSelected==='1')" [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [segmentListArray]="protocols[index].segmentListArray" [disabled]="protocols[index].locked==1"></segment>
+			    <group *ngIf="(typeSelected==='0')" [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [groupListArray]="protocols[index].groupListArray" [disabled]="protocols[index].locked==1"></group>
 			</div>
 	     </div>
 		 <div class="row">
         	<div class="col">
-			    <block-protocol [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [blockListArray]="protocols[index].blockListArray"></block-protocol>
+			    <block-protocol [protocolId]="protocols[index].id" [protocolName]="protocols[index].name" [blockListArray]="protocols[index].blockListArray" [disabled]="protocols[index].locked==1"></block-protocol>
 			</div>
 	     </div>
-	     <div class="row">
+	     <div class="row" >
         	<div class="col">
 			    <button mat-raised-button
 			            class="example-delete-tab-button"
-			            [disabled]="tabs.length === 1"
+			            [disabled]="tabs.length === 1 || protocols[index].locked==1"
 			            (click)="removeTab(index)">
 			      Borrar Protocolo
 			    </button>

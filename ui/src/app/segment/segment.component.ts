@@ -60,6 +60,8 @@ export class SegmentComponent {
   protocolId;
   @Input()
   protocolName;
+  @Input()
+  disabled;
   
   segmentForm: FormGroup;
   typeArray;

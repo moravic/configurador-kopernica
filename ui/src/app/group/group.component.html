@@ -16,7 +16,7 @@
 				</mat-form-field>
 			</ng-container>
 			<ng-container *ngIf="(groupForm.value.name!==undefined)">
-			  <button mat-icon-button (click)="addGroupList()" color="black">
+			  <button mat-icon-button (click)="addGroupList()" color="black" [disabled] = "disabled">
 		         <mat-icon svgIcon="add-new"></mat-icon>
 		      </button>
 		    </ng-container>
@@ -26,7 +26,7 @@
 		     <div class="example-label"><strong>{{groupList.group.name}}</strong></div>
 		     <mat-action-list>
 		       <div>
-			      <button mat-icon-button (click)="removeGroupList($event, i)" color="black">
+			      <button mat-icon-button (click)="removeGroupList($event, i)" color="black" [disabled] = "disabled">
 			         <mat-icon class="btn_list" style="width: 15px;height: 15px" svgIcon="minus-delete"></mat-icon>
 			      </button>
 			   </div>

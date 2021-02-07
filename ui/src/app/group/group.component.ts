@@ -40,6 +40,8 @@ export class GroupComponent {
   protocolId;
   @Input()
   protocolName;
+  @Input()
+  disabled;
   
   groupForm: FormGroup;
   error_str:string;
