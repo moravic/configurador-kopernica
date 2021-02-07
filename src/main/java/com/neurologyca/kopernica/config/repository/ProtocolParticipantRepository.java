@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.BlockElementTableList;
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.ParticipantProtocol;
 import com.neurologyca.kopernica.config.model.Protocol;
 import com.neurologyca.kopernica.config.model.ProtocolGroupList;
 import com.neurologyca.kopernica.config.model.Segment;
@@ -166,29 +167,17 @@ public class ProtocolParticipantRepository {
      }
    	
 	
-    private Integer applyConditions() throws Exception {
+    private Integer applyConditions(Connection conn) throws Exception {
 		List<Participant> participantList = new ArrayList<Participant>();
 		List<Segment> segmentList = new ArrayList<Segment>();
 		List<Protocol> protocolList = new ArrayList<Protocol>();
 		ParticipantRepository participantRepository = new ParticipantRepository();
 		boolean meetConditions;
 
-		//System.out.println("Entrando en apply Conditions");
-		
-		if (AppController.fullDatabaseUrl == null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
-
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-			if (conn != null) {
-				// Si no existe se crea la bbdd
-				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
-				// System.out.println("A new database has been created.");
-			}
+		try {
 			
 			// Obtenemos el listado de participantes
-			participantList = participantRepository.getParticipantList();
+			participantList = participantRepository.getParticipantNonBlockedList();
 			
 			// Obtenemos el listado de protocolos
 			protocolList = getProtocols();
@@ -239,7 +228,7 @@ public class ProtocolParticipantRepository {
 				
 						}
 						if (meetConditions) {
-							//System.out.println("Cumple " + participant.toString());
+							//System.out.println("Cumple Protocol:" + protocol.getId() + " Participante:" + participant.toString());
 							// Insertamos en la tabla participant_protocol
 							insertParticipantProtocol(conn, participant.getId(), protocol.getId());
 						}
@@ -289,7 +278,45 @@ public class ProtocolParticipantRepository {
 
 	}
 	
-	private List<BlockElementTableList> getBlockElementList() throws Exception {
+	private List<ParticipantProtocol> getParticipantProtocolNonBlockedList() throws Exception {
+		List<ParticipantProtocol> participantProtocolList = new ArrayList<ParticipantProtocol>();
+		ParticipantProtocol participant;
+
+		String getParticipants = "SELECT id, participant_id, protocol_id FROM participant_protocol WHERE participant_id IN "
+				+ "(SELECT id FROM participants WHERE IFNULL(locked, 0) <> 1)";
+
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+
+			PreparedStatement pstmt = conn.prepareStatement(getParticipants);
+			
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				participant = new ParticipantProtocol();
+				participant.setId(rs.getInt("id"));
+				participant.setParticipantId(rs.getInt("participant_id"));
+				participant.setProtocolId(rs.getInt("protocol_id"));
+				participantProtocolList.add(participant);
+			}
+
+			return participantProtocolList;
+
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+
+	}
+	
+	private List<BlockElementTableList> getBlockElementList(Integer protocolId) throws Exception {
 		List<BlockElementTableList> blockElementList = new ArrayList<BlockElementTableList>();
 		BlockElementTableList blockElement;
 
@@ -301,6 +328,7 @@ public class ProtocolParticipantRepository {
 				+ "JOIN blockelement be ON (be.id=bel.blockElement_id)\r\n"
 				+ "LEFT JOIN questions q ON (q.id=be.question_id)\r\n"
 				+ "LEFT JOIN stimulus s ON (s.id=be.stimulus_id)\r\n"
+				+ "WHERE pr.id = ?\r\n"
 				+ "ORDER BY pr.id, bl.block_id, bel.id";
 
 		if (AppController.fullDatabaseUrl == null) {
@@ -315,6 +343,8 @@ public class ProtocolParticipantRepository {
 			}
 
 			PreparedStatement pstmt = conn.prepareStatement(getBlocksInfo);
+			
+			pstmt.setInt(1, protocolId);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -325,6 +355,8 @@ public class ProtocolParticipantRepository {
 				blockElement.setBlockElementId(rs.getInt("blockElement_id"));
 				
 				blockElementList.add(blockElement);
+				
+				//System.out.println("Aplicando a bloque: " + blockElement.getBlockId() + "Block Element: " + blockElement.getBlockElementId());
 			}
 
 			return blockElementList;
@@ -363,18 +395,12 @@ public class ProtocolParticipantRepository {
       	 throw new Exception(e.getMessage());
        }
   }
-	private Integer applyBlocks() throws Exception {
-		List<Integer> participantProtocolList = new ArrayList<Integer>();
+	private Integer applyBlocks(Connection conn) throws Exception {
+		List<ParticipantProtocol> participantProtocolList = new ArrayList<ParticipantProtocol>();
 		List<BlockElementTableList> blockElementList = new ArrayList<BlockElementTableList>();
 		Integer no_order;
 
-		//System.out.println("Entrando en apply Blocks");
-		
-		if (AppController.fullDatabaseUrl == null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
-
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+		try {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
@@ -383,18 +409,20 @@ public class ProtocolParticipantRepository {
 			}
 			
 			// Obtenemos el listado de participantes que han cumplido las condiciones de cada protocolo
-			participantProtocolList = getParticipantProtocolList();
+			participantProtocolList = getParticipantProtocolNonBlockedList();
 			
-            // Obtenemos las preguntas y estimulos de cada protocolo
-			blockElementList = getBlockElementList();
 			no_order = 0;
 			
-			for (Integer participant:participantProtocolList) {
-				//System.out.println("Paricipant Id: " + participant);
+			for (ParticipantProtocol participant:participantProtocolList) {
+				//System.out.println("Paricipant: " + participant);
+				
+	            // Obtenemos las preguntas y estimulos de cada protocolo
+				blockElementList = getBlockElementList(participant.getProtocolId());
 			
-				for (BlockElementTableList blockElement:blockElementList) {					
-					// Insertamos en la tabla participant_protocolo_order
-					insertParticipantProtocolOrder(conn, participant, blockElement.getBlockId(), blockElement.getBlockElementId(), no_order++);
+				for (BlockElementTableList blockElement:blockElementList) {
+					//System.out.println("Insertando: " + blockElement.getBlockId() + " " +  blockElement.getBlockElementId());
+					// Insertamos en la tabla participant_protocolo_order 
+					insertParticipantProtocolOrder(conn, participant.getId(), blockElement.getBlockId(), blockElement.getBlockElementId(), no_order++);
 				}
 			}
 			
@@ -406,20 +434,12 @@ public class ProtocolParticipantRepository {
 		return 1;
 	}
 	
-	public void deleteParticipantProtocol() throws Exception{
-	    String deleteAllSql = "DELETE FROM participant_protocol";
+	public void deleteParticipantProtocol(Connection conn) throws Exception{
+	    String deleteAllSql = "DELETE FROM participant_protocol "
+	    		+ "WHERE participant_id IN "
+	    		+ "(SELECT id FROM participants WHERE ifnull(locked,0) <> 1)";
 	    
-		if (AppController.fullDatabaseUrl==null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
-            
+		try  {
             PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
             pstmt.executeUpdate();
 
@@ -429,22 +449,18 @@ public class ProtocolParticipantRepository {
 		
 	}
 	
-	public void deleteParticipantProtocolOrder() throws Exception{
-	    String deleteAllSql = "DELETE FROM participant_protocol_order";
+	public void deleteParticipantProtocol(Connection conn, Integer participantId) throws Exception{
+	    String deleteSql = "DELETE FROM participant_protocol "
+	    		+ "WHERE participant_id IN "
+	    		+ "(SELECT id FROM participants WHERE id = ? AND ifnull(locked,0) <> 1)";
 	    
-		if (AppController.fullDatabaseUrl==null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-            if (conn != null) {
-            	// Si no existe se crea la bbdd
-                DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
-                //System.out.println("A new database has been created.");
-            }
+		try  {
             
-            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
+            PreparedStatement pstmt = conn.prepareStatement(deleteSql);
+            pstmt.setInt(1, participantId);
+            
             pstmt.executeUpdate();
+            
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
@@ -452,31 +468,53 @@ public class ProtocolParticipantRepository {
 		
 	}
 	
-	private Integer applyGroupConditions() throws Exception {
+	public void deleteParticipantProtocolOrder(Connection conn) throws Exception{
+	    String deleteAllSql = "DELETE FROM participant_protocol_order "
+	    		+ "WHERE participant_protocol_id IN "
+	    		+ "(SELECT id FROM participant_protocol WHERE participant_id IN "
+	    		+ "(SELECT id FROM participants WHERE ifnull(locked,0) <> 1))";
+	    
+		try  {
+            
+            PreparedStatement pstmt = conn.prepareStatement(deleteAllSql);
+            pstmt.executeUpdate();
+            
+
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
+	public void deleteParticipantProtocolOrder(Connection conn, Integer participantId) throws Exception{
+	    String deleteSql = "DELETE FROM participant_protocol_order "
+	    		+ "WHERE participant_protocol_id IN "
+	    		+ "(SELECT id FROM participant_protocol WHERE participant_id IN "
+	    		+ "(SELECT id FROM participants WHERE id = ? AND ifnull(locked,0) <> 1))";
+	    
+      try {      
+            PreparedStatement pstmt = conn.prepareStatement(deleteSql);
+            pstmt.setInt(1, participantId);
+            
+            pstmt.executeUpdate();
+            
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
+	}
+	
+	private Integer applyGroupConditions(Connection conn) throws Exception {
 		List<ProtocolGroupList> groupList = new ArrayList<ProtocolGroupList>();
 		GroupRepository groupRepository = new GroupRepository();
 
-
-		//System.out.println("Entrando en apply Conditions");
+		try  {
 		
-		if (AppController.fullDatabaseUrl == null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
-
-		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
-			if (conn != null) {
-				// Si no existe se crea la bbdd
-				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
-				// System.out.println("A new database has been created.");
-			}
-			
 			// Obtenemos el listado de grupos de cada protocolo
 			groupList = groupRepository.getProtocolGroupList();
 			
 			//Para cada protocolo si tiene grupo 1 se aplica a todos los participantes
 			for (ProtocolGroupList protocolGroupList: groupList) {
-				System.out.println(protocolGroupList.getProtocolId());
 				if (protocolGroupList.getGroupId()==1) {
 					insertAllParticipantProtocol(conn, protocolGroupList.getProtocolId());
 				}
@@ -484,7 +522,7 @@ public class ProtocolParticipantRepository {
 					insertGroupParticipantProtocol(conn, protocolGroupList.getProtocolId(), protocolGroupList.getGroupId());
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		}
@@ -494,16 +532,52 @@ public class ProtocolParticipantRepository {
 	
 	public Integer applyConfiguration() throws Exception {
 		StudyRepository studyRepository = new StudyRepository();
-		try {
-			deleteParticipantProtocolOrder();
-			deleteParticipantProtocol();
+		
+		if (AppController.fullDatabaseUrl == null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+			if (conn != null) {
+				// Si no existe se crea la bbdd
+				DatabaseMetaData meta = conn.getMetaData();
+				// System.out.println("The driver name is " + meta.getDriverName());
+				// System.out.println("A new database has been created.");
+			}
+			
+			deleteParticipantProtocolOrder(conn);
+			deleteParticipantProtocol(conn);
 			 if (studyRepository.getTypeStudy().equals(INDIVIDUAL_INTERVIEW)) {	
-				 applyConditions();
+				 applyConditions(conn);
 			 }
 			 else {
-				 applyGroupConditions();
+				 applyGroupConditions(conn);
 			 }
-			applyBlocks();
+			applyBlocks(conn);
+			
+			conn.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+		return 1;
+	}
+	
+	public Integer deleteParticipantConfiguration(Connection conn) throws Exception {
+
+		try {
+			deleteParticipantProtocolOrder(conn);
+			deleteParticipantProtocol(conn);
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+		return 1;
+	}
+	
+	public Integer deleteParticipantConfiguration(Connection conn, Integer participantId) throws Exception {
+
+		try {
+			deleteParticipantProtocolOrder(conn, participantId);
+			deleteParticipantProtocol(conn, participantId);
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		}

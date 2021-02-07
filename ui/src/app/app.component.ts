@@ -210,4 +210,13 @@ export class AppComponent implements OnInit{
         this.typeSelected = itemSelected;   
    }
    
+   refreshParticipants () {
+   		this.participantService.getParticipants(this.projectSelected, this.studySelected)
+	      		.subscribe(data => {
+	        		//console.log(data);
+	        		this.participants = data;
+	      		}, error =>  {this.error_str=error.error.message; 
+	      					  this.participants.length=0;});
+	}      					  
+   
 }

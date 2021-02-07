@@ -110,13 +110,13 @@ public class StudyRepository {
                 //System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
-            
+            System.out.println("a");            
             PreparedStatement pstmt = conn.prepareStatement(getTypeStudy);
 
             ResultSet rs = pstmt.executeQuery();
 
 			rs.next();
-			
+			System.out.println("b"); 		
 			return rs.getString("type");
 
         } catch (SQLException e) {

@@ -37,7 +37,7 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <participant-list [participants]="participants" [project]="projectSelected" [study]="studySelected" [typeStudy]="typeSelected" disabled="{{listComponentsDisabled}}"></participant-list>
+        <participant-list (refresh)="refreshParticipants()" [participants]="participants" [project]="projectSelected" [study]="studySelected" [typeStudy]="typeSelected" disabled="{{listComponentsDisabled}}"></participant-list>
       </div>
     </div>
     <div class="row">
