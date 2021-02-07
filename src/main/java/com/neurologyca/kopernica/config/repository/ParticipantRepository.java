@@ -208,17 +208,19 @@ public class ParticipantRepository {
     public void deleteGroup(Connection conn, Integer groupId) throws Exception{
 	    String deleteGroup = "DELETE FROM groups where id = ?";
 	    
-		if (AppController.fullDatabaseUrl==null) {
-			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
-		}
+	    // El grupo 1 Todos...es un grupo especial y no se puede borrar
+	    if (groupId != 1) {
+	    	if (AppController.fullDatabaseUrl==null) {
+	    		throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+	    	}
         
-		try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
-	        pstmt.setInt(1, groupId);
-	        pstmt.executeUpdate();
-        } catch (SQLException e) {
-        	throw new Exception(e.getMessage());
-        }
-		
+	    	try (PreparedStatement pstmt = conn.prepareStatement(deleteGroup)){
+	    		pstmt.setInt(1, groupId);
+	    		pstmt.executeUpdate();
+	    	} catch (SQLException e) {
+	    		throw new Exception(e.getMessage());
+	    	}
+	    }
 	}
     
     public void deleteGroupList(Connection conn, Integer groupId) throws Exception{
@@ -238,7 +240,7 @@ public class ParticipantRepository {
 	}
     
     public void deleteAllGroup(Connection conn) throws Exception{
-	    String deleteGroup = "DELETE FROM groups WHERE id NOT IN (SELECT DISTINCT(group_id) FROM participants )";
+	    String deleteGroup = "DELETE FROM groups WHERE id <> 1 AND id NOT IN (SELECT DISTINCT(group_id) FROM participants )";
 	    
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");

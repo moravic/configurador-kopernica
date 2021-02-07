@@ -414,13 +414,13 @@ public class ProtocolParticipantRepository {
 			no_order = 0;
 			
 			for (ParticipantProtocol participant:participantProtocolList) {
-				//System.out.println("Paricipant: " + participant);
+				System.out.println("Paricipant: " + participant);
 				
 	            // Obtenemos las preguntas y estimulos de cada protocolo
 				blockElementList = getBlockElementList(participant.getProtocolId());
 			
 				for (BlockElementTableList blockElement:blockElementList) {
-					//System.out.println("Insertando: " + blockElement.getBlockId() + " " +  blockElement.getBlockElementId());
+					System.out.println("Insertando: " + blockElement.getBlockId() + " " +  blockElement.getBlockElementId());
 					// Insertamos en la tabla participant_protocolo_order 
 					insertParticipantProtocolOrder(conn, participant.getId(), blockElement.getBlockId(), blockElement.getBlockElementId(), no_order++);
 				}

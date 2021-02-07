@@ -49,7 +49,7 @@ public class ProtocolRepository {
 		String create_PROTOCOLS = "CREATE TABLE IF NOT EXISTS protocols (id INTEGER PRIMARY KEY, name TEXT NOT NULL, locked INT NULL)";
 		String create_PARTICIPANT_PROTOCOL = "CREATE TABLE IF NOT EXISTS participant_protocol (id INTEGER PRIMARY KEY, participant_id INTEGER NOT NULL, protocol_id INTEGER NOT NULL, FOREIGN KEY(participant_id) REFERENCES participants(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id))";
 		String create_PARTICIPANT_PROTOCOL_ORDER = "CREATE TABLE IF NOT EXISTS participant_protocol_order (id INTEGER PRIMARY KEY, participant_protocol_id INTEGER NOT NULL, block_id INTEGER NOT NULL, blockElement_id INTEGER NOT NULL, no_order INTEGER NOT NULL, FOREIGN KEY(participant_protocol_id) REFERENCES participant_protocol(id), FOREIGN KEY(blockElement_id) REFERENCES blockElement(id))";
-		
+		String insert_GROUP = "INSERT OR REPLACE INTO groups(id, name) " + "VALUES(1,'Todos')";
 		/*
 		 * 
 insert into participant_protocol_order
@@ -86,6 +86,7 @@ order by pr.id, p.id, b.id, no_order
 			stmt.execute(create_BLOCKELEMENT);
 			stmt.execute(create_GROUPS);
 			stmt.execute(create_GROUP_LIST);
+			stmt.execute(insert_GROUP);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
