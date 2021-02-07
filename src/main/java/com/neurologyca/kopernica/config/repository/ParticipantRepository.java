@@ -139,8 +139,13 @@ public class ParticipantRepository {
     private Participant insertParticipant(Connection conn, Participant participant) throws Exception {
     	 String insertSql = "INSERT OR REPLACE INTO participants(id, name, gender, age, profile, email, group_id, study_id) "
     	 		+ "VALUES(?,?,?,?,?,?,?,1)";
+    	 Integer beforeGroupId;
     	 
-    	 Integer beforeGroupId = participant.getGroupId();
+    	 if (participant.getGroupId() == null)
+    		 beforeGroupId = 0;
+    	 else
+    		 beforeGroupId = participant.getGroupId();
+    		 
     	 // Revisamos si el estudio es grupal
     	 // No es grupal....group_id=0
     	 // Es grupal ... buscar el group_id en grupos (se crea e inserta si no existe)
@@ -311,7 +316,7 @@ public class ParticipantRepository {
 				
 				if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
 		    		 participant.setGroup(groupRepository.getGroupName(rs.getInt("group_id")));
-		    		 System.out.println("Nombre Grupo: " + participant.getGroup());
+		    		 //System.out.println("Nombre Grupo: " + participant.getGroup());
 		    	 }
 		    	 else {
 		    		 participant.setGroup("");
@@ -363,7 +368,7 @@ public class ParticipantRepository {
 				
 				if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
 		    		 participant.setGroup(groupRepository.getGroupName(rs.getInt("group_id")));
-		    		 System.out.println("Nombre Grupo: " + participant.getGroup());
+		    		 //System.out.println("Nombre Grupo: " + participant.getGroup());
 		    	 }
 		    	 else {
 		    		 participant.setGroup("");

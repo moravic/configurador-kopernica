@@ -31,7 +31,7 @@ public class Profile {
 
 	@Override
 	public String toString() {
-		return "Profule [id=" + id + ", type=" + type + "]";
+		return "Profile [id=" + id + ", type=" + type + "]";
 	}
 
 }

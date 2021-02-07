@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.BlockElementTableList;
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.ParticipantProtocol;
 import com.neurologyca.kopernica.config.model.Protocol;
 import com.neurologyca.kopernica.config.model.ProtocolGroupList;
 import com.neurologyca.kopernica.config.model.Segment;
@@ -227,7 +228,7 @@ public class ProtocolParticipantRepository {
 				
 						}
 						if (meetConditions) {
-							//System.out.println("Cumple " + participant.toString());
+							//System.out.println("Cumple Protocol:" + protocol.getId() + " Participante:" + participant.toString());
 							// Insertamos en la tabla participant_protocol
 							insertParticipantProtocol(conn, participant.getId(), protocol.getId());
 						}
@@ -277,12 +278,12 @@ public class ProtocolParticipantRepository {
 
 	}
 	
-	private List<Integer> getParticipantProtocolNonBlockedList() throws Exception {
-		List<Integer> participantProtocolList = new ArrayList<Integer>();
-		Integer participant;
+	private List<ParticipantProtocol> getParticipantProtocolNonBlockedList() throws Exception {
+		List<ParticipantProtocol> participantProtocolList = new ArrayList<ParticipantProtocol>();
+		ParticipantProtocol participant;
 
-		String getParticipants = "SELECT id FROM participant_protocol WHERE participant_id IN "
-				+ "(SELECT id FROM participants WHERE IFNULL(locked, 0) = 0)";
+		String getParticipants = "SELECT id, participant_id, protocol_id FROM participant_protocol WHERE participant_id IN "
+				+ "(SELECT id FROM participants WHERE IFNULL(locked, 0) <> 1)";
 
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -300,7 +301,10 @@ public class ProtocolParticipantRepository {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				participant = rs.getInt("id");
+				participant = new ParticipantProtocol();
+				participant.setId(rs.getInt("id"));
+				participant.setParticipantId(rs.getInt("participant_id"));
+				participant.setProtocolId(rs.getInt("protocol_id"));
 				participantProtocolList.add(participant);
 			}
 
@@ -312,7 +316,7 @@ public class ProtocolParticipantRepository {
 
 	}
 	
-	private List<BlockElementTableList> getBlockElementList() throws Exception {
+	private List<BlockElementTableList> getBlockElementList(Integer protocolId) throws Exception {
 		List<BlockElementTableList> blockElementList = new ArrayList<BlockElementTableList>();
 		BlockElementTableList blockElement;
 
@@ -324,6 +328,7 @@ public class ProtocolParticipantRepository {
 				+ "JOIN blockelement be ON (be.id=bel.blockElement_id)\r\n"
 				+ "LEFT JOIN questions q ON (q.id=be.question_id)\r\n"
 				+ "LEFT JOIN stimulus s ON (s.id=be.stimulus_id)\r\n"
+				+ "WHERE pr.id = ?\r\n"
 				+ "ORDER BY pr.id, bl.block_id, bel.id";
 
 		if (AppController.fullDatabaseUrl == null) {
@@ -338,6 +343,8 @@ public class ProtocolParticipantRepository {
 			}
 
 			PreparedStatement pstmt = conn.prepareStatement(getBlocksInfo);
+			
+			pstmt.setInt(1, protocolId);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -348,6 +355,8 @@ public class ProtocolParticipantRepository {
 				blockElement.setBlockElementId(rs.getInt("blockElement_id"));
 				
 				blockElementList.add(blockElement);
+				
+				//System.out.println("Aplicando a bloque: " + blockElement.getBlockId() + "Block Element: " + blockElement.getBlockElementId());
 			}
 
 			return blockElementList;
@@ -387,7 +396,7 @@ public class ProtocolParticipantRepository {
        }
   }
 	private Integer applyBlocks(Connection conn) throws Exception {
-		List<Integer> participantProtocolList = new ArrayList<Integer>();
+		List<ParticipantProtocol> participantProtocolList = new ArrayList<ParticipantProtocol>();
 		List<BlockElementTableList> blockElementList = new ArrayList<BlockElementTableList>();
 		Integer no_order;
 
@@ -402,16 +411,18 @@ public class ProtocolParticipantRepository {
 			// Obtenemos el listado de participantes que han cumplido las condiciones de cada protocolo
 			participantProtocolList = getParticipantProtocolNonBlockedList();
 			
-            // Obtenemos las preguntas y estimulos de cada protocolo
-			blockElementList = getBlockElementList();
 			no_order = 0;
 			
-			for (Integer participant:participantProtocolList) {
-				//System.out.println("Paricipant Id: " + participant);
+			for (ParticipantProtocol participant:participantProtocolList) {
+				//System.out.println("Paricipant: " + participant);
+				
+	            // Obtenemos las preguntas y estimulos de cada protocolo
+				blockElementList = getBlockElementList(participant.getProtocolId());
 			
-				for (BlockElementTableList blockElement:blockElementList) {					
-					// Insertamos en la tabla participant_protocolo_order
-					insertParticipantProtocolOrder(conn, participant, blockElement.getBlockId(), blockElement.getBlockElementId(), no_order++);
+				for (BlockElementTableList blockElement:blockElementList) {
+					//System.out.println("Insertando: " + blockElement.getBlockId() + " " +  blockElement.getBlockElementId());
+					// Insertamos en la tabla participant_protocolo_order 
+					insertParticipantProtocolOrder(conn, participant.getId(), blockElement.getBlockId(), blockElement.getBlockElementId(), no_order++);
 				}
 			}
 			
