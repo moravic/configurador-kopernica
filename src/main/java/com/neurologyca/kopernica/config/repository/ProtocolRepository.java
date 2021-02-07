@@ -273,7 +273,14 @@ order by pr.id, p.id, b.id, no_order
 			}
 			
 			conn.close();
-
+            
+			if (protocols.size()==0) { // Protocolo por defecto
+				Protocol p = new Protocol();
+				p.setId(1);
+				protocols.add(p);
+			}
+				
+			
 			return protocols;
 
 		} catch (SQLException e) {

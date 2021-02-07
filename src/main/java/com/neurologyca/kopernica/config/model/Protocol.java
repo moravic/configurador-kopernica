@@ -65,6 +65,8 @@ public class Protocol {
 	}
 
 	public Integer getLocked() {
+		if (locked==null)
+			setLocked(0);
 		return locked;
 	}
 
