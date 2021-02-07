@@ -50,12 +50,12 @@ export class AppComponent implements OnInit{
     private domSanitizer: DomSanitizer
   ){
     this.matIconRegistry.addSvgIcon(
-      "export-csv",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/export-csv.svg")
+      "export-xlsx",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/export-xlsx.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      "import-csv",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/import-csv.svg")
+      "import-xlsx",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/import-xlsx.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "add-new",
@@ -68,6 +68,10 @@ export class AppComponent implements OnInit{
     this.matIconRegistry.addSvgIcon(
       "delete-bin",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/delete-bin.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "locked",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../../config-kopernica/assets/locked.svg")
     );
   }
 
