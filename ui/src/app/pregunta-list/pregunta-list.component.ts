@@ -150,7 +150,7 @@ export class PreguntaListComponent implements OnInit, AfterViewInit {
 	    }
 	    
 	    this.storeService.broadcastElementChange("S");
-      }, error =>  this.error_str=error.error.message);
+      }, error =>  this.openDialog("Error", error.error.message));
     }
   }
   

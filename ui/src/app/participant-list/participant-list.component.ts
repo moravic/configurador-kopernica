@@ -395,7 +395,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         this.elistMatTableDataSource.paginator = this.paginator;
         this.elistMatTableDataSource.sort = this.sort;
         this.storeService.broadcastGroupChange("S");
-      }, error =>  this.error_str=error.error.message);
+      }, error =>  this.openDialog("Error", error.error.message));
     }
   }
   

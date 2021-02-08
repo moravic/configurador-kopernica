@@ -21,9 +21,11 @@ import java.util.List;
 @Repository
 public class StimulusRepository {
 	
+	static final String ESTIMULO_DUPLICADO = "ERROR: Ya existe un estímulo con el mismo texto";
+	
     public void createTableStimulus(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS stimulus ("
-				+ "id integer PRIMARY KEY, name TEXT NOT NULL, "
+				+ "id integer PRIMARY KEY, name TEXT NOT NULL UNIQUE, "
 				+ "study_id integer NOT NULL, "
 				+ "FOREIGN KEY(study_id) REFERENCES studies(id))";
 		
@@ -35,6 +37,21 @@ public class StimulusRepository {
 			throw new Exception(e.getMessage());
 		 }
 	 }
+    
+    private Integer existsStimulus(Connection conn, String stimuli) throws Exception {
+     	 String selectSql = "SELECT COUNT(1) contador FROM stimulus WHERE name = ?";
+     	
+          try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
+          	pstmt.setString(1, stimuli);
+          	ResultSet rs = pstmt.executeQuery();
+          	Integer resultado = rs.getInt("contador");
+
+          	return resultado;
+          	
+          } catch (SQLException e) {
+         	 throw new Exception(e.getMessage());
+          }
+     }
 
     private Integer selectMaxId(Connection conn) throws Exception {
    	 String selectMaxIdSql = "SELECT MAX(id) id FROM stimulus";
@@ -90,7 +107,12 @@ public class StimulusRepository {
             }
             
 			createTableStimulus(conn);
-			insertStimulus(conn, stimulus);
+			
+			if (stimulus.getName()=="" || existsStimulus(conn, stimulus.getName()) == 0) {
+				insertStimulus(conn, stimulus);
+			} else {
+				throw new Exception(ESTIMULO_DUPLICADO);
+			}
             
 			conn.close();
         } catch (SQLException e) {

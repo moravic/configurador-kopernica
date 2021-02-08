@@ -19,10 +19,11 @@ import java.util.List;
 
 @Repository
 public class QuestionRepository {
-	
+	static final String PREGUNTA_DUPLICADA = "ERROR: Ya existe una pregunta con el mismo texto";
+			
     public void createTableQuestions(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS questions ("
-				+ "id integer PRIMARY KEY, question TEXT NOT NULL, "
+				+ "id integer PRIMARY KEY, question TEXT NOT NULL UNIQUE, "
 				+ "study_id integer NOT NULL, "
 				+ "FOREIGN KEY(study_id) REFERENCES studies(id))";
 		
@@ -47,6 +48,22 @@ public class QuestionRepository {
         }
         return rs.getInt("id");
    }
+    
+    private Integer existsQuestion(Connection conn, String question) throws Exception {
+      	 String selectSql = "SELECT COUNT(1) contador FROM questions WHERE question = ?";
+      	
+
+           try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
+           	pstmt.setString(1, question);
+           	ResultSet rs = pstmt.executeQuery();
+           	Integer resultado = rs.getInt("contador");
+
+           	return resultado;
+           	
+           } catch (SQLException e) {
+          	 throw new Exception(e.getMessage());
+           }
+      }
 	
 	public Integer getNewId() throws Exception{
 		try {
@@ -88,7 +105,11 @@ public class QuestionRepository {
             }
             
 			createTableQuestions(conn);
-			insertQuestion(conn, question);
+			if (question.getQuestion()=="" || existsQuestion(conn, question.getQuestion()) == 0) {
+				insertQuestion(conn, question);
+			} else {
+				throw new Exception(PREGUNTA_DUPLICADA);
+			}
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());

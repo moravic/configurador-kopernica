@@ -151,7 +151,7 @@ export class EstimuloListComponent implements OnInit, AfterViewInit {
 	    
 	    //this.storeService.setStimuli(this.stimuli);
 	    this.storeService.broadcastElementChange("S");
-      }, error =>  this.error_str=error.error.message);
+      }, error =>  this.openDialog("Error", error.error.message));
     }
   }
   

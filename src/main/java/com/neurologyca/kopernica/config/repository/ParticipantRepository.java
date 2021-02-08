@@ -31,11 +31,13 @@ public class ParticipantRepository {
 	static final String GROUP_INTEVIEW = "0";
 	static final String INDIVIDUAL_INTERVIEW = "1";
 	
+	static final String PARTICIPANTE_DUPLICADO = "ERROR: Ya existe un participante con el mismo nombre y edad";
+	
     public void createTableParticipants(Connection conn) throws Exception{
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS participants ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, gender TEXT NOT NULL, age integer NOT NULL, "
 				+ "profile TEXT NOT NULL, email TEXT, group_id integer, study_id integer NOT NULL, locked INT NULL, "
-				+ "FOREIGN KEY(study_id) REFERENCES studies(id), FOREIGN KEY(group_id) REFERENCES groups(id))";
+				+ "FOREIGN KEY(study_id) REFERENCES studies(id), FOREIGN KEY(group_id) REFERENCES groups(id),  UNIQUE(name, age))";
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute(createTableQuery);	
@@ -56,6 +58,25 @@ public class ParticipantRepository {
           	 throw new Exception(e.getMessage());
            }
            return rs.getInt("id");
+      }
+    
+    
+    private Integer existsParticipant(Connection conn, Participant participant) throws Exception {
+      	 String selectSql = "SELECT COUNT(1) contador FROM participants WHERE name = ? AND age = ? AND id <> ?";
+      	
+
+           try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
+           	pstmt.setString(1, participant.getName());
+           	pstmt.setInt(2, participant.getAge());
+           	pstmt.setInt(3, participant.getId());
+           	ResultSet rs = pstmt.executeQuery();
+           	Integer resultado = rs.getInt("contador");
+
+           	return resultado;
+           	
+           } catch (SQLException e) {
+          	 throw new Exception(e.getMessage());
+           }
       }
    
 	public Integer getNewId() throws Exception{
@@ -283,7 +304,13 @@ public class ParticipantRepository {
             }
             
 			createTableParticipants(conn);
-			participant = insertParticipant(conn, participant);
+			
+			if (participant.getName()=="" || existsParticipant(conn, participant) == 0) {
+				participant = insertParticipant(conn, participant);
+			} else {
+				throw new Exception(PARTICIPANTE_DUPLICADO);
+			}
+
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());

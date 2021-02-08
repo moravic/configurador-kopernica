@@ -27,7 +27,7 @@ public class GroupRepository {
 	
 	public void createTableGroups(Connection conn) throws Exception {
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS groups ("
-				+ "id integer PRIMARY KEY, name TEXT NOT NULL )";
+				+ "id integer PRIMARY KEY, name TEXT NOT NULL UNIQUE)";
 		String insertSql = "INSERT OR REPLACE INTO groups(id, name) " + "VALUES(1,'Todos')";
 
 		try {
