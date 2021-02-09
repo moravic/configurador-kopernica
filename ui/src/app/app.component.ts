@@ -14,6 +14,8 @@ import { ProtocolService } from './protocol.service';
 import { Protocol } from './protocol';
 import { ProtocolparticipantService } from './protocolparticipant.service';
 import { StoreService } from './store.service';
+import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -48,7 +50,8 @@ export class AppComponent implements OnInit{
     private protocolparticipantService:ProtocolparticipantService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    private storeService: StoreService
+    private storeService: StoreService,
+    private dialog: MatDialog
   ){
     this.matIconRegistry.addSvgIcon(
       "export-xlsx",
@@ -109,11 +112,12 @@ export class AppComponent implements OnInit{
    }
    
    public applyConfiguration(){
-   		//console.log("Generating Protocol Participants...");
+   		console.log("Generating Protocol Participants...");
    		this.protocolparticipantService.applyConfiguration()
      	.subscribe(resp => {
      	    console.log(resp);
-	      }, error =>  this.error_str=error.error.message);
+     	    this.openDialog("Info", "Se ha aplicado la configuración");
+	      }, error =>  this.openDialog("Error", error.error.message));
 	      this.error_str=""; 
    }
   
@@ -231,6 +235,21 @@ export class AppComponent implements OnInit{
 	        		this.participants = data;
 	      		}, error =>  {this.error_str=error.error.message; 
 	      					  this.participants.length=0;});
-	}      					  
+	}      	
+	
+  openDialog(title, content) {
+    let dialogRef = this.dialog.open(MatDialogOkComponent, {
+      data: {
+        title: title,
+        content: content
+      }
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'confirm') {
+        console.log('Confirmado');
+      }
+    })
+  }			  
    
 }
