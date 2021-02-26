@@ -255,7 +255,7 @@ public class GroupRepository {
 	}
 	
 	public String getGroupName(Integer groupId) throws Exception{
-		String selectSql = "SELECT name FROM groups WHERE id = ?";
+		String selectSql = "SELECT max(name) name FROM groups WHERE id = ?";
 		String groupName;
 		
 		if (AppController.fullDatabaseUrl==null) {

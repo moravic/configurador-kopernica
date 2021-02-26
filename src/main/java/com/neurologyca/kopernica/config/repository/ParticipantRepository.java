@@ -37,7 +37,7 @@ public class ParticipantRepository {
 		String createTableQuery = "CREATE TABLE IF NOT EXISTS participants ("
 				+ "id integer PRIMARY KEY, name TEXT NOT NULL, gender TEXT NOT NULL, age integer NOT NULL, "
 				+ "profile TEXT NOT NULL, email TEXT, group_id integer, study_id integer NOT NULL, locked INT NULL, "
-				+ "FOREIGN KEY(study_id) REFERENCES studies(id), FOREIGN KEY(group_id) REFERENCES groups(id),  UNIQUE(name, age))";
+				+ "FOREIGN KEY(study_id) REFERENCES studies(id), FOREIGN KEY(group_id) REFERENCES groups(id))";
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute(createTableQuery);	
@@ -131,7 +131,7 @@ public class ParticipantRepository {
 	}
 	
 	public Integer isBlockedParticipant(Integer participantId) throws Exception{
-		String selectSql = "SELECT ifnull(locked, 0) bloqueado FROM participants WHERE id = ?";
+		String selectSql = "SELECT max(ifnull(locked, 0)) bloqueado FROM participants WHERE id = ?";
 		Integer bloqueado = 0;
 		
 		if (AppController.fullDatabaseUrl==null) {
@@ -200,7 +200,11 @@ public class ParticipantRepository {
          try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
         	 if (participant.getId()==0) {
         		 participant.setId(selectMaxId(conn)+1);
-        	 }        	 
+        	 } 
+        	 
+     		//if (participant.getName().equals(""))
+    		//	participant.setName("_"+participant.getId());
+    			
              pstmt.setInt(1, participant.getId());
              pstmt.setString(2, participant.getName());
              pstmt.setString(3, participant.getGender());
@@ -305,7 +309,7 @@ public class ParticipantRepository {
             
 			createTableParticipants(conn);
 			
-			if (participant.getName()=="" || existsParticipant(conn, participant) == 0) {
+			if (participant.getName().equals("") || existsParticipant(conn, participant) == 0) {
 				participant = insertParticipant(conn, participant);
 			} else {
 				throw new Exception(PARTICIPANTE_DUPLICADO);
@@ -454,6 +458,8 @@ public class ParticipantRepository {
 				participant = new Participant();
 				participant.setId(rs.getInt("id"));
 				participant.setName(rs.getString("name"));
+				//if (participant.getName().startsWith("_"))
+				//	participant.setName("Inválido");
 				participant.setAge(rs.getInt("age"));
 				participant.setGender(rs.getString("gender"));
 				participant.setEmail(rs.getString("email"));

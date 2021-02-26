@@ -23,12 +23,6 @@ import java.util.List;
 
 @Repository
 public class StudyRepository {
-
-	@Value("${database.url}")
-	private String databaseUrl;
-	
-	@Value("${base.path}")
-	private String basePath;
 	
 	@Autowired
 	private ProtocolRepository protocolRepository;
@@ -36,12 +30,12 @@ public class StudyRepository {
     private QuestionRepository questionRepository;
     @Autowired
     private StimulusRepository stimulusRepository;
-    	
+    
 	private void createFolders(String project, String study) throws Exception {
 		 
-		String subFolder = basePath + "\\" + project + "\\" + study + "\\csvs";
-		String subFolderFaces = basePath + "\\" + project + "\\" + study + "\\faces";
-		String subFolderAudios = basePath + "\\" + project + "\\" + study + "\\audios";
+		String subFolder = AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "csvs" + System.getProperty("file.separator");
+		String subFolderFaces = AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "faces" + System.getProperty("file.separator");
+		String subFolderAudios = AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "audios" + System.getProperty("file.separator");
 		
 		File projectFolder = new File(subFolder);
     		

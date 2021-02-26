@@ -1,5 +1,7 @@
 package com.neurologyca.kopernica.config.controller;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AppController {
 	@Value("${base.path}")
-	private String basePath;
+	public String basePath;
+	
+	private boolean setPath=true;
 	
 	@Value("${database.url}")
 	private String databaseUrl;
@@ -22,20 +26,31 @@ public class AppController {
 	public static String estudio;
 	public static String proyecto;
 	public static String fullDatabaseUrl;
+	public static String fullBasePath;
 	
 	@GetMapping("/app/properties/{project}/{study}")
-	public void setProperties(@PathVariable String project, @PathVariable String study) {
+	public void setProperties(@PathVariable String project, @PathVariable String study) throws URISyntaxException {
 		this.proyecto = project;
 		this.estudio = study;
-		fullDatabaseUrl = databaseUrl + project + "\\" + study + "\\csvs\\database";
-		//System.out.println(fullDatabaseUrl);
+		
+		fullDatabaseUrl = databaseUrl + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "csvs" + System.getProperty("file.separator") + "database";
+		System.out.println(fullDatabaseUrl);
 	}
 		
 	@SuppressWarnings("finally")
 	@GetMapping("/app/")
 	public List<String> getProyectos() throws Exception {
-		//System.out.println("getProjects " + basePath);
-		Path directory = Paths.get(basePath);
+		System.out.println("basePath " + basePath);
+		String jarPath = new File("").getAbsolutePath();
+		System.out.println("jarPath " + jarPath);
+		if (this.setPath) {
+			this.setPath=false;
+			this.fullBasePath = jarPath + System.getProperty("file.separator") + basePath + System.getProperty("file.separator");
+			this.databaseUrl = databaseUrl + this.fullBasePath;
+		}
+		
+		System.out.println("fullBasePath " + fullBasePath);
+		Path directory = Paths.get(fullBasePath);
 		List<String> folders = new ArrayList<String>();
 		
 		try {

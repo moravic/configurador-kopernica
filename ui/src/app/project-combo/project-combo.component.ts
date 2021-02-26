@@ -44,9 +44,9 @@ export class ProjectComboComponent implements OnInit {
     this.shareItemToParent.emit(value);
     console.log('filterValue ' + value);
     const results = this.listItems.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
-    const exactMatch = this.listItems.filter(option => option === filterValue);
+    const exactMatch = this.listItems.filter(option => option.toLowerCase() === filterValue);
     
-    if (!exactMatch.length && filterValue) this.notFound = 'No existe el proyecto ' + filterValue + ', se creará uno nuevo.'
+    if (!exactMatch.length && filterValue) this.notFound = 'No existe el proyecto ' + value + ', se creará uno nuevo.'
     else this.notFound = '';
     
     return results;

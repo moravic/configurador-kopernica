@@ -61,7 +61,11 @@ export class GroupComponent {
     console.log("addGroupList");
     if (this.groupForm.value.id==null)
       return;
-      
+    
+    // si existe
+    if (this.groupListArray.filter(option => option.group.id === this.groupForm.value.id).length>0)
+      return;
+    
     var groupList:GroupList = {
         id: null,
 	    group: {
@@ -86,10 +90,10 @@ export class GroupComponent {
          
     this.groupService.deleteGroupProtocol(this.protocolId, this.groupArray[index].id)
       .subscribe(data => {
-        console.log("Save " + data); 
+        console.log("Save " + data);
+        this.groupListArray.splice(index, 1);
      }); 
     
-    this.groupListArray.splice(index, 1);
   }
   
 }

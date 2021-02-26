@@ -96,16 +96,16 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   private uniques(arr) {
     var a = [];
     for (var i=0, l=arr.length; i<l; i++)
-        if (a.indexOf(arr[i].profile) === -1 && arr[i].profile !== '')
-            a.push(arr[i].profile);
+        if (a.indexOf(arr[i].value.profile) === -1 && arr[i].value.profile !== '')
+            a.push(arr[i].value.profile);
     return a;
   }
   
     private uniquesGroup(arr) {
     var a = [];
     for (var i=0, l=arr.length; i<l; i++)
-        if (a.indexOf(arr[i].group) === -1 && arr[i].group !== '')
-            a.push(arr[i].group);
+        if (a.indexOf(arr[i].value.group) === -1 && arr[i].value.group !== '')
+            a.push(arr[i].value.group);
     return a;
   }
 
@@ -146,7 +146,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   
   ngOnChanges() {
     console.log("ngOnChanges " + this.participants);
-        if (this.typeStudy == "0") {
+    if (this.typeStudy == "0") {
     	this.displayedColumns = [
       		'name',
       		'email',
@@ -166,6 +166,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
       		'deleteParticipant'
     		];
     }
+    this.profileOptions=[];
+    this.groupOptions=[];
     this.updateParticipants();
   }
   
@@ -174,10 +176,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
       return;
         
     console.log("updateParticipants " + this.participants);
-    
-    this.profileListItems = this.uniques(this.participants);
-    this.groupListItems = this.uniquesGroup(this.participants);
-        
+            
     this.form= this.formBuilder.group({
        participants: this.formBuilder.array([])
     });
@@ -188,6 +187,9 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
     );*/
     
     this.elistMatTableDataSource = new MatTableDataSource((this.participantFormArray as FormArray).controls);
+    
+    this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
+    this.groupListItems = this.uniquesGroup(this.elistMatTableDataSource.data);
     
     // adjust filtering and sorting logic to support AbstractControl object.
   	this.elistMatTableDataSource.sortingDataAccessor = (data: AbstractControl, sortHeaderId: string) => {
@@ -362,6 +364,7 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
   }
   
   saveParticipant(participant){
+    console.log('saveParticipant');
 	var index =  this.participantFormArray.value.findIndex(part => part.id === participant.id);
     if ((this.form.controls.participants as FormArray).controls[index].valid) {
       this.participantService.saveParticipant(participant)
@@ -375,8 +378,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         this.elistMatTableDataSource.data[index].profile = participant.profile;
         this.elistMatTableDataSource.data[index].group = data.groupId;*/
         
-        this.profileListItems = this.uniques(this.participantFormArray.value);
-        this.groupListItems = this.uniquesGroup(this.participantFormArray.value);
+        this.profileListItems = this.uniques(this.elistMatTableDataSource.data);
+        this.groupListItems = this.uniquesGroup(this.elistMatTableDataSource.data);
             
         if (this.participantFormArray.value[index].id != data.id || this.participantFormArray.value[index].groupId != data.groupId ) {
             this.participantFormArray.value[index].id = data.id;
@@ -396,7 +399,8 @@ export class ParticipantListComponent implements OnInit, AfterViewInit {
         this.elistMatTableDataSource.sort = this.sort;
         this.storeService.broadcastGroupChange("S");
       }, error =>  this.openDialog("Error", error.error.message));
-    }
+    } else 
+    	(this.form.controls.participants as FormArray).controls[index].markAllAsTouched();
   }
   
   onRowChanged(row, index) {
