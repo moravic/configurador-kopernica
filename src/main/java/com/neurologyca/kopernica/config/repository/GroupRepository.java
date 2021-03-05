@@ -402,7 +402,7 @@ public class GroupRepository {
    }
 	
 	public List<ProtocolGroupList> getProtocolGroupList() throws Exception{
-	    String getGroupListSql = "SELECT id, group_id, protocol_id FROM group_list";
+	    String getGroupListSql = "SELECT id, group_id, protocol_id FROM group_list where protocol_id not in (select protocol_id from protocols where ifnull(locked,0)=1)";
 	    ProtocolGroupList group;
 	    List<ProtocolGroupList> groupList = new ArrayList<ProtocolGroupList>();
 	    

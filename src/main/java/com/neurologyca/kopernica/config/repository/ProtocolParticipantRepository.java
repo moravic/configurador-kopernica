@@ -38,7 +38,7 @@ public class ProtocolParticipantRepository {
 		List<Protocol> protocols = new ArrayList<Protocol>();
 		Protocol protocol;
 
-		String getProtocol = "SELECT id FROM protocols";
+		String getProtocol = "SELECT id FROM protocols where ifnull(locked,0)=0";
 
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
