@@ -1,7 +1,5 @@
 package com.neurologyca.kopernica.config.model;
 
-import java.util.List;
-
 public class BlockElementList {
 	private Integer id;
     private BlockElement blockElement;

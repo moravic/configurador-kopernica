@@ -10,7 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,21 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.Question;
 import com.neurologyca.kopernica.config.model.Stimulus;
+import com.neurologyca.kopernica.config.repository.GroupRepository;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.repository.QuestionRepository;
 import com.neurologyca.kopernica.config.repository.StimulusRepository;
 import com.neurologyca.kopernica.config.repository.StudyRepository;
-import com.neurologyca.kopernica.config.repository.GroupRepository;
-import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
 @RequestMapping("import-excel")
 public class ImportExcelController {
-	
-	@Value("${base.path}")
-	private String basePath;
-	
+		
     @Autowired
     private ParticipantRepository participantRepository;
     
@@ -59,13 +55,14 @@ public class ImportExcelController {
         List<Participant> participantList = new ArrayList<>();
         Integer numParticipantes;
         
-        final File file = new File(basePath + "\\" + project + "\\" + study + "\\Participantes.xlsx");
+        final File file = new File(AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + "\\Participantes.xlsx");
         final InputStream targetStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(targetStream);
         XSSFSheet worksheet = workbook.getSheetAt(0);
 
         numParticipantes = participantRepository.deleteAll();
-
+        
+        System.out.println("Borrados " + numParticipantes);
         
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
@@ -102,7 +99,7 @@ public class ImportExcelController {
         HttpStatus status = HttpStatus.OK;
         List<Stimulus> stimulusList = new ArrayList<>();
 
-        final File file = new File(basePath + "\\" + project + "\\" + study + "\\Estimulos.xlsx");
+        final File file = new File(AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + "\\Estimulos.xlsx");
         final InputStream targetStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(targetStream);
         XSSFSheet worksheet = workbook.getSheetAt(0);
@@ -132,7 +129,7 @@ public class ImportExcelController {
 		HttpStatus status = HttpStatus.OK;
         List<Question> questionList = new ArrayList<>();
         
-        final File file = new File(basePath + "\\" + project + "\\" + study + "\\Preguntas.xlsx");
+        final File file = new File(AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + "\\Preguntas.xlsx");
         final InputStream targetStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(targetStream);
         XSSFSheet worksheet = workbook.getSheetAt(0);

@@ -8,27 +8,22 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.neurologyca.kopernica.config.model.Participant;
+import com.neurologyca.kopernica.config.model.Question;
 import com.neurologyca.kopernica.config.model.Stimulus;
 import com.neurologyca.kopernica.config.repository.ParticipantRepository;
 import com.neurologyca.kopernica.config.repository.QuestionRepository;
 import com.neurologyca.kopernica.config.repository.StimulusRepository;
 import com.neurologyca.kopernica.config.repository.StudyRepository;
-import com.neurologyca.kopernica.config.model.Question;
 
 @RestController
 @RequestMapping("export-excel")
 public class ExportExcelController {
-	
-	@Value("${base.path}")
-	private String basePath;
 	
 	@Autowired
     private StudyRepository studyRepository;
@@ -79,7 +74,7 @@ public class ExportExcelController {
         	worksheet.autoSizeColumn(i);
         }   
       // Escribe el fichero de salida
-        FileOutputStream fileOut = new FileOutputStream(basePath + "\\" + project + "\\" + study + "\\" + "Participantes.xlsx");
+        FileOutputStream fileOut = new FileOutputStream(AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "Participantes.xlsx");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
@@ -111,7 +106,7 @@ public class ExportExcelController {
         	worksheet.autoSizeColumn(i);
         }   
       // Escribe el fichero de salida
-        FileOutputStream fileOut = new FileOutputStream(basePath + "\\" + project + "\\" + study + "\\" + "Preguntas.xlsx");
+        FileOutputStream fileOut = new FileOutputStream(AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "Preguntas.xlsx");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
@@ -144,7 +139,7 @@ public class ExportExcelController {
         }   
 
         // Escribe el fichero de salida
-        FileOutputStream fileOut = new FileOutputStream(basePath + "\\" + project + "\\" + study + "\\" + "Estimulos.xlsx");
+        FileOutputStream fileOut = new FileOutputStream(AppController.fullBasePath + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "Estimulos.xlsx");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();

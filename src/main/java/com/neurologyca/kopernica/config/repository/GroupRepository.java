@@ -6,19 +6,16 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import com.neurologyca.kopernica.config.controller.AppController;
 import com.neurologyca.kopernica.config.model.Group;
 import com.neurologyca.kopernica.config.model.GroupList;
 import com.neurologyca.kopernica.config.model.ProtocolGroupList;
-import com.neurologyca.kopernica.config.model.Question;
-import com.neurologyca.kopernica.config.model.Stimulus;
-
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 
 
@@ -83,7 +80,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -110,7 +107,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
     
@@ -170,7 +167,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
     
@@ -199,7 +196,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -232,7 +229,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -265,7 +262,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -301,7 +298,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -335,7 +332,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -359,7 +356,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -414,7 +411,7 @@ public class GroupRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             

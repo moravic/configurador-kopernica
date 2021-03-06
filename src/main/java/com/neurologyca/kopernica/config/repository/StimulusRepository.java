@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import org.springframework.stereotype.Repository;
 
 import com.neurologyca.kopernica.config.controller.AppController;
-import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Stimulus;
 
 import java.sql.Statement;
@@ -102,7 +101,7 @@ public class StimulusRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -135,7 +134,7 @@ public class StimulusRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -169,7 +168,7 @@ public class StimulusRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             
@@ -192,7 +191,7 @@ public class StimulusRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             

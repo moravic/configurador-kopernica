@@ -30,8 +30,8 @@ public class AppController {
 	
 	@GetMapping("/app/properties/{project}/{study}")
 	public void setProperties(@PathVariable String project, @PathVariable String study) throws URISyntaxException {
-		this.proyecto = project;
-		this.estudio = study;
+		proyecto = project;
+		estudio = study;
 		
 		fullDatabaseUrl = databaseUrl + System.getProperty("file.separator") + project + System.getProperty("file.separator") + study + System.getProperty("file.separator") + "csvs" + System.getProperty("file.separator") + "database";
 		System.out.println(fullDatabaseUrl);
@@ -45,8 +45,8 @@ public class AppController {
 		System.out.println("jarPath " + jarPath);
 		if (this.setPath) {
 			this.setPath=false;
-			this.fullBasePath = jarPath + System.getProperty("file.separator") + basePath + System.getProperty("file.separator");
-			this.databaseUrl = databaseUrl + this.fullBasePath;
+			fullBasePath = jarPath + System.getProperty("file.separator") + basePath + System.getProperty("file.separator");
+			this.databaseUrl = databaseUrl + fullBasePath;
 		}
 		
 		System.out.println("fullBasePath " + fullBasePath);

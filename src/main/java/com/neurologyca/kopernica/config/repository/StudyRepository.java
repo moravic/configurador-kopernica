@@ -9,17 +9,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.neurologyca.kopernica.config.controller.AppController;
-import com.neurologyca.kopernica.config.model.Participant;
 import com.neurologyca.kopernica.config.model.Study;
 
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Repository
 public class StudyRepository {
@@ -103,7 +98,7 @@ public class StudyRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
            
@@ -133,7 +128,7 @@ public class StudyRepository {
             if (conn != null) {
             	// Si no existe se crea la bbdd
                 DatabaseMetaData meta = conn.getMetaData();
-                //System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("The driver name is " + meta.getDriverName());
                 //System.out.println("A new database has been created.");
             }
             

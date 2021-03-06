@@ -47,7 +47,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 
@@ -86,7 +86,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 
@@ -244,6 +244,7 @@ public class ProtocolParticipantRepository {
 		return 1;
 	}
 	
+	@SuppressWarnings("unused")
 	private List<Integer> getParticipantProtocolList() throws Exception {
 		List<Integer> participantProtocolList = new ArrayList<Integer>();
 		Integer participant;
@@ -257,7 +258,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 
@@ -292,7 +293,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 
@@ -338,7 +339,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 
@@ -404,7 +405,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 			
@@ -541,7 +542,7 @@ public class ProtocolParticipantRepository {
 			if (conn != null) {
 				// Si no existe se crea la bbdd
 				DatabaseMetaData meta = conn.getMetaData();
-				// System.out.println("The driver name is " + meta.getDriverName());
+				System.out.println("The driver name is " + meta.getDriverName());
 				// System.out.println("A new database has been created.");
 			}
 			
