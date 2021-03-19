@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class StimulusService {
-  private baseUrl = 'http://localhost:8080/config-kopernica/stimuli';
+  private baseUrl = 'http://localhost:8091/config-kopernica/stimuli';
 
   constructor(private http: HttpClient) { }
   

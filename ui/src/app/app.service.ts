@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AppService {
 
-  private baseUrl = 'http://localhost:8080/config-kopernica/app/';
+  private baseUrl = 'http://localhost:8091/config-kopernica/app/';
 
   constructor(private http: HttpClient) { }
 

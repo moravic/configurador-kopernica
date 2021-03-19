@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class ProtocolService {
-  private baseUrl = 'http://localhost:8080/config-kopernica/protocol';
+  private baseUrl = 'http://localhost:8091/config-kopernica/protocol';
 
   constructor(private http: HttpClient) { }
   

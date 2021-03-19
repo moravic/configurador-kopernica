@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class QuestionService {
-  private baseUrl = 'http://localhost:8080/config-kopernica/questions';
+  private baseUrl = 'http://localhost:8091/config-kopernica/questions';
 
   constructor(private http: HttpClient) { }
   

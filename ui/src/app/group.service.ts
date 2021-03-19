@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class GroupService {
-  private baseUrl = 'http://localhost:8080/config-kopernica/group';
+  private baseUrl = 'http://localhost:8091/config-kopernica/group';
 
   constructor(private http: HttpClient) { }
   

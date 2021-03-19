@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class ExportService {
-  private baseUrl = 'http://localhost:8080/config-kopernica/export-excel';
+  private baseUrl = 'http://localhost:8091/config-kopernica/export-excel';
 
   constructor(private http: HttpClient) { }
   
