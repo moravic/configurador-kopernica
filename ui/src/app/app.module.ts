@@ -25,6 +25,7 @@ import { SegmentComponent } from './segment/segment.component';
 import { GroupComponent } from './group/group.component';
 import { BlockProtocolComponent } from './block-protocol/block-protocol.component';
 import { StoreService } from './store.service';
+import {MAT_DATE_LOCALE} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { StoreService } from './store.service';
     ParticipantDataStoreService,
     PreguntaDataStoreService,
     EstimuloDataStoreService,
-    StoreService
+    StoreService,
+    {provide: MAT_DATE_LOCALE, useValue: 'es-ES'}
   ],
   bootstrap: [AppComponent]
 })

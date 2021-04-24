@@ -16,11 +16,12 @@ import { ProtocolparticipantService } from './protocolparticipant.service';
 import { StoreService } from './store.service';
 import { MatDialogOkComponent } from './mat-dialog-ok/mat-dialog-ok.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit{
   title = 'Kopernica Configurator';
@@ -39,6 +40,9 @@ export class AppComponent implements OnInit{
   addStudyDisabled=true;
   listComponentsDisabled=true;
   protocols:Protocol[]=[];
+  
+  start = new FormControl();
+  end = new FormControl();
   
   constructor(
     private appService: AppService,
@@ -86,6 +90,8 @@ export class AppComponent implements OnInit{
      this.study.study=this.studySelected;
      this.study.type=this.typeSelected;
      this.typeDisabled=true;
+     this.study.initDate=this.start.value;
+     this.study.endDate=this.end.value;
      this.studyService.addStudy(this.study)
      	.subscribe(resp => {
      	    //console.log(resp);
@@ -109,6 +115,19 @@ export class AppComponent implements OnInit{
 	    }, error =>  this.error_str=error.error.message);
 	    
 	    this.storeService.broadcastAddStudy("S");
+   }
+   
+   public saveStudy($event){
+     console.log("Saving study");
+     if (!this.study)
+     	return;
+     this.study.initDate=this.start.value;
+     this.study.endDate=this.end.value;
+     this.studyService.saveStudy(this.study)
+     	.subscribe(resp => { 
+     	console.log("Study saved");
+	 }, error =>  this.error_str=error.error.message);
+	    
    }
    
    public applyConfiguration(){
@@ -160,9 +179,11 @@ export class AppComponent implements OnInit{
      	this.appService.setProperties(this.projectSelected, this.studySelected).subscribe(data => {
 	     	//console.log(data);
 	     	this.error_str="";
-	     	this.studyService.getTypeStudy(this.projectSelected, this.studySelected).subscribe(data => {
-	     	if (data == "0" || data == "1"){
-		    	this.typeSelected=""+data; 
+	     	this.studyService.getStudy(this.projectSelected, this.studySelected).subscribe(data => {
+	     	console.log("getStudy " + data.type);
+	     	console.log("getStudy " + data.initDate);
+	     	if (data.type == '0' || data.type == '1'){
+		    	this.typeSelected=""+data.type; 
 		    	this.typeDisabled=true;
 		    	this.addStudyDisabled=true;
 		    	this.listComponentsDisabled=false;
@@ -172,6 +193,10 @@ export class AppComponent implements OnInit{
 		    	this.addStudyDisabled=false;
 		    	this.listComponentsDisabled=false;
 		 	}
+		 	
+		 	this.start = new FormControl(data.initDate);
+		 	this.end = new FormControl(data.endDate);
+		 	
 		 	//console.log("getParticipants");
          	this.participantService.getParticipants(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {

@@ -35,3 +35,4 @@ build/
 /nodes_modules
 src/main/resources/static
 .mvn/
+/data-kopernica/

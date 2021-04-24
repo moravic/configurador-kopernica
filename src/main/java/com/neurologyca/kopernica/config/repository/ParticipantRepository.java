@@ -190,7 +190,7 @@ public class ParticipantRepository {
     	 // No es grupal....group_id=0
     	 // Es grupal ... buscar el group_id en grupos (se crea e inserta si no existe)
     	 //System.out.println("Tipo Estudio: " + studyRepository.getTypeStudy());
-    	 if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {	 	
+    	 if (studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) {	 	
     		 participant.setGroupId(groupRepository.getGroupId(participant.getGroupId(), participant.getGroup(), participant.getId()));
     	 }
     	 else {
@@ -407,7 +407,7 @@ public class ParticipantRepository {
             protocolParticipantRepository.deleteParticipantConfiguration(conn, id);
             
             // Revisar si el grupo al que pertenece se ha quedado huerfano
-            if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+            if (studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) {
             	PreparedStatement pstmt = conn.prepareStatement(selectSql);
             	pstmt.setInt(1, id);
             	ResultSet rs = pstmt.executeQuery();
@@ -419,7 +419,7 @@ public class ParticipantRepository {
             pstmt.executeUpdate();
             
             // Revisar si el grupo al que pertenece se ha quedado huerfano
-            if ((studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) && (contador == 1)) {
+            if ((studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) && (contador == 1)) {
             	 deleteGroupList(conn, group_id);
             	 deleteGroup(conn, group_id);
 	    		 //System.out.println("Nombre Grupo: " + participant.getGroup());
@@ -432,7 +432,7 @@ public class ParticipantRepository {
 	}
 	
 	public List<Participant> getParticipantList() throws Exception{
-	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email, group_id FROM participants";
+	    String getParticipantsSql = "SELECT id, name, gender, age, profile, email, group_id FROM participants order by id asc";
 	    Participant participant;
 	    List<Participant> participantList = new ArrayList<Participant>();
 	    StudyRepository studyRepository = new StudyRepository();
@@ -466,7 +466,7 @@ public class ParticipantRepository {
 				participant.setProfile(rs.getString("profile"));
 				participant.setGroupId(rs.getInt("group_id"));
 				
-				if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+				if (studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) {
 		    		 participant.setGroup(groupRepository.getGroupName(rs.getInt("group_id")));
 		    		 //System.out.println("Nombre Grupo: " + participant.getGroup());
 		    	 }
@@ -518,7 +518,7 @@ public class ParticipantRepository {
 				participant.setProfile(rs.getString("profile"));
 				participant.setGroupId(rs.getInt("group_id"));
 				
-				if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+				if (studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) {
 		    		 participant.setGroup(groupRepository.getGroupName(rs.getInt("group_id")));
 		    		 //System.out.println("Nombre Grupo: " + participant.getGroup());
 		    	 }

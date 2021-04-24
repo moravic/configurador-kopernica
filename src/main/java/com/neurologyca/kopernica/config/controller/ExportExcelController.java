@@ -65,7 +65,7 @@ public class ExportExcelController {
                 row.createCell(4).setCellValue(participant.getProfile());
                 row.createCell(5).setCellValue(participant.getEmail());
                 
-                if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+                if (studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) {
                 	row.createCell(6).setCellValue(participant.getGroup());
                 }
         }

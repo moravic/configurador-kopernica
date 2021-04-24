@@ -23,16 +23,24 @@
          </div>
     </div>
     <div class="row">
+	    <div class="col">
+	    	<mat-form-field appearance="fill">
+			  <mat-date-range-input [rangePicker]="picker">
+			    <input matStartDate formControlName="start" name="start" [value]="start.value" placeholder="Fecha Inicio" (dateChange)="saveStudy($event)">
+			    <input matEndDate formControlName="end" name="end" [value]="end.value" placeholder="Fecha Final" (dateChange)="saveStudy($event)">
+			  </mat-date-range-input>
+			  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+			  <mat-date-range-picker #picker></mat-date-range-picker>
+	       </mat-form-field>
+      </div>
       <div class="col">
       	 <projectType-radio (shareItemToParent) = shareChangeType($event) [selectedItem]="typeSelected" disabled="{{typeDisabled}}"></projectType-radio>
       </div>
-       <div class="col">
+      <div class="col">
             <button type="submit" [disabled]="addStudyDisabled" (click)="addStudy()" style="border:none;background:none;"><img src="../../config-kopernica/assets/add-new.svg" width="25" height="25"/></button>
       </div>
-      <div class="row"> 
-       <div class="col">
+      <div class="col-2">
             <button mat-raised-button class="apply-configuration" [disabled]="listComponentsDisabled" (click)="applyConfiguration()">Aplicar Configuración</button>
-       </div> 
       </div>
     </div>
     <div class="row">

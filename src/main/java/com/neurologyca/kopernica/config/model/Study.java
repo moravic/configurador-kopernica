@@ -1,9 +1,13 @@
 package com.neurologyca.kopernica.config.model;
 
+import java.sql.Date;
+
 public class Study {
 	private String project;
     private String study;
 	private String type;
+	private Date initDate;
+	private Date endDate;
 	
 	public Study() {	  
 	    }
@@ -34,12 +38,27 @@ public class Study {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	 @Override
-	    public String toString() {
-	        return "Study [id=1, project=" + project + ", study=" + study + ", type=" + type
-	       + "]";
-	    }
-	    
+
+	public Date getInitDate() {
+		return initDate;
+	}
+
+	public void setInitDate(Date initDate) {
+		this.initDate = initDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	@Override
+	public String toString() {
+		return "Study [project=" + project + ", study=" + study + ", type=" + type + ", initDate=" + initDate
+				+ ", endDate=" + endDate + "]";
+	}
 	    
 }

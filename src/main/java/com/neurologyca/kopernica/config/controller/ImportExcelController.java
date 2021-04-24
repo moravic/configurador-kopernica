@@ -75,7 +75,7 @@ public class ImportExcelController {
                 participant.setProfile((String) row.getCell(4).getStringCellValue());
                 participant.setEmail((String) row.getCell(5).getStringCellValue());
             
-                if (studyRepository.getTypeStudy().equals(GROUP_INTEVIEW)) {
+                if (studyRepository.getStudy().getType().equals(GROUP_INTEVIEW)) {
                 	participant.setGroup((String) row.getCell(6).getStringCellValue());
                 	participant.setGroupId(groupRepository.getGroupId((String) row.getCell(6).getStringCellValue()));
                 }

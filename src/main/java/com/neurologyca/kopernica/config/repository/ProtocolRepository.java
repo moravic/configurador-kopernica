@@ -39,7 +39,7 @@ public class ProtocolRepository {
 		String create_BLOCKS = "CREATE TABLE IF NOT EXISTS blocks (id INTEGER PRIMARY KEY, block_name TEXT NOT NULL UNIQUE)";
 		String create_BLOCK_LIST = "CREATE TABLE IF NOT EXISTS block_list (id INTEGER, block_id INTEGER NOT NULL, protocol_id INTEGER NOT NULL, FOREIGN KEY(block_id) REFERENCES blocks(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id), PRIMARY KEY(id))";
 		String create_PROTOCOLS = "CREATE TABLE IF NOT EXISTS protocols (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, locked INT NULL)";
-		String create_PARTICIPANT_PROTOCOL = "CREATE TABLE IF NOT EXISTS participant_protocol (id INTEGER PRIMARY KEY, participant_id INTEGER NOT NULL, protocol_id INTEGER NOT NULL, FOREIGN KEY(participant_id) REFERENCES participants(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id))";
+		String create_PARTICIPANT_PROTOCOL = "CREATE TABLE IF NOT EXISTS participant_protocol (id INTEGER NOT NULL, participant_id INTEGER NOT NULL, protocol_id INTEGER NOT NULL, PRIMARY KEY(id,participant_id) FOREIGN KEY(participant_id) REFERENCES participants(id), FOREIGN KEY(protocol_id) REFERENCES protocols(id))";
 		String create_PARTICIPANT_PROTOCOL_ORDER = "CREATE TABLE IF NOT EXISTS participant_protocol_order (id INTEGER PRIMARY KEY, participant_protocol_id INTEGER NOT NULL, block_id INTEGER NOT NULL, blockElement_id INTEGER NOT NULL, no_order INTEGER NOT NULL, FOREIGN KEY(participant_protocol_id) REFERENCES participant_protocol(id), FOREIGN KEY(blockElement_id) REFERENCES blockElement(id))";
 		String insert_GROUP = "INSERT OR REPLACE INTO groups(id, name) " + "VALUES(1,'Todos')";
 		/*

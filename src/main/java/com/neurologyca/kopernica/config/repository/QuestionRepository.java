@@ -49,12 +49,13 @@ public class QuestionRepository {
         return rs.getInt("id");
    }
     
-    private Integer existsQuestion(Connection conn, String question) throws Exception {
-      	 String selectSql = "SELECT COUNT(1) contador FROM questions WHERE question = ?";
+    private Integer existsQuestion(Connection conn, Question question) throws Exception {
+      	 String selectSql = "SELECT COUNT(1) contador FROM questions WHERE question = ? and id != ?";
       	
 
            try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-           	pstmt.setString(1, question);
+           	pstmt.setString(1, question.getQuestion());
+           	pstmt.setInt(2, question.getId());
            	ResultSet rs = pstmt.executeQuery();
            	Integer resultado = rs.getInt("contador");
 
@@ -104,8 +105,9 @@ public class QuestionRepository {
                 //System.out.println("A new database has been created.");
             }
             
+            System.out.println("question: " + question.getQuestion());
 			createTableQuestions(conn);
-			if (question.getQuestion()=="" || existsQuestion(conn, question.getQuestion()) == 0) {
+			if (question.getQuestion().equals("") || existsQuestion(conn, question) == 0) {
 				insertQuestion(conn, question);
 			} else {
 				throw new Exception(PREGUNTA_DUPLICADA);
@@ -119,7 +121,7 @@ public class QuestionRepository {
 	}
 	
 	public List<Question> getQuestionList() throws Exception{
-	    String getQuestionsSql = "SELECT id, question FROM questions";
+	    String getQuestionsSql = "SELECT id, question FROM questions order by id asc";
 	    Question question;
 	    List<Question> questionList = new ArrayList<Question>();
 	    

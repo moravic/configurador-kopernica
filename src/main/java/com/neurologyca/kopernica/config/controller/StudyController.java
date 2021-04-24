@@ -17,15 +17,21 @@ public class StudyController {
     @Autowired
     private StudyRepository studyRepository;
 
-	@GetMapping("/getTypeStudy/{project}/{study}")
-	public String getTypeStudy(@PathVariable String project, @PathVariable String study) throws Exception {
-		return studyRepository.getTypeStudy();
+	@GetMapping("/getStudy/{project}/{study}")
+	public Study getTypeStudy(@PathVariable String project, @PathVariable String study) throws Exception {
+		return studyRepository.getStudy();
 	}
 	
-    @PostMapping()
+    @PostMapping("/addStudy/")
     public Integer createStudy(@RequestBody Study study) throws Exception {
     	System.out.println("createStudy");
-        return studyRepository.save(study);
+        return studyRepository.createStudy(study);
+    }
+    
+    @PostMapping("/saveStudy/")
+    public Integer save(@RequestBody Study study) throws Exception {
+    	System.out.println("createStudy");
+        return studyRepository.saveStudy(study);
     }
 
 }

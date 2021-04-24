@@ -38,7 +38,7 @@ public class ProtocolParticipantRepository {
 		List<Protocol> protocols = new ArrayList<Protocol>();
 		Protocol protocol;
 
-		String getProtocol = "SELECT id FROM protocols where ifnull(locked,0)=0";
+		String getProtocol = "SELECT id FROM protocols order by ifnull(locked,0) desc, id";
 
 		if (AppController.fullDatabaseUrl == null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -116,17 +116,28 @@ public class ProtocolParticipantRepository {
 
 	}
 	
-    private Integer selectMaxId(Connection conn) throws Exception {
-     	 String selectMaxIdSql = "SELECT MAX(id) id FROM participant_protocol";
+    private Integer selectMaxId(Connection conn, Integer participant_id) throws Exception {
+    	 String selectParticipantIdSql = "SELECT ifnull(MAX(id),0) id FROM participant_protocol where participant_id=?";
+     	 String selectMaxIdSql = "SELECT ifnull(MAX(id),0)+1 id FROM participant_protocol";
      	 ResultSet rs;
+     	 ResultSet rs2;
+     	 int id;
      	 
-          try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
+          try (PreparedStatement pstmt = conn.prepareStatement(selectParticipantIdSql)) {
+          	pstmt.setInt(1, participant_id);
+          	rs = pstmt.executeQuery();
+          	id = rs.getInt("id");
+          	
+          	if (id!=0)
+          		return id;
+          	
           	Statement stmt = conn.createStatement();
-          	rs = stmt.executeQuery(selectMaxIdSql);
+          	rs2 = stmt.executeQuery(selectMaxIdSql);
           } catch (SQLException e) {
          	 throw new Exception(e.getMessage());
           }
-          return rs.getInt("id");
+          
+          return rs2.getInt("id");
      }
     
     private void insertParticipantProtocol(Connection conn, Integer participant_id, Integer protocol_id) throws Exception {
@@ -134,7 +145,7 @@ public class ProtocolParticipantRepository {
    	 		+ "VALUES(?,?,?)";
    	 
         try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	    	 
-            pstmt.setInt(1, selectMaxId(conn)+1);
+            pstmt.setInt(1, selectMaxId(conn, participant_id));
             pstmt.setInt(2, participant_id);
             pstmt.setInt(3, protocol_id);
             pstmt.executeUpdate();
@@ -156,7 +167,7 @@ public class ProtocolParticipantRepository {
     
     private void insertGroupParticipantProtocol(Connection conn, Integer protocolId, Integer groupId) throws Exception {
      	 String insertSql = "INSERT OR REPLACE INTO participant_protocol(id, participant_id, protocol_id) "
-     	 		+ "SELECT ROW_NUMBER() OVER (ORDER BY id ASC, group_id ASC) + (SELECT MAX(id) FROM participant_protocol), id, '" + protocolId + "' FROM participants WHERE group_id=?";
+     	 		+ "SELECT ROW_NUMBER() OVER (ORDER BY id ASC, group_id ASC) + (SELECT ifnull(MAX(id),0) FROM participant_protocol), id, '" + protocolId + "' FROM participants WHERE group_id=?";
 
           try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {     
               pstmt.setInt(1, groupId);
@@ -368,12 +379,13 @@ public class ProtocolParticipantRepository {
 
 	}
 	
-    private Integer selectMaxIdParticipantProtocolOrder(Connection conn) throws Exception {
-    	 String selectMaxIdSql = "SELECT MAX(id) id FROM participant_protocol_order";
+    private Integer selectMaxIdParticipantProtocolOrder(Connection conn, Integer participant_id) throws Exception {
+    	 String selectMaxIdSql = "SELECT ifnull(MAX(id),0)+1 id FROM participant_protocol_order";
     	 ResultSet rs;
     	 
          try (PreparedStatement pstmt = conn.prepareStatement(selectMaxIdSql)) {
-         	Statement stmt = conn.createStatement();
+         	
+          	Statement stmt = conn.createStatement();
          	rs = stmt.executeQuery(selectMaxIdSql);
          } catch (SQLException e) {
         	 throw new Exception(e.getMessage());
@@ -386,7 +398,7 @@ public class ProtocolParticipantRepository {
   	 		+ "VALUES(?,?,?,?,?)";
   	 
        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {      	    	 
-           pstmt.setInt(1, selectMaxIdParticipantProtocolOrder(conn)+1);
+           pstmt.setInt(1, selectMaxIdParticipantProtocolOrder(conn, participant_id));
            pstmt.setInt(2, participant_id);
            pstmt.setInt(3, block_id);
            pstmt.setInt(4, blockElement_id);
@@ -548,7 +560,7 @@ public class ProtocolParticipantRepository {
 			
 			deleteParticipantProtocolOrder(conn);
 			deleteParticipantProtocol(conn);
-			 if (studyRepository.getTypeStudy().equals(INDIVIDUAL_INTERVIEW)) {	
+			 if (studyRepository.getStudy().getType().equals(INDIVIDUAL_INTERVIEW)) {	
 				 applyConditions(conn);
 			 }
 			 else {

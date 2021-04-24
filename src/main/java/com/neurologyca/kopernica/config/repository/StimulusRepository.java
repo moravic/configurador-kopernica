@@ -37,11 +37,12 @@ public class StimulusRepository {
 		 }
 	 }
     
-    private Integer existsStimulus(Connection conn, String stimuli) throws Exception {
-     	 String selectSql = "SELECT COUNT(1) contador FROM stimulus WHERE name = ?";
+    private Integer existsStimulus(Connection conn, Stimulus stimuli) throws Exception {
+     	 String selectSql = "SELECT COUNT(1) contador FROM stimulus WHERE name = ? and id != ?";
      	
           try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-          	pstmt.setString(1, stimuli);
+          	pstmt.setString(1, stimuli.getName());
+          	pstmt.setInt(2, stimuli.getId());
           	ResultSet rs = pstmt.executeQuery();
           	Integer resultado = rs.getInt("contador");
 
@@ -105,9 +106,11 @@ public class StimulusRepository {
                 //System.out.println("A new database has been created.");
             }
             
+            System.out.println("stimulus: " + stimulus.getName());
+            
 			createTableStimulus(conn);
 			
-			if (stimulus.getName()=="" || existsStimulus(conn, stimulus.getName()) == 0) {
+			if (stimulus.getName().equals("") || existsStimulus(conn, stimulus) == 0) {
 				insertStimulus(conn, stimulus);
 			} else {
 				throw new Exception(ESTIMULO_DUPLICADO);
@@ -122,7 +125,7 @@ public class StimulusRepository {
 	}
 	
 	public List<Stimulus> getStimulusList() throws Exception{
-	    String getStimulusSql = "SELECT id, name FROM stimulus";
+	    String getStimulusSql = "SELECT id, name FROM stimulus order by id asc";
 	    Stimulus stimulus;
 	    List<Stimulus> stimulusList = new ArrayList<Stimulus>();
 	    

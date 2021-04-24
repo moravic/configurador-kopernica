@@ -15,12 +15,19 @@ export class StudyService {
     const headers = { 'content-type': 'application/json'}  
     const body=JSON.stringify(data);
     console.log(body);
-    return this.http.post(`${this.baseUrl}`,body,{'headers':headers});
+    return this.http.post(`${this.baseUrl}/addStudy`,body,{'headers':headers});
   }
   
-  getTypeStudy(project: string, study: string): Observable<Object> {
+  saveStudy(data): Observable<any> {
+    const headers = { 'content-type': 'application/json'}  
+    const body=JSON.stringify(data);
+    console.log(body);
+    return this.http.post(`${this.baseUrl}/saveStudy`,body,{'headers':headers});
+  }
+  
+  getStudy(project: string, study: string): Observable<any> {
     //console.log("test " + project + "/" + study);
-    return this.http.get(`${this.baseUrl}/getTypeStudy/${project}/${study}`);
+    return this.http.get(`${this.baseUrl}/getStudy/${project}/${study}`);
   }
 
 }

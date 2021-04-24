@@ -62,7 +62,7 @@ public class StudyRepository {
 	}
 	
     private void createTableStudies(Connection conn) throws Exception{
-		String createTableQuery = "CREATE TABLE IF NOT EXISTS studies (id integer PRIMARY KEY, project TEXT NOT NULL, study TEXT NOT NULL, type TEXT NOT NULL)";
+		String createTableQuery = "CREATE TABLE IF NOT EXISTS studies (id integer PRIMARY KEY, project TEXT NOT NULL, study TEXT NOT NULL, type TEXT NOT NULL, initDate DATE, endDate DATE)";
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -73,8 +73,8 @@ public class StudyRepository {
 		 }
 	 }
     
-    private void insertStudies(Connection conn, Study study) throws Exception {
-    	 String insertSql = "INSERT OR REPLACE INTO studies(id, project, study, type) VALUES(1,?,?,?)";
+    private void saveStudies(Connection conn, Study study) throws Exception {
+    	 String insertSql = "INSERT OR REPLACE INTO studies(id, project, study, type, initDate, endDate) VALUES(1,?,?,?,?,?)";
     	 
     	 createTableStudies(conn);
     	 
@@ -82,14 +82,16 @@ public class StudyRepository {
              pstmt.setString(1, study.getProject());
              pstmt.setString(2, study.getStudy());
              pstmt.setString(3, study.getType());
+             pstmt.setDate(4, study.getInitDate());
+             pstmt.setDate(5, study.getEndDate());
              pstmt.executeUpdate();
          } catch (SQLException e) {
         	 throw new Exception(e.getMessage());
          }
     }
 	
-    public String getTypeStudy() throws Exception{
-    	String getTypeStudy = "SELECT type FROM studies";
+    public Study getStudy() throws Exception{
+    	String getStudy = "SELECT type, initDate, endDate FROM studies";
 
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -102,13 +104,19 @@ public class StudyRepository {
                 //System.out.println("A new database has been created.");
             }
            
-            PreparedStatement pstmt = conn.prepareStatement(getTypeStudy);
+            PreparedStatement pstmt = conn.prepareStatement(getStudy);
 
             ResultSet rs = pstmt.executeQuery();
 
 			rs.next();
-	
-			return rs.getString("type");
+			
+			Study study = new Study();
+	        
+			study.setType(rs.getString("type"));
+			study.setInitDate(rs.getDate("initDate"));
+			study.setEndDate(rs.getDate("endDate"));
+			
+			return study;
 
         } catch (SQLException e) {
         	throw new Exception(e.getMessage());
@@ -116,7 +124,7 @@ public class StudyRepository {
 		
     }
     
-	public Integer save(Study study) throws Exception{
+	public Integer createStudy(Study study) throws Exception{
 		
 		if (AppController.fullDatabaseUrl==null) {
 			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
@@ -137,7 +145,7 @@ public class StudyRepository {
 			questionRepository.createTableQuestions(conn);			
 			stimulusRepository.createTableStimulus(conn);		
 			protocolRepository.createProtocolTables(conn);		
-			insertStudies(conn, study);
+			saveStudies(conn, study);
 		
 
         } catch (SQLException e) {
@@ -146,6 +154,29 @@ public class StudyRepository {
 		
 		
 
+		return 1;
+	}
+	
+	public Integer saveStudy(Study study) throws Exception{
+		
+		if (AppController.fullDatabaseUrl==null) {
+			throw new Exception("Debe estar seleccionado un proyecto y un estudio");
+		}
+		
+		try (Connection conn = DriverManager.getConnection(AppController.fullDatabaseUrl)) {
+            if (conn != null) {
+            	// Si no existe se crea la bbdd
+                DatabaseMetaData meta = conn.getMetaData();
+                System.out.println("The driver name is " + meta.getDriverName());
+                //System.out.println("A new database has been created.");
+            }
+            		
+			saveStudies(conn, study);
+		
+        } catch (SQLException e) {
+        	throw new Exception(e.getMessage());
+        }
+		
 		return 1;
 	}
 }
