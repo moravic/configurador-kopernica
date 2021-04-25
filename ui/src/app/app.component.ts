@@ -41,8 +41,10 @@ export class AppComponent implements OnInit{
   listComponentsDisabled=true;
   protocols:Protocol[]=[];
   
-  start = new FormControl();
-  end = new FormControl();
+  range = new FormGroup({  
+    start: new FormControl(),  
+    end: new FormControl()  
+  });  
   
   constructor(
     private appService: AppService,
@@ -90,8 +92,8 @@ export class AppComponent implements OnInit{
      this.study.study=this.studySelected;
      this.study.type=this.typeSelected;
      this.typeDisabled=true;
-     this.study.initDate=this.start.value;
-     this.study.endDate=this.end.value;
+     this.study.initDate=this.range.value.start;
+     this.study.endDate=this.range.value.end;
      this.studyService.addStudy(this.study)
      	.subscribe(resp => {
      	    //console.log(resp);
@@ -118,11 +120,20 @@ export class AppComponent implements OnInit{
    }
    
    public saveStudy($event){
-     console.log("Saving study");
-     if (!this.study)
+     console.log("Saving study " + this.study);
+     if (this.typeDisabled==true){
+	     this.study = new Study();
+	     this.study.project=this.projectSelected;
+	     this.study.study=this.studySelected;
+	     this.study.type=this.typeSelected;
+	     this.typeDisabled=true;
+	     this.study.initDate=this.range.value.start;
+	     this.study.endDate=this.range.value.end;
+     }
+     else
      	return;
-     this.study.initDate=this.start.value;
-     this.study.endDate=this.end.value;
+     
+     console.log("Saving study " + this.study.endDate);
      this.studyService.saveStudy(this.study)
      	.subscribe(resp => { 
      	console.log("Study saved");
@@ -194,9 +205,9 @@ export class AppComponent implements OnInit{
 		    	this.listComponentsDisabled=false;
 		 	}
 		 	
-		 	this.start = new FormControl(data.initDate);
-		 	this.end = new FormControl(data.endDate);
-		 	
+		 	this.range.controls.start.setValue(data.initDate);
+			this.range.controls.end.setValue(data.endDate);  
+  
 		 	//console.log("getParticipants");
          	this.participantService.getParticipants(this.projectSelected, this.studySelected)
 	      		.subscribe(data => {

@@ -1,5 +1,7 @@
 package com.neurologyca.kopernica.config.controller;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,21 +19,28 @@ public class StudyController {
     @Autowired
     private StudyRepository studyRepository;
 
+    ReentrantLock lock = new ReentrantLock();
+    
 	@GetMapping("/getStudy/{project}/{study}")
 	public Study getTypeStudy(@PathVariable String project, @PathVariable String study) throws Exception {
 		return studyRepository.getStudy();
 	}
 	
-    @PostMapping("/addStudy/")
+    @PostMapping("/addStudy")
     public Integer createStudy(@RequestBody Study study) throws Exception {
     	System.out.println("createStudy");
         return studyRepository.createStudy(study);
     }
     
-    @PostMapping("/saveStudy/")
+    @PostMapping("/saveStudy")
     public Integer save(@RequestBody Study study) throws Exception {
-    	System.out.println("createStudy");
-        return studyRepository.saveStudy(study);
+		System.out.println("saveStudy");
+		 lock.lock();
+		 try {
+			return studyRepository.saveStudy(study);
+		 }finally {
+		     lock.unlock();
+		 }
     }
 
 }
